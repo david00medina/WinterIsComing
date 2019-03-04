@@ -1,5 +1,5 @@
-#Informe de Procesadores de Lenguaje
-##Estructura de documento
+# Informe de Procesadores de Lenguaje
+## Estructura de documento
 En este repositorio los archivos se organizan siguiendo el siguiente esquema:
 * _src/_. Es donde se encuentra el código fuente del documento LATEX, es decir, todos aquellos archivos con extensión _.tex_
 * _res/_. Aquí se encuentran todos los recursos que vayan a ser utilizados por el documento LATEX:
