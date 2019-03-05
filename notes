@@ -1,0 +1,131 @@
++ Mas de un tipo de dato aritmético (entero, flotante), tener arrays
++ if, while y for (complementario)
+
+Literal : La forma de representación del valor de un tipo en el código fuente
+Variable : Contenedor de un valor
+Tipo : Conjunto de valores que puede adquirir y operaciones
+Valor : Concepto abstracto (Luego tiene una representación física)
+Expresión : Es un literal de variables simples o compuestas o de llamadas a funciones que devuelven valores simples
+
+
+Tipos de dato (Declaración implicita) (Declarar los tipos de datos):
+  - entero (4 bytes) (int)
+  - lógico (1 bit) (bool)
+  - arrays (1D) ==> [] (Especificar qué tipos)
+  - número en coma flotante de simple precisión (32 bits) ==> real
+  - char (1 byte)
+  
+  
+Tipos de operadores: (Indicar a qué tipo de datos son aplicables)
+  - Operadores artiméticos:
+    + Suma: {EXPR} + {EXPR}
+    + Resta: {EXPR} - {EXPR}
+    + Multiplicación: {EXPR} * {EXPR}
+    + División: {EXPR} / {EXPR} (Si hay entero => Real)
+    + Módulo: {EXPR} % {EXPR} (Si, para reales)
+    + Potencia: {EXPR} ^ {EXPR}
+    + Raíces: {EXPR} # {EXPR} (Explicar)
+    + Incremento: {EXPR}++  POSTINCREMENTO (Especificar orden operaciones)
+    + Decremento: {EXPR}-- POSTDECREMENTO (Especificar orden operaciones)
+    
+  - Operador bit a bit: (Qué tipos se aplican estos operadores?) ()
+    + AND: {EXPR} & {EXPR}
+    + OR: {EXPR} | {EXPR}
+    + XOR: {EXPR} * {EXPR}
+    + DESP. IZQ.: {EXPR}<<{EXPR}
+    + DESP. DERCH.: {EXPR}>>{EXPR}
+  
+  - Operadores lógicos (Posibilidad de usar comparadores n-arios [comparacion dos a dos]):
+    + AND: {EXPR} && {EXPR}
+    + OR: {EXPR} || {EXPR}
+    + NOT: !{EXPR}
+    + IGUAL: {EXPR} == {EXPR}
+    + NOIGUAL: {EXPR} != {EXPR}
+    + MAYOR: {EXPR} > {EXPR}
+    + MAYORIGUAL: {EXPR} >= {EXPR}
+    + MENOR: {EXPR} < {EXPR}
+    + MENORIGUAL: {EXPR} <= {EXPR} 
+  
+  - Operadores array: (De qué tipo)
+    + Unión: {EXPR} U {EXPR}
+    + Diferencia: {EXPR} D {EXPR}
+    + Intersección: {EXPR} I {EXPR}
+    + Subconjunto: {EXPR} C {EXPR}
+    
+Comentarios: 
+  - Comentario línea: .. {EXPR}
+  - Comentario bloque: 
+          ,.{EXPR}
+            {EXPR}.,
+    
+  
+
+Estructuras de control: (Explicar que cuando quitamos una tabulación hay un simbolo de cierre de contexto)
+  - Bucles: (PUeden haber varios else's)
+    + for-forelse-else: 
+          {COND} ?? {EXPR}:
+            TAB {INSTR}
+          .{COND} ?? {EXPR}:
+            TAB {INSTR}
+          .??:
+            TAB {INSTR}
+            
+    + while-whileelse-else:
+          [{COND}] ??:
+            TAB {EXPR}
+          .[{COND}] ??:
+            TAB {EXPR}
+          .??:
+            TAB {EXPR}
+    
+  - Condicionales:
+    + if-elseif-else:
+          {COND} ?:
+            TAB {EXPR}
+          .{COND} ?:
+            TAB {EXPR}
+          .?:
+            TAB {EXPR}
+            
+            
+Palabras reservadas:
+  - CONTINUAR: continue
+  - PARAR: break
+  - DEVOLVER: return
+  - NULL: null (Solo para arrays)
+  - DEFINICION: fun
+  
+Simbolos: 
+  - FIN_INSTRUCCIÓN: '\n'
+  - TAB: '\t' x (N)
+  - NOTAB:  '\t' x (N-1)
+  - COMMA: ','
+  
+
+Funciones: (Explicar si las funciones devuelven arrays)
+  - Definición de funciones: (Paso de arrays por referencia)
+    fun {TIPO} {NAME}({PARAM_NAME}, | ...])
+    
+  - Declaración de funciones:
+     fun {TIPO} {NAME}({PARAM_NAME}, | ...]):
+      TAB {INSTR}
+      [TAB return {VAR}]
+    
+  - Uso de funciones:
+    {NAME}({EXPR}, | ...])
+            
+           
+    
+  
+2 < 5?:
+  print("Si")
+. 5 > 2?:
+  print("No")
+.?:
+  print("No computa")
+  
+  
+Explicar bien este caso
+int[] a = new int[2]
+int[] a = b
++ Definir cómo se recorre el array.. Límites?
