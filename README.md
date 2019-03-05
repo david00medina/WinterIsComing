@@ -16,9 +16,9 @@ git clone https://github.com/david00medina/informe-pl.git
 
 Debe crearse una rama propia donde se harán los commits de cada uno de los autores del documento:
 ```
-git branch _mirama_
-git checkout _mirama_
-git push --set-upstream origin _mirama_
+git branch mi_rama
+git checkout mi_rama
+git push --set-upstream origin mi_rama
 ```
 
 Cada autor hará sobre su rama personal los commits que considere oportunos ejecutando estos comandos desde el directorio raíz del proyecto:
