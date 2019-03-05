@@ -9,6 +9,23 @@ En este repositorio los archivos se organizan siguiendo el siguiente esquema:
 * _refs/_. Todas las referencias bibliográficas se almacenan en un fichero _.bib_ que aloja todas las citas que hagamos en nuestro documento como si se tratase de una base de datos con todas las fuentes que utilicemos en el desarrollo de este documento.
 
 ## ¿Cómo hacer commits?
-En primer lugar debe crearse una rama propia donde se harán los commits de cada uno de los autores del documento. Cada autor hará sobre su rama personal los commits que considere oportunos.
+En primer lugar debe clonarse el proyecto en un directorio de nuestra elección:
+```
+git clone https://github.com/david00medina/informe-pl.git
+```
+
+Debe crearse una rama propia donde se harán los commits de cada uno de los autores del documento:
+```
+git branch _mirama_
+git checkout _mirama_
+git push --set-upstream origin _mirama_
+```
+
+Cada autor hará sobre su rama personal los commits que considere oportunos ejecutando estos comandos desde el directorio raíz del proyecto:
+```
+git add *
+git commit -m "Mensaje del commit"
+git push
+```
 
 Cuando los cambios hayan sido comprobados se mergeará la rama de cada autor con la rama _master_.
