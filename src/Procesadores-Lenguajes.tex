@@ -1,11 +1,11 @@
 \documentclass[11pt, english]{article}
 \usepackage{graphicx}
 \usepackage[colorlinks=true, linkcolor=blue]{hyperref}
-\usepackage[english]{babel}
+\usepackage[spanish]{babel}
 \selectlanguage{english}
 \usepackage[utf8]{inputenc}
 \usepackage[svgnames]{xcolor}
-
+\usepackage{booktabs}
 
 
 \usepackage{listings}
@@ -117,7 +117,60 @@ Introducir breve introducción del lenguaje que planteamos.
 \newpage
 
 \subsection{Tipos de datos (David)}
-Aquí va el texto. Poner siempre un código de ejemplo.
+Cualquier leguaje de programación necesita definir un conjunto de \emph{tipos de datos}, esto es, la batería de valores y operaciones que puede adquirir una variable. Cada tipo de dato está definido en el lenguaje por un \emph{literal} único que lo representa, lo que permite que cada tipo de dato tenga un representación física específica.
+
+Los tipos de datos definidos en el lenguaje son los que figuran en el \emph{cuadro \ref{tab:table1}}. Las características críticas de implementación que define a cada tipo son:
+
+\begin{description}
+	\item[Entero] Representa a todas y cada una de las variables enteras que sean declaradas en el lenguaje. Este tipo de dato presenta un tamaño de 4 bytes (32 bits) y permite representar números enteros con signo. El \emph{complemento a 2} es el sistema elegido para definir el signo del número entro. Este dato se representa por el literal \texttt{int}. El rango de valores que puede tomar es 
+	
+	\begin{equation}\label{eq:equation1}
+		\left [-2^{N-1},\: 2^{N-1}-1 \right ] = \left [-2^{32-1},\: 2^{32-1}-1 \right] = \left [-2147483648,\: 2147483647 \right]
+	\end{equation}
+	
+	donde, $N$ es el número de bits disponibles para representar el número el número entero (32 bits).
+	\item[Coma flotante de simple precisión] Este tipo de dato representa número reales en coma flotante de simple precisión con un tamaño de 4 bytes (32 bits) siguiendo el estándar \emph{IEEE 754}. En la figura \ref{fig:figure1} puede observarse como esta representación binaria los bits se organizan en tres sectores principales:
+	\begin{itemize}
+		\item \textbf{Signo} (1 bit). Se trata de un sólo bit que define el signo del número: positivo (0) o negativo (1).
+		\item  \textbf{Exponente (8bits)}. Se trata de un número entero con signo de complemento a 2 ($\left [ -128,\: 127\right ]$)
+		\item \textbf{Mantisa (23 bits)}. Conforma la fracción a la derecha de la coma binaria y un bit de encabezado implícito.
+	\end{itemize}
+	Este tipo de dato se representa con el literal \texttt{real}. Su rango de valores es de $\left [ 1.18 \cdot 10^{–38},\; 3.4 \cdot 10^{38} \right ]$.
+	\begin{figure}[H]\label{fig:figure1}
+		\centering
+		\includegraphics[width=0.75\textwidth]{../res/pics/data-types/float_diag.png}
+		\caption{Representación binaria de número en coma flotante de simple precisión (\emph{IEEE 754})}
+	\end{figure}
+
+	\item[Caracter] Este tipo de dato es usado para representar caracteres de codificación \emph{UTF-8}, es por este motivo que el tamaño de que ocupan las variables de tipo caracter son de 4 bytes siendo \texttt{char} el literal que lo representa.
+	\item[Booleano] Se trata de un tipo de dato utilizado para representar representar valores booleanos. Su tamaño es de 1 bit, por lo que tan solo puede tomar dos valores: \texttt{1} (verdadero) ó \texttt{0} (falso). El literal que lo representa es \texttt{bool}.
+\end{description} 
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{Tipos de datos}
+		\label{tab:table1}
+		\begin{tabular}{l|l|l|l}
+			\toprule
+			\textbf{Tipo} & \textbf{Literal} & \textbf{Tamaño} & \textbf{Rango}\\
+			\midrule
+			Entero & int &4 Bytes & $\left [-2147483648,\: 2147483647 \right]$\\
+			Coma flotante de simple precisión & real & 4 Byte & $\left [ 1.18 \cdot 10^{–38},\; 3.4 \cdot 10^{38} \right ]$\\
+			Caracter & char & 1 Byte & \emph{UTF-8}\\
+			Lógico & bool & 1 Bit & $\left [0,\; 1 \right ]$\\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+\end{table}
+
+En el siguiente ejemplo se muestra cómo se declaran las variables con los literales de los tipos descritos anteriormente:
+
+\lstinputlisting[language=C++]{../res/lst/data-types/data-type.x}
+
+\subsection{Colecciones de datos: \texttt{Arrays}}
+Las variables pueden ser agrupadas en colecciones de datos de una dimensión denominados \emph{arrays}. En este lenguaje, cualquier tipo de dato puede formar parte de un \emph{array}.
+
+% Añadir listado de ejemplo
 \newpage
 
 \subsection{Palabras reservadas (Christian)}
