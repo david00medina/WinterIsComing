@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2019.2.7)  6 MAR 2019 23:51
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2019.3.11)  18 MAR 2019 20:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -465,25 +465,184 @@ l.168 ...e=C++]{../res/lst/data-types/data-type.x}
 t_diag.png>] (../res/lst/data-types/data-type.x)
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <12> not available
 (Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 170.
+
+
+LaTeX Warning: Command \~ invalid in math mode on input line 180.
+
+! Please use \mathaccent for accents in math mode.
+\add@accent ...@spacefactor \spacefactor }\accent 
+                                                  #1 #2\egroup \spacefactor ...
+l.180 		Tamañ
+              o_{memoria} = Tamaño_{tipo\, dato} \times Tamaño_{array}
+I'm changing \accent to \mathaccent here; wish me luck.
+(Accents are not the same in formulas as they are in text.)
+
+! You can't use `\spacefactor' in display math mode.
+\add@accent ...}\accent #1 #2\egroup \spacefactor 
+                                                  \accent@spacefactor 
+l.180 		Tamañ
+              o_{memoria} = Tamaño_{tipo\, dato} \times Tamaño_{array}
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+
+LaTeX Warning: Command \~ invalid in math mode on input line 180.
+
+! Please use \mathaccent for accents in math mode.
+\add@accent ...@spacefactor \spacefactor }\accent 
+                                                  #1 #2\egroup \spacefactor ...
+l.180 		Tamaño_{memoria} = Tamañ
+                                  o_{tipo\, dato} \times Tamaño_{array}
+I'm changing \accent to \mathaccent here; wish me luck.
+(Accents are not the same in formulas as they are in text.)
+
+! You can't use `\spacefactor' in display math mode.
+\add@accent ...}\accent #1 #2\egroup \spacefactor 
+                                                  \accent@spacefactor 
+l.180 		Tamaño_{memoria} = Tamañ
+                                  o_{tipo\, dato} \times Tamaño_{array}
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+
+LaTeX Warning: Command \~ invalid in math mode on input line 180.
+
+! Please use \mathaccent for accents in math mode.
+\add@accent ...@spacefactor \spacefactor }\accent 
+                                                  #1 #2\egroup \spacefactor ...
+l.180 ...ia} = Tamaño_{tipo\, dato} \times Tamañ
+                                                  o_{array}
+I'm changing \accent to \mathaccent here; wish me luck.
+(Accents are not the same in formulas as they are in text.)
+
+! You can't use `\spacefactor' in display math mode.
+\add@accent ...}\accent #1 #2\egroup \spacefactor 
+                                                  \accent@spacefactor 
+l.180 ...ia} = Tamaño_{tipo\, dato} \times Tamañ
+                                                  o_{array}
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+Missing character: There is no � in font cmex10!
+Missing character: There is no � in font cmex10!
+Missing character: There is no � in font cmex10!
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 189
+.
+(/usr/share/texmf/tex/latex/R/tex/latex/omscmtt.fd
+File: omscmtt.fd 
+)
+LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 189.
  [4pdfTeX warning (ext4): destination with the same identifier (name{table.1}) 
 has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.174 \newpage
-              ] [5] [6] [7]
+l.196 	\end{equation}
+                     ] (../res/lst/array/array.x
+
+! Package inputenc Error: Invalid UTF-8 byte sequence.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2 ...y de cada tipo de variable sin asignación 
+                                                  de espacio en memoria
+The document does not appear to be in UTF-8 encoding.
+Try adding \UseRawInputEncoding as the first line of the file
+or specify an encoding such as \usepackage [latin1]{inputenc}
+in the document preamble.
+Alternatively, save the file in UTF-8 using your editor or another tool
+
+
+! Package inputenc Error: Invalid UTF-8 byte sequence.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.11 ...ara un array de cada tipo con asignación 
+                                                  de espacio en memoria (de ...
+
+The document does not appear to be in UTF-8 encoding.
+Try adding \UseRawInputEncoding as the first line of the file
+or specify an encoding such as \usepackage [latin1]{inputenc}
+in the document preamble.
+Alternatively, save the file in UTF-8 using your editor or another tool
+
+
+! Package inputenc Error: Invalid UTF-8 byte sequence.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.11 ...nación de espacio en memoria (de tamaño 
+                                                  5 cada uno)
+The document does not appear to be in UTF-8 encoding.
+Try adding \UseRawInputEncoding as the first line of the file
+or specify an encoding such as \usepackage [latin1]{inputenc}
+in the document preamble.
+Alternatively, save the file in UTF-8 using your editor or another tool
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 23.
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 23.
+
+
+! Package inputenc Error: Invalid UTF-8 byte sequence.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.25 char[] string2_ab = "ab"	..Declaración 
+                                             con asignación alternativo al ...
+
+The document does not appear to be in UTF-8 encoding.
+Try adding \UseRawInputEncoding as the first line of the file
+or specify an encoding such as \usepackage [latin1]{inputenc}
+in the document preamble.
+Alternatively, save the file in UTF-8 using your editor or another tool
+
+
+! Package inputenc Error: Invalid UTF-8 byte sequence.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.25 ..._ab = "ab"	..Declaración con asignación 
+                                                  alternativo al tipo string
+The document does not appear to be in UTF-8 encoding.
+Try adding \UseRawInputEncoding as the first line of the file
+or specify an encoding such as \usepackage [latin1]{inputenc}
+in the document preamble.
+Alternatively, save the file in UTF-8 using your editor or another tool
+
+) [5] [6] [7] [8]
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 203.
- [8] [9] [10]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 224.
- [11]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 224.
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 236.
+ [9] [10] [11]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 257.
+ [12]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 257.
  (./Procesadores-Lenguajes.aux
 LaTeX Info: Redefining \. on input line 24.
 LaTeX Info: Redefining \% on input line 24.
 )
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 224.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 224.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 257.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 257.
 Package rerunfilecheck Info: File `Procesadores-Lenguajes.out' has not changed.
 
 (rerunfilecheck)             Checksum: CAF8D26AE970BCB2B8AF0448FD05874D;1447.
@@ -491,16 +650,16 @@ Package rerunfilecheck Info: File `Procesadores-Lenguajes.out' has not changed.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 224.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 257.
  ) 
 Here is how much of TeX's memory you used:
- 8608 strings out of 494458
- 123150 string characters out of 6174502
- 431677 words of memory out of 5000000
- 12138 multiletter control sequences out of 15000+600000
+ 8788 strings out of 494458
+ 125525 string characters out of 6174501
+ 461066 words of memory out of 5000000
+ 12274 multiletter control sequences out of 15000+600000
  8881 words of font info for 32 fonts, out of 8000000 for 9000
  62 hyphenation exceptions out of 8191
- 34i,11n,61p,443b,1208s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,12n,61p,557b,1320s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/tex
@@ -514,10 +673,10 @@ ts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></
 usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on Procesadores-Lenguajes.pdf (12 pages, 1318674 bytes).
+Output written on Procesadores-Lenguajes.pdf (13 pages, 1332924 bytes).
 PDF statistics:
- 226 PDF objects out of 1000 (max. 8388607)
- 192 compressed objects within 2 object streams
- 38 named destinations out of 1000 (max. 500000)
+ 278 PDF objects out of 1000 (max. 8388607)
+ 242 compressed objects within 3 object streams
+ 72 named destinations out of 1000 (max. 500000)
  152 words of extra memory for PDF output out of 10000 (max. 10000000)
 
