@@ -9,12 +9,12 @@
 
 \usepackage{listings}
 \usepackage{afterpage}
+
 \pagestyle{plain}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
-
 %\lstset{language=R,
 %    basicstyle=\small\ttfamily,
 %   stringstyle=\color{DarkGreen},
@@ -38,7 +38,8 @@ commentstyle=\color{dkgreen},
 stringstyle=\color{mauve},
 breaklines=true,
 breakatwhitespace=true,
-tabsize=3
+tabsize=3,
+escapeinside={(@}{@)}
 }
 
 \usepackage{here}
@@ -194,27 +195,36 @@ En relación a las expresiones de comparación, consideramos hacer que de moment
 \begin{table}[h!]
 	\begin{center}
 		\caption{Tipos de operadores lógicos}
-		\label{tab:table222}
+		\label{tab:table2}
 		\begin{tabular}{c|c|c|c}
 		\toprule
-		\multicolumn{1}{c|}{\textbf{Operador}} & \multicolumn{1}{c|}{\textbf{Símbolo}} & \multicolumn{1}{c}{\textbf{Formato}}      & \multicolumn{1}				{c|}{\textbf{Tipos de datos comparables}}            
+		\multicolumn{1}{c}{\textbf{Operador}} & \multicolumn{1}{c}{\textbf{Símbolo}} & \multicolumn{1}{c}{\textbf{Formato}}      & \multicolumn{1}				{c}{\textbf{Tipos de datos comparables}}            
 		\\ \midrule
 		AND                            & \&\&                         & \{EXPR\} \&\& \{EXPR\}            & LOGICO - LOGICO                                                                                                                                  		\\ \midrule
-		OR                             & \textbar\textbar                           & \{EXPR\} \textbar\textbar \{EXPR\}              & LOGICO - LOGICO                                                                                                                                  		\\ \midrule
+		OR                             & \textbar\textbar                           & \{EXPR\} \textbar\textbar$ \; $\{EXPR\}              & LOGICO - LOGICO                                                                                                                                  		\\ \midrule
 		NOT                            & !                            & !\{EXPR\}                         & LOGICO                                                                                                                                           		\\ \midrule
-		IGUAL                          & ==                           & \{EXPR\} == \{EXPR\}              & \begin{tabular}[c]{@{}c@{}}LOGICO-LOGICO / ENTERO-		ENTERO /\\  ENTERO-REAL /REAL-REAL / CHAR-CHAR /\\ ARRAY{[}CHAR{]}-ARRAY{[}CHAR{]}\end{tabular} \\ \midrule
-		NOIGUAL                        & !=                           & \{EXPR\} != \{EXPR\}              & \begin{tabular}[c]{@{}c@{}}LOGICO-LOGICO / ENTERO-		ENTERO /\\ ENTERO-REAL /REAL-REAL / CHAR-CHAR /\\ ARRAY{[}CHAR{]}-ARRAY{[}CHAR{]}\end{tabular} \\ \midrule
-		MAYOR                          & \textgreater{}               & \{EXPR\} \textgreater \{EXPR\}    & \begin{tabular}[c]{@{}c@{}}ENTERO-ENTERO / 		ENTERO-REAL /\\ REAL-REAL\end{tabular}                                                                \\ \midrule
-		MAYORIGUAL                     & \textgreater{}=              & \{EXPR\} \textgreater{}= \{EXPR\} & \begin{tabular}[c]{@{}c@{}}ENTERO-ENTERO / 		ENTERO-REAL /\\ REAL-REAL\end{tabular}                                                                \\ \midrule
-		MENOR                          & \textless{}                  & \{EXPR\} \textless \{EXPR\}       & \begin{tabular}[c]{@{}c@{}}ENTERO-ENTERO / ENTERO-		REAL /\\ REAL-REAL\end{tabular}                                                                \\ \midrule
-		MENORIGUAL                     & \textless{}=                 & \{EXPR\} \textless{}= \{EXPR\}    & \begin{tabular}[c]{@{}c@{}}ENTERO-ENTERO / 		ENTERO-REAL /\\ REAL-REAL\end{tabular}  
-		\\ \bottomrule                                                
+		IGUAL                          & ==                           & \{EXPR\} == \{EXPR\}              & \begin{tabular}[c]{@{}c@{}}LOGICO - LOGICO \\ ENTERO - 		ENTERO  \\  ENTERO - REAL  \\ REAL - REAL  \\  CHAR - CHAR  \\ ARRAY{[}CHAR{]} - ARRAY{[}CHAR{]}\end{tabular} \\ \midrule
+		NOIGUAL                        & !=                           & \{EXPR\} != \{EXPR\}              & \begin{tabular}[c]{@{}c@{}}LOGICO - LOGICO \\ ENTERO - 		ENTERO  \\  ENTERO - REAL  \\ REAL - REAL  \\  CHAR - CHAR  \\  ARRAY{[}CHAR{]} - ARRAY{[}CHAR{]}\end{tabular} \\ \midrule
+		MAYOR                          & \textgreater{}               & \{EXPR\} \textgreater $ \; $\{EXPR\}    & \begin{tabular}[c]{@{}c@{}}ENTERO - ENTERO  \\  		ENTERO - REAL \\ REAL - REAL\end{tabular}                                                                \\ \midrule
+		MAYORIGUAL                     & \textgreater{}=              & \{EXPR\} \textgreater{}= \{EXPR\} & \begin{tabular}[c]{@{}c@{}}ENTERO - ENTERO  \\  		ENTERO - REAL \\ REAL - REAL\end{tabular}                                                                      
+		\end{tabular}               
+	\end{center}     
+\end{table}
+\newpage
+\begin{table}[h!]
+	\begin{center}
+		\begin{tabular}{c|c|c|c}
+\multicolumn{1}{c|}{\textcolor{white}{\textbf{Operador}}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Símbolo}}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Formato}}}      & \multicolumn{1}				{c}{\textcolor{white}{ARRAY{[}CHAR{]} - ARRAY{[}CHAR{]}}}     
+		\\ \midrule
+			MENOR                          & \textless{}                  & \{EXPR\} \textless $ \; $\{EXPR\}       & \begin{tabular}[c]{@{}c@{}}ENTERO - ENTERO \\\ ENTERO - REAL \\ REAL - REAL\end{tabular}                                                                \\ \midrule
+			MENORIGUAL                     & \textless{}=                 & \{EXPR\} \textless{}= \{EXPR\}    & \begin{tabular}[c]{@{}c@{}}ENTERO - ENTERO \\ 		ENTERO - REAL \\ REAL - REAL\end{tabular}  
+		\\ \bottomrule                                          
 		\end{tabular}               
 	\end{center}     
 \end{table}
 
+
 A continuación mostramos un ejemplo de uso de los operadores lógicos para un caso trivial meramente ejemplificativo:
-\vfill
 \begin{lstlisting}[frame=single]
 int a = 7
 int suma = 0
@@ -240,9 +250,9 @@ Aquí va el texto. Poner siempre un código de ejemplo.
 Aquí va el texto. Poner siempre un código de ejemplo.
 
 \subsubsection{Bucle \texttt{for-forelse-else} (Christopher)}
-La estructura de control evaluará un conjunto de expresiones hasta alcanzar los símbolos que hemos utilizado para definir bucles, el \texttt{??}, indicando la repetición del \texttt{?} el que se está evaluando una expresión repetidamente. Posteriormente se puede especificar una expresión que siempre ocurre al evaluar la condición de entrada del bucle, ejecutando las instrucciones dentro del contexto en caso de que el conjunto de condiciones del bucle se cumpla. Se ha considerado hacer que exista el \texttt{for-else}, que actuaría de tal manera que si no se cumple inicialmente la condición del primer bucle, comprobará la expresión del siguiente, y si su condición se cumple, estará evaluando repetidamente las instrucciones de este último (sin volver a comparar con las condiciones del bucle anterior al \texttt{else}). De esta manera, podemos hacer una estructura combinada de lo que en otros casos serían \texttt{if-for-elseif-for}, de forma directa con solo un \texttt{for-else}. \vspace{10px}
+La estructura de control evaluará un conjunto de expresiones hasta alcanzar los símbolos que hemos utilizado para definir bucles, el "\texttt{??}". Posteriormente se puede especificar una expresión que se usará comúnmente como modificador del valor de iteración empleado en la condición, aunque no es estrictamente necesario que en la condición figure el parámetro utilizado en la iteración, si por ejemplo se definen otras formas de salida dentro del contexto del bucle, y si se cumple la condición evaluada se ejecutarán las instrucciones dentro del contexto en caso de que el conjunto de condiciones del bucle se cumpla. Se ha considerado hacer que exista el \texttt{for-else}, que actuaría de tal manera que si no se cumple inicialmente la condición del primer bucle, comprobará la expresión del siguiente, y si su condición se cumple, estará evaluando repetidamente las instrucciones de este último (sin volver a comparar con las condiciones del bucle anterior al \texttt{else}). De esta manera, podemos hacer una estructura combinada de lo que en otros casos serían \texttt{if-for-else-for}, de forma directa con solo un \texttt{for-else}. \vspace{10px}
 
-De forma análoga a los \texttt{else} de las expresiones condicionales, la representación para el \texttt{for-else} hará uso también del símbolo de punto para indicar un \texttt{else} y sucesivamente los que pudiesen añadirse tras este, tantos como se deseen, considerando que el último else, al no tener condición de entrada como tal, se ejecutará una sola vez. En caso de que se aniden, hay que considerar que los cierres de contexto dependen del número de tabulaciones que hayan. A continuación se muestra un ejemplo de uso:
+De forma análoga a los \texttt{else} de las expresiones condicionales, la representación para el \texttt{for-else} hará uso también del símbolo "." para indicar un \texttt{else} y sucesivamente los que pudiesen añadirse tras este, tantos como se deseen, considerando que el último else, al no tener condición de entrada como tal, se ejecutará una sola vez. En caso de que se aniden, hay que considerar que los cierres de contexto dependen del número de tabulaciones que hayan. A continuación se muestra un ejemplo de uso:
 \begin{lstlisting}[frame=single]
 int a = 7
 int b = 9
@@ -255,7 +265,7 @@ a > contador ?? contador++:
 	suma = suma + b*contador + a
 .??:
 	suma = a + b	
-#Dado que 'a' es mayor que 'contador' inicialmente, solamente se ejecutan las instrucciones del primer bucle
+(@\textcolor[rgb]{0,0.5,0}{.. Como 'a' es mayor que 'contador' inicialmente, solo se ejecutan instrucciones del primer bucle} @)
 \end{lstlisting}
 
 \subsubsection{Bucle \texttt{while-whileelse-else} (Christian)}
