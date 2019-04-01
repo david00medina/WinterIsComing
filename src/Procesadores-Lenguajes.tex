@@ -122,10 +122,37 @@ Aquí va el texto. Poner siempre un código de ejemplo.
 
 \subsection{Palabras reservadas (Christian)}
 Aquí va el texto. Poner siempre un código de ejemplo.
+\begin{itemize}
+	\item \textbf{'continue'} . La sentencia de continue es de tipo de control de bucles. Dentro de la iteracion en un bucle, de cualquiera de los tipos (while, do-while, for), el uso de esta sentencia rompe la iteracion de dicho bucle. Provocando que se ejecute la siguiente iteracion de dicho bucle, ignorando las sentencias posteriores a "continue".
+	\item \textbf{'break'} . Dentro de la iteracion en un bucle, de cualquiera de los tipos (while, do-while, for), el uso de esta sentencia rompe la iteracion de dicho bucle.
+	\item \textbf{'return'} . Palabra empleada para retornar el resultado de un método o función, además de interrumpir la ejecución del mismo.
+	\item \textbf{'null'} . La palabra reservada “null” indica que una variable que referencia a un objeto dentro de un array, se encuentra “sin objeto”, es decir, la variable ha sido declarada pero no apunta a ningún objeto.
+	\item \textbf{'fun'} . REDACTAR.
+\end{itemize}
 \newpage
 
 \subsection{Comentarios (Christian)}
 Aquí va el texto. Poner siempre un código de ejemplo.
+\begin{itemize}
+	\item \textbf{'Comentario de línea'} . Para indicar un comentario de línea, basta con comenzar con '..', siendo el resultado final '.. {TEXTO}'.
+\begin{lstlisting}[frame=single]
+int a = 7
+.. Variable que almacena una suma.
+int suma = 0
+suma = 30 + a
+\end{lstlisting}
+	\item \textbf{'Comentario de bloque'} . Los comentarios de varias líneas se establecen utilizando ',.' y '.,'  quedando como resultado ',. {VARIAS LÍNEAS DE TEXTO} .,'.
+\begin{lstlisting}[frame=single]
+int a = 7
+int suma = 0
+suma = 30 + a
+,.
+En este punto, la variable suma toma el
+valor de 37.
+.,
+\end{lstlisting}
+\end{itemize}
+
 \newpage
 
 \subsection{Tipos de operadores}
@@ -139,6 +166,20 @@ Aquí va el texto. Poner siempre un código de ejemplo.
 
 \subsubsection{Operadores bit a bit (Christian)}
 Aquí va el texto. Poner siempre un código de ejemplo.
+QUE TIPOS SE APLICAN ESTOS OPERADORES?
+\newline
+NO ME DEJA PONER ASPERSAN
+\newline
+LOS OPERADORES MENOR QUE Y MAYOR QUE NO SE VISUALIZAN CORRECTAMENTE
+ 
+\begin{itemize}
+	\item \textbf{'AND} .  {EXPR}  aspersan {EXPR}.
+	\item \textbf{'OR'} . {EXPR} | {EXPR}
+	\item \textbf{'XOR'} . {EXPR} * {EXPR}
+	\item \textbf{'DESPLAZAMIENTO DERECHA'} . {EXPR} >> {EXPR}
+	\item \textbf{'DESPLAZAMIENTO IZQUIERDA'} . {EXPR} << {EXPR}
+
+\end{itemize}
 
 \subsubsection{Operadores de array (Christopher)}
 Aquí va el texto. Poner siempre un código de ejemplo.
