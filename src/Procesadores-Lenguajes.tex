@@ -8,15 +8,14 @@
 \usepackage{booktabs}
 \usepackage[flushleft]{threeparttable}
 
-
 \usepackage{listings}
 \usepackage{afterpage}
+
 \pagestyle{plain}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
-
 %\lstset{language=R,
 %    basicstyle=\small\ttfamily,
 %   stringstyle=\color{DarkGreen},
@@ -40,7 +39,8 @@ commentstyle=\color{dkgreen},
 stringstyle=\color{mauve},
 breaklines=true,
 breakatwhitespace=true,
-tabsize=3
+tabsize=3,
+escapeinside={(@}{@)}
 }
 
 \usepackage{here}
@@ -123,12 +123,12 @@ Cualquier leguaje de programación necesita definir un conjunto de \emph{tipos d
 Los tipos de datos definidos en el lenguaje son los que figuran en el \emph{cuadro \ref{tab:table1}}. Las características críticas de implementación que define a cada tipo son:
 
 \begin{description}
-	\item[Entero] Representa a todas y cada una de las variables enteras que sean declaradas en el lenguaje. Este tipo de dato presenta un tamaño de 4 bytes (32 bits) y permite representar números enteros con signo. El \emph{complemento a 2} es el sistema elegido para definir el signo del número entero. Este dato se representa por el literal \texttt{int}. El rango de valores que puede tomar es 
-	
+	\item[Entero] Representa a todas y cada una de las variables enteras que sean declaradas en el lenguaje. Este tipo de dato presenta un tamaño de 4 bytes (32 bits) y permite representar números enteros con signo. El \emph{complemento a 2} es el sistema elegido para definir el signo del número entero. Este dato se representa por el literal \texttt{int}. El rango de valores que puede tomar es
+
 	\begin{equation}\label{eq:equation1}
 		\left [-2^{N-1},\: 2^{N-1}-1 \right ] = \left [-2^{32-1},\: 2^{32-1}-1 \right] = \left [-2147483648,\: 2147483647 \right]
 	\end{equation}
-	
+
 	donde, $N$ es el número de bits disponibles para representar el número entero (32 bits).
 	\item[Coma flotante de simple precisión] Este tipo de dato representa número reales en coma flotante de simple precisión con un tamaño de 4 bytes (32 bits) siguiendo el estándar \emph{IEEE 754}. En la figura \ref{fig:figure1} puede observarse como esta representación binaria los bits se organizan en tres sectores principales:
 	\begin{itemize}
@@ -145,7 +145,7 @@ Los tipos de datos definidos en el lenguaje son los que figuran en el \emph{cuad
 
 	\item[Caracter] Este tipo de dato es usado para representar caracteres con la codificación \emph{ASCII}, es por este motivo que el tamaño de que ocupan las variables de tipo caracter son de 1 byte de tamaño, siendo \texttt{char} el literal que lo representa.
 	\item[Booleano] Se trata de un tipo de dato utilizado para representar representar valores booleanos. Su tamaño es de 1 bit, por lo que tan solo puede tomar dos valores: \texttt{1} (verdadero) ó \texttt{0} (falso). El literal que lo representa es \texttt{bool}.
-\end{description} 
+\end{description}
 
 \begin{table}[h!]
 	\begin{center}
@@ -219,6 +219,7 @@ Aquí va el texto. Poner siempre un código de ejemplo.
 Aquí va el texto. Poner siempre un código de ejemplo.
 
 \subsubsection{Operadores aritméticos (David)}\label{arithmetic-operators}
+<<<<<<< HEAD
 Estos operadores son necesarios para realizar operaciones matemáticas sencillas. La descripción detallada de cada uno de estos operadores queda reflejado en la tabla \ref{tab:arithmetic}.
 
 \begin{table}[h!]
@@ -251,9 +252,57 @@ Estos operadores son necesarios para realizar operaciones matemáticas sencillas
 		\end{threeparttable}
 	\end{center}
 \end{table}
-
-\subsubsection{Operadores lógicos (Néstor)}\label{logical-operators}
+=======
 Aquí va el texto. Poner siempre un código de ejemplo.
+\newpage
+>>>>>>> b176eca2bf7daa7c743937d81ea7cc81f6583270
+
+\subsubsection{Operadores lógicos (Christopher)}
+Definimos los símbolos que identificarán a los operadores lógicos de forma análoga a los utilizados por gran parte de otros lenguajes de programación, separando cada operador 2 expresiones a comparar por los operadores lógicos a utilizar, con la excepción del propio \emph{NOT}, que podrá utilizarse directamente para determinar si el valor devuelto por una expresión de tipo \texttt{booleano} es directamente verdadero o no. Como dato adicional, también consideramos la posibilidad de hacer uso de comparadores mediante dichos operadores lógicos n-arios, comparando pares de expresiones entre sí de forma sucesiva siguiendo el orden de lectura de izquierda a derecha (que a efectos prácticos es lo mismo que hacer sucesivos \emph{AND} pero de forma más breve) y la posibilidad de prioridades para ciertos operadores (como el \emph{AND}). \vspace{0px}
+
+En relación a las expresiones de comparación, consideramos hacer que de momento solo se puedan utilizar entre tipos de datos del mismo tipo o similar (por ejemplo, entre enteros y reales podría hacerse). Dejamos la tabla de operadores como sigue: \vspace{0px}
+\begin{table}[h!]
+	\begin{center}
+		\caption{Tipos de operadores lógicos}
+		\label{tab:table2}
+		\begin{tabular}{c|c|c|c}
+		\toprule
+		\multicolumn{1}{c}{\textbf{Operador}} & \multicolumn{1}{c}{\textbf{Símbolo}} & \multicolumn{1}{c}{\textbf{Formato}}      & \multicolumn{1}				{c}{\textbf{Tipos de datos comparables}}
+		\\ \midrule
+		AND                            & \&\&                         & \{EXPR\} \&\& \{EXPR\}            & LOGICO - LOGICO                                                                                                                                  		\\ \midrule
+		OR                             & \textbar\textbar                           & \{EXPR\} \textbar\textbar$ \; $\{EXPR\}              & LOGICO - LOGICO                                                                                                                                  		\\ \midrule
+		NOT                            & !                            & !\{EXPR\}                         & LOGICO                                                                                                                                           		\\ \midrule
+		IGUAL                          & ==                           & \{EXPR\} == \{EXPR\}              & \begin{tabular}[c]{@{}c@{}}LOGICO - LOGICO \\ ENTERO - 		ENTERO  \\  ENTERO - REAL  \\ REAL - REAL  \\  CHAR - CHAR  \\ ARRAY{[}CHAR{]} - ARRAY{[}CHAR{]}\end{tabular} \\ \midrule
+		NOIGUAL                        & !=                           & \{EXPR\} != \{EXPR\}              & \begin{tabular}[c]{@{}c@{}}LOGICO - LOGICO \\ ENTERO - 		ENTERO  \\  ENTERO - REAL  \\ REAL - REAL  \\  CHAR - CHAR  \\  ARRAY{[}CHAR{]} - ARRAY{[}CHAR{]}\end{tabular} \\ \midrule
+		MAYOR                          & \textgreater{}               & \{EXPR\} \textgreater $ \; $\{EXPR\}    & \begin{tabular}[c]{@{}c@{}}ENTERO - ENTERO  \\  		ENTERO - REAL \\ REAL - REAL\end{tabular}                                                                \\ \midrule
+		MAYORIGUAL                     & \textgreater{}=              & \{EXPR\} \textgreater{}= \{EXPR\} & \begin{tabular}[c]{@{}c@{}}ENTERO - ENTERO  \\  		ENTERO - REAL \\ REAL - REAL\end{tabular}
+		\end{tabular}
+	\end{center}
+\end{table}
+\newpage
+\begin{table}[h!]
+	\begin{center}
+		\begin{tabular}{c|c|c|c}
+\multicolumn{1}{c|}{\textcolor{white}{\textbf{Operador}}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Símbolo}}} & \multicolumn{1}{c|}{\textcolor{white}{\textbf{Formato}}}      & \multicolumn{1}				{c}{\textcolor{white}{ARRAY{[}CHAR{]} - ARRAY{[}CHAR{]}}}
+		\\ \midrule
+			MENOR                          & \textless{}                  & \{EXPR\} \textless $ \; $\{EXPR\}       & \begin{tabular}[c]{@{}c@{}}ENTERO - ENTERO \\\ ENTERO - REAL \\ REAL - REAL\end{tabular}                                                                \\ \midrule
+			MENORIGUAL                     & \textless{}=                 & \{EXPR\} \textless{}= \{EXPR\}    & \begin{tabular}[c]{@{}c@{}}ENTERO - ENTERO \\ 		ENTERO - REAL \\ REAL - REAL\end{tabular}
+		\\ \bottomrule
+		\end{tabular}
+	\end{center}
+\end{table}
+
+
+A continuación mostramos un ejemplo de uso de los operadores lógicos para un caso trivial meramente ejemplificativo:
+\begin{lstlisting}[frame=single]
+int a = 7
+int suma = 0
+5 <= a < 10 ?:
+	suma = 4 * a
+
+suma > 20 > a && 2*suma != 32 < a
+	suma++
+\end{lstlisting}
 
 \subsubsection{Operadores bit a bit (David)}\label{bitwise-operators}
 Estos operadores permiten manipular los valores de una expresión a nivel de bits. El cuadro \ref{tab:bitwise} refleja la descripción detallada de cada uno de estos operadores.
@@ -281,7 +330,7 @@ Estos operadores permiten manipular los valores de una expresión a nivel de bit
 	\end{center}
 \end{table}
 
-\subsubsection{Operadores de array (Christopher)}\label{array-operators}
+\subsubsection{Operadores de array (Néstor)}
 Aquí va el texto. Poner siempre un código de ejemplo.
 \newpage
 
@@ -291,12 +340,28 @@ Aquí va el texto. Poner siempre un código de ejemplo.
 \subsubsection{Sentencias \texttt{if-ifelse-else} (Néstor)}\label{if}
 Aquí va el texto. Poner siempre un código de ejemplo.
 
-\subsubsection{Bucle \texttt{for-forelse-else} (Christopher)}\label{for}
-Aquí va el texto. Poner siempre un código de ejemplo.
+\subsubsection{Bucle \texttt{for-forelse-else} (Christopher)}
+La estructura de control evaluará un conjunto de expresiones hasta alcanzar los símbolos que hemos utilizado para definir bucles, el "\texttt{??}". Posteriormente se puede especificar una expresión que se usará comúnmente como modificador del valor de iteración empleado en la condición, aunque no es estrictamente necesario que en la condición figure el parámetro utilizado en la iteración, si por ejemplo se definen otras formas de salida dentro del contexto del bucle, y si se cumple la condición evaluada se ejecutarán las instrucciones dentro del contexto en caso de que el conjunto de condiciones del bucle se cumpla. Se ha considerado hacer que exista el \texttt{for-else}, que actuaría de tal manera que si no se cumple inicialmente la condición del primer bucle, comprobará la expresión del siguiente, y si su condición se cumple, estará evaluando repetidamente las instrucciones de este último (sin volver a comparar con las condiciones del bucle anterior al \texttt{else}). De esta manera, podemos hacer una estructura combinada de lo que en otros casos serían \texttt{if-for-else-for}, de forma directa con solo un \texttt{for-else}. \vspace{10px}
+
+De forma análoga a los \texttt{else} de las expresiones condicionales, la representación para el \texttt{for-else} hará uso también del símbolo "." para indicar un \texttt{else} y sucesivamente los que pudiesen añadirse tras este, tantos como se deseen, considerando que el último else, al no tener condición de entrada como tal, se ejecutará una sola vez. En caso de que se aniden, hay que considerar que los cierres de contexto dependen del número de tabulaciones que hayan. A continuación se muestra un ejemplo de uso:
+\begin{lstlisting}[frame=single]
+int a = 7
+int b = 9
+int suma = 0
+int contador = 0
+
+a > contador ?? contador++:
+	suma = suma + a * contador + b
+. b > contador ?? contador++:
+	suma = suma + b*contador + a
+.??:
+	suma = a + b
+(@\textcolor[rgb]{0,0.5,0}{.. Como 'a' es mayor que 'contador' inicialmente, solo se ejecutan instrucciones del primer bucle} @)
+\end{lstlisting}
 
 \subsubsection{Bucle \texttt{while-whileelse-else} (Christian)}\label{while}
 Aquí va el texto. Poner siempre un código de ejemplo.
-\newpage
+
 
 \subsection{Funciones (David)}\label{functions}
 Las funciones componen una estructura fundamental en cualquier lenguaje de programación que son útiles para estructurar funcionalmente el código en diferentes contextos, aportando una mayor expresividad del lenguaje.
