@@ -2,10 +2,11 @@
 \usepackage{graphicx}
 \usepackage[colorlinks=true, linkcolor=blue]{hyperref}
 \usepackage[spanish]{babel}
-\selectlanguage{english}
+\selectlanguage{spanish}
 \usepackage[utf8]{inputenc}
 \usepackage[svgnames]{xcolor}
 \usepackage{booktabs}
+\usepackage[flushleft]{threeparttable}
 
 
 \usepackage{listings}
@@ -142,7 +143,7 @@ Los tipos de datos definidos en el lenguaje son los que figuran en el \emph{cuad
 		\caption{Representación binaria de número en coma flotante de simple precisión (\emph{IEEE 754})}
 	\end{figure}
 
-	\item[Caracter] Este tipo de dato es usado para representar caracteres de codificación \emph{UTF-8}, es por este motivo que el tamaño de que ocupan las variables de tipo caracter son de 1-4 bytes siendo \texttt{char} el literal que lo representa.
+	\item[Caracter] Este tipo de dato es usado para representar caracteres con la codificación \emph{ASCII}, es por este motivo que el tamaño de que ocupan las variables de tipo caracter son de 1 byte de tamaño, siendo \texttt{char} el literal que lo representa.
 	\item[Booleano] Se trata de un tipo de dato utilizado para representar representar valores booleanos. Su tamaño es de 1 bit, por lo que tan solo puede tomar dos valores: \texttt{1} (verdadero) ó \texttt{0} (falso). El literal que lo representa es \texttt{bool}.
 \end{description} 
 
@@ -156,7 +157,7 @@ Los tipos de datos definidos en el lenguaje son los que figuran en el \emph{cuad
 			\midrule
 			Entero & int &4 Bytes & $\left [-2147483648,\: 2147483647 \right]$\\
 			Coma flotante de simple precisión & real & 4 Byte & $\left [ 1.18 \cdot 10^{–38},\; 3.4 \cdot 10^{38} \right ]$\\
-			Caracter & char & 1-4 Byte & $\left [ \texttt{0x00 - 0xFFFFFFFF} \right ]$\\
+			Caracter & char & 1 Byte & $\left [ \texttt{0x00 - 0xFF} \right ]$\\
 			Lógico & bool & 1 Bit & $\left [0,\; 1 \right ]$\\
 			\bottomrule
 		\end{tabular}
@@ -177,7 +178,7 @@ Para declarar un \texttt{array} del tipo que se desee, debe usar la gramática \
 
 donde el $tipo$ define el tipo de dato e $<int>$ un valor entero opcional que define el tamaño del \texttt{array}. Cuando no se indica este último valor entero, no se lleva a término la reserva en memoria del \texttt{array} declarado. En caso contrario, se reservará en memoria tantos bytes/bits como fueren necesarios para generar una colección de tipos de datos del tamaño indicado por $<int>$. El número de bytes/bits a reservar está determinado por el tipo de dato y el tamaño del \texttt{array},
 	\begin{equation}\label{eq:1.2}
-		Tamaño_{memoria} = Tamaño_{tipo\, dato} \times Tamaño_{array}
+		Tamano_{memoria} = Tamano_{tipo\, dato} \times Tamano_{array}
 	\end{equation}
 
 Un \texttt{array} que ha sido declarado con anterioridad puede ser redefinido haciendo uso de la gramática \ref{grammar:1.2.2},
@@ -218,13 +219,67 @@ Aquí va el texto. Poner siempre un código de ejemplo.
 Aquí va el texto. Poner siempre un código de ejemplo.
 
 \subsubsection{Operadores aritméticos (David)}\label{arithmetic-operators}
-Aquí va el texto. Poner siempre un código de ejemplo.
+Estos operadores son necesarios para realizar operaciones matemáticas sencillas. La descripción detallada de cada uno de estos operadores queda reflejado en la tabla \ref{tab:arithmetic}.
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{Operadores aritméticos}\label{tab:arithmetic}
+		\begin{threeparttable}
+			\begin{tabular}{l|l|l|l|l|l}
+				\toprule
+				\textbf{Operación} & \textbf{Tipo operación} & \textbf{Lexema} & \textbf{Estructura} & \textbf{Tipo entrada} & \textbf{Tipo salida} \tnote{1}\\
+				\midrule
+				Suma  & Binaria & \texttt{+} & \texttt{\{Expr\} + \{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				Resta & Binaria & \texttt{-} & \texttt{\{Expr\} - \{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				Multiplicación & Binaria & \texttt{*} & \texttt{\{Expr\} * \{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				División & Binaria & \texttt{/} & \texttt{\{Expr\} / \{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				Módulo & Binaria & \texttt{\%} & \texttt{\{Expr\}\, \% \{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				Potencia & Binaria & \texttt{**} & \texttt{\{Expr\} ** \{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				Raíz & Binaria & \texttt{\#} & \texttt{\{Expr\} \# \{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				Pre-incremento \tnote{2} & Unaria & \texttt{++} & ++\texttt{\{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				Pre-decremento \tnote{2} & Unaria & \texttt{--} & --\texttt{\{Expr\}} & \texttt{int/real} & \texttt{int/real}\\
+				Post-incremento \tnote{3} & Unaria & \texttt{++} & \texttt{\{Expr\}++} & \texttt{int/real} & \texttt{int/real}\\
+				Post-decremento \tnote{3} & Unaria & \texttt{--} & \texttt{\{Expr\}--} & \texttt{int/real} & \texttt{int/real}\\
+				\bottomrule
+			\end{tabular}
+			\begin{tablenotes}
+				\small
+				\item[1] Todas las operaciones binarias permiten entremezclar el uso de un valor entero y otro real al mismo tiempo aunque esto conllevaría el \textit{casteo} del resultado de la operación a un valor de tipo real.
+				\item [2] El valor de la variable es incrementado/decrementado una unidad previa asignación del mismo.
+				\item[3] El valor de la variable es incrementada/decrementada una unidad después de asignar el valor del misma.
+			\end{tablenotes}
+		\end{threeparttable}
+	\end{center}
+\end{table}
 
 \subsubsection{Operadores lógicos (Néstor)}\label{logical-operators}
 Aquí va el texto. Poner siempre un código de ejemplo.
 
-\subsubsection{Operadores bit a bit (Christian)}\label{bitwise-operators}
-Aquí va el texto. Poner siempre un código de ejemplo.
+\subsubsection{Operadores bit a bit (David)}\label{bitwise-operators}
+Estos operadores permiten manipular los valores de una expresión a nivel de bits. El cuadro \ref{tab:bitwise} refleja la descripción detallada de cada uno de estos operadores.
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{Operadores bit a bit}\label{tab:bitwise}
+		\begin{threeparttable}
+			\begin{tabular}{l|l|l|l|l|l}
+				\toprule
+				\textbf{Operación} & \textbf{Tipo operación} & \textbf{Lexema} & \textbf{Estructura} & \textbf{Tipo entrada} & \textbf{Tipo salida}\\
+				\midrule
+				\texttt{AND} & Binaria & \texttt{\&} &  \texttt{\{Expr\} \& \{Expr\}} & Cualquiera & Cualquiera\\
+				\texttt{OR} & Binaria & \texttt{|} &  \texttt{\{Expr\} | \{Expr\}} & Cualquiera & Cualquiera\\
+				\texttt{XOR} & Binaria & \texttt{\textasciicircum} &  \texttt{\{Expr\} \textasciicircum \, \{Expr\}} & Cualquiera & Cualquiera\\
+				Desp. izq. & Unaria & \texttt{\textless\textless} &  \texttt{\{Expr\} \textless\textless\, \{Expr\}}\tnote{1}\,& Cualquiera & Cualquiera\\
+				Desp. dcha. & Unaria & \texttt{\textgreater\textgreater} & \texttt{\{Expr\} \textgreater\textgreater\, \{Expr\}}\tnote{1}\, & Cualquiera & Cualquiera\\
+				\bottomrule
+			\end{tabular}
+			\begin{tablenotes}
+				\small
+				\item[1] Rota los bits de la expresión de la izquierda tantas unidades a la izquierda/derecha como indique la expresión de la derecha.
+			\end{tablenotes}
+		\end{threeparttable}
+	\end{center}
+\end{table}
 
 \subsubsection{Operadores de array (Christopher)}\label{array-operators}
 Aquí va el texto. Poner siempre un código de ejemplo.
@@ -244,7 +299,23 @@ Aquí va el texto. Poner siempre un código de ejemplo.
 \newpage
 
 \subsection{Funciones (David)}\label{functions}
-Aquí va el texto. Poner siempre un código de ejemplo.
+Las funciones componen una estructura fundamental en cualquier lenguaje de programación que son útiles para estructurar funcionalmente el código en diferentes contextos, aportando una mayor expresividad del lenguaje.
+
+Una función puede ser declarada sin especificar el código que se ejecutará dentro de su contexto. La forma general de declaración puede observarse en el listado \ref{lst:fun-declaration}.
+
+\lstinputlisting[language=C++,caption=Declaracion de funciones\label{lst:fun-declaration}]{../res/lst/function/function-declaration.x}
+
+La definición de cualquier función sigue la estructura del listado \ref{lst:fun-definition}. El cuerpo de la función debe comenzar por el caracter de cambio de contexto (caracter \texttt{0x09} o cuatro caracteres \texttt{0x20} seguidos). 
+
+\lstinputlisting[language=C++,firstline=1,lastline=7, showlines=true, caption=Declaracion de funciones\label{lst:fun-definition}]{../res/lst/function/function-definition.x}
+
+El listado \ref{lst:fun-use} ilustra la estructura general de llamada a una función.
+
+\lstinputlisting[language=C++,firstline=1,lastline=7, showlines=true, caption=Declaracion de funciones\label{lst:fun-use}]{../res/lst/function/function-use.x}
+
+Es importante recalcar que la referencia en memoria de un array es leída cuando este es usado como parámetro de una función. Si un array es el valor de retorno de una función, se devuelve su referencia en memoria. 
+
+
 \newpage
 
 \subsection{Funciones primitivas (Néstor)}\label{primitive-functions}
