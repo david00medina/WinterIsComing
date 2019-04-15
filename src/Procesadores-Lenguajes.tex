@@ -7,6 +7,7 @@
 \usepackage[svgnames]{xcolor}
 \usepackage{booktabs}
 \usepackage[flushleft]{threeparttable}
+\usepackage{float}
 
 \usepackage{listings}
 \usepackage{afterpage}
@@ -147,7 +148,7 @@ Los tipos de datos definidos en el lenguaje son los que figuran en el \emph{cuad
 	\item[Booleano] Se trata de un tipo de dato utilizado para representar representar valores booleanos. Su tamaño es de 1 bit, por lo que tan solo puede tomar dos valores: \texttt{1} (verdadero) ó \texttt{0} (falso). El literal que lo representa es \texttt{bool}.
 \end{description}
 
-\begin{table}[h!]
+\begin{table}[H]
 	\begin{center}
 		\caption{Tipos de datos}
 		\label{tab:table1}
@@ -205,24 +206,46 @@ El \texttt{array} de caracteres constituyen los denominados \texttt{string}, los
 
 El siguiente listado muestra algunos ejemplos de uso de los \texttt{array} definidos en este lenguaje:
 
-\lstinputlisting[language=C++]{../res/lst/array/array.x}
+\lstinputlisting[language=C++, caption=Ejemplo de uso de arrays]{../res/lst/array/array.x}
 
-\subsection{Palabras reservadas (Christian)}\label{keywords}
-Aquí va el texto. Poner siempre un código de ejemplo.
+\subsection{Palabras reservadas (Christian)}
+Este lenguaje utiliza una serie de palabras reservadas que se utilizan para desempeñar las funciones aquí descritas:
+\begin{itemize}
+	\item \textbf{'continue'} . La sentencia de continue es de tipo de control de bucles. Dentro de la iteracion en un bucle, de cualquiera de los tipos (while, do-while, for), el uso de esta sentencia rompe la iteracion de dicho bucle. Provocando que se ejecute la siguiente iteracion de dicho bucle, ignorando las sentencias posteriores a "continue".
+	\item \textbf{'break'} . Dentro de la iteracion en un bucle, de cualquiera de los tipos (while, do-while, for), el uso de esta sentencia rompe la iteracion de dicho bucle.
+	\item \textbf{'return'} . Palabra empleada para retornar el resultado de un método o función, además de interrumpir la ejecución del mismo.\item \textbf{'fun'} . Palabra especial utilizada al principio de cada declaración o definición de funciones.
+\end{itemize}
 \newpage
 
-\subsection{Comentarios (Christian)}\label{commentaries}
+\subsection{Comentarios (Christian)}
 Aquí va el texto. Poner siempre un código de ejemplo.
-\newpage
+\begin{itemize}
+	\item \textbf{'Comentario de línea'} . Para indicar un comentario de línea, basta con comenzar con '..', siendo el resultado final '.. {TEXTO}'.
+\begin{lstlisting}[frame=single]
+int a = 7
+.. Variable que almacena una suma.
+int suma = 0
+suma = 30 + a
+\end{lstlisting}
+	\item \textbf{'Comentario de bloque'} . Los comentarios de varias líneas se establecen utilizando ',.' y '.,'  quedando como resultado ',. {VARIAS LÍNEAS DE TEXTO} .,'.
+\begin{lstlisting}[frame=single]
+int a = 7
+int suma = 0
+suma = 30 + a
+,.
+En este punto, la variable suma toma el
+valor de 37.
+.,
+\end{lstlisting}
+\end{itemize}
 
 \subsection{Tipos de operadores}\label{operators}
 Aquí va el texto. Poner siempre un código de ejemplo.
 
 \subsubsection{Operadores aritméticos (David)}\label{arithmetic-operators}
-<<<<<<< HEAD
 Estos operadores son necesarios para realizar operaciones matemáticas sencillas. La descripción detallada de cada uno de estos operadores queda reflejado en la tabla \ref{tab:arithmetic}.
 
-\begin{table}[h!]
+\begin{table}[H]
 	\begin{center}
 		\caption{Operadores aritméticos}\label{tab:arithmetic}
 		\begin{threeparttable}
@@ -252,16 +275,12 @@ Estos operadores son necesarios para realizar operaciones matemáticas sencillas
 		\end{threeparttable}
 	\end{center}
 \end{table}
-=======
-Aquí va el texto. Poner siempre un código de ejemplo.
-\newpage
->>>>>>> b176eca2bf7daa7c743937d81ea7cc81f6583270
 
 \subsubsection{Operadores lógicos (Christopher)}
 Definimos los símbolos que identificarán a los operadores lógicos de forma análoga a los utilizados por gran parte de otros lenguajes de programación, separando cada operador 2 expresiones a comparar por los operadores lógicos a utilizar, con la excepción del propio \emph{NOT}, que podrá utilizarse directamente para determinar si el valor devuelto por una expresión de tipo \texttt{booleano} es directamente verdadero o no. Como dato adicional, también consideramos la posibilidad de hacer uso de comparadores mediante dichos operadores lógicos n-arios, comparando pares de expresiones entre sí de forma sucesiva siguiendo el orden de lectura de izquierda a derecha (que a efectos prácticos es lo mismo que hacer sucesivos \emph{AND} pero de forma más breve) y la posibilidad de prioridades para ciertos operadores (como el \emph{AND}). \vspace{0px}
 
 En relación a las expresiones de comparación, consideramos hacer que de momento solo se puedan utilizar entre tipos de datos del mismo tipo o similar (por ejemplo, entre enteros y reales podría hacerse). Dejamos la tabla de operadores como sigue: \vspace{0px}
-\begin{table}[h!]
+\begin{table}[H]
 	\begin{center}
 		\caption{Tipos de operadores lógicos}
 		\label{tab:table2}
@@ -307,7 +326,7 @@ suma > 20 > a && 2*suma != 32 < a
 \subsubsection{Operadores bit a bit (David)}\label{bitwise-operators}
 Estos operadores permiten manipular los valores de una expresión a nivel de bits. El cuadro \ref{tab:bitwise} refleja la descripción detallada de cada uno de estos operadores.
 
-\begin{table}[h!]
+\begin{table}[H]
 	\begin{center}
 		\caption{Operadores bit a bit}\label{tab:bitwise}
 		\begin{threeparttable}
@@ -370,7 +389,7 @@ Una función puede ser declarada sin especificar el código que se ejecutará de
 
 \lstinputlisting[language=C++,caption=Declaracion de funciones\label{lst:fun-declaration}]{../res/lst/function/function-declaration.x}
 
-La definición de cualquier función sigue la estructura del listado \ref{lst:fun-definition}. El cuerpo de la función debe comenzar por el caracter de cambio de contexto (caracter \texttt{0x09} o cuatro caracteres \texttt{0x20} seguidos). 
+La definición de cualquier función sigue la estructura del listado \ref{lst:fun-definition}. El cuerpo de la función debe comenzar por el caracter de cambio de contexto (caracter \texttt{0x09} o cuatro caracteres \texttt{0x20} seguidos).
 
 \lstinputlisting[language=C++,firstline=1,lastline=7, showlines=true, caption=Declaracion de funciones\label{lst:fun-definition}]{../res/lst/function/function-definition.x}
 
@@ -378,7 +397,7 @@ El listado \ref{lst:fun-use} ilustra la estructura general de llamada a una func
 
 \lstinputlisting[language=C++,firstline=1,lastline=7, showlines=true, caption=Declaracion de funciones\label{lst:fun-use}]{../res/lst/function/function-use.x}
 
-Es importante recalcar que la referencia en memoria de un array es leída cuando este es usado como parámetro de una función. Si un array es el valor de retorno de una función, se devuelve su referencia en memoria. 
+Es importante recalcar que la referencia en memoria de un array es leída cuando este es usado como parámetro de una función. Si un array es el valor de retorno de una función, se devuelve su referencia en memoria.
 
 
 \newpage
