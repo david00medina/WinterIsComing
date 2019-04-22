@@ -35,6 +35,9 @@
 /* Tokens de los operadores bit a bit */
 %token AND_BIT OR_BIT XOR_BIT LEFT_SHIFT RIGHT_SHIFT
 
+/* Tokens para estructuras de control y bucles */
+%token IF_CLAUSE FOR_WHILE_CLAUSE HEADER_END ELSE_IF_FOR_WHILE_CLAUSE
+
 /* Tokens delimitadores */
 %token ARRAY_OPEN ARRAY_CLOSE ARRAY_ELEM_OPEN ARRAY_ELEM_CLOSE
 %token ELEM_SEPARATOR FUN_PARAM_OPEN FUN_PARAM_CLOSE

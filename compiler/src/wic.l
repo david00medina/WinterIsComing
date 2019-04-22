@@ -40,6 +40,12 @@ real_type                     (real)
 bool_type                     (bool)
 char_type                     (char)
 
+/* Expresiones regulares para estructuras de control y bucles */
+if                            (\?){1}
+for_while                     (\?){2}
+header_end                    :
+else_if_for_while             (\.){1}
+
 /* Expresiones regulares delimitadoras */
 blank_space                   [ ]{1,3}
 context_tag                   [\t]|[ ]{4}
@@ -226,6 +232,26 @@ id                            {letter}({letter}|{digit})+
                                 printf("%s is a LESS_EQUALS\n", yytext);
                                 return LESS_EQUALS;
                               }
+
+
+  /* Expresiones regulares para estructuras de control y bucles */
+{if}                          {
+                                printf("%s is an IF_CLAUSE\n", yytext);
+                                return IF_CLAUSE;
+                              }
+{header_end}                  {
+                                printf("%s is an HEADER_END\n", yytext);
+                                return HEADER_END;
+                              }
+{for_while}                   {
+                                printf("%s is an FOR_WHILE_CLAUSE\n", yytext);
+                                return FOR_WHILE_CLAUSE;
+                              }
+{else_if_for_while}           {
+                                printf("%s is an ELSE_IF_FOR_WHILE_CLAUSE\n", yytext);
+                                return ELSE_IF_FOR_WHILE_CLAUSE;
+                              }
+
 
 
    /* Expresiones regulares delimitadoras */
