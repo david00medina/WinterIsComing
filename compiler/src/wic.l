@@ -1,118 +1,311 @@
 /* Ajustes iniciales */
 
-%option yylineno
 %x COMMENT_BLOCK
 %x COMMENT_LINE
 
+%option noyywrap
 
 %{
 
     /* Declaraciones */
 
-    #include <stdio.h>
     #include "wic.tab.h"
 
 %}
 
-    /* Definiciones regulares */
+/* Definiciones regulares */
 
-    /* Expresiones regulares genéricas */
-    letter                        [a-z]|[A-Z]
-    digit                         [0-9]
-    end_of_instr                  ([\r\n])
-    separator                     [ ]{1,3}
-    context_tag                   [\t]|[ ]{4}
-    id                            ({letter}|{digit})+
+/* Expresiones regulares reutilizables */
+letter                        [a-zA-Z]
+digit                         [0-9]
 
-    /* Tipos de dato */
-    int_val                       {digit}+
-    real_val                      {digit}+(\.{digit}+)?
-    bool_val                      (true|false)
-    char_val                      (['][\W|\w]?['])
-    string_val                    (["][\W|\w]*["])
-    int_type                      (int)
-    real_type                     (real)
-    bool_type                     (bool)
-    char_type                     (char)
+/* Palabras reservadas */
+new                           (new)
+continue                      (continue)
+break                         (break)
+return                        (return)
+void                          (void)
+fun                           (fun)
 
-    /* Array */
-    array_declare                 {int_type|real_type|bool_type|char_type}[\[][\]]{separator}{id}
-    array_declare_size            {int_type|real_type|bool_type|char_type}[\[]{int_val}[\]]{separator}{id}
+/* Valores segun el tipo de dato */
+int_val                       {digit}+
+real_val                      ({digit}+\.){digit}*|\.{digit}+
+bool_val                      (true|false)
+char_val                      \'.?\'
+string_val                    \".*\"
 
-    /* Palabras reservadas */
-    new                           (new)
-    continue                      (continue)
-    break                         (break)
-    return                        (return)
-    void                          (void)
-    fun                           (fun)
+/* Tipos de dato */
+int_type                      (int)
+real_type                     (real)
+bool_type                     (bool)
+char_type                     (char)
 
-    /* Operadores aritméticos */
-    preincrement                  [\+]{2}({id}|{int_val})
-    postincrement                 ({id}|{int_val})[\+]{2}
-    predecrement                  [-]{2}({id}|{int_val})
-    postdecrement                 ({id}|{int_val})[-]{2}
+/* Expresiones regulares delimitadoras */
+blank_space                   [ ]{1,3}
+context_tag                   [\t]|[ ]{4}
+
+/* Identificador */
+id                            {letter}({letter}|{digit})+
 
 %%
 
-    /* Reglas de traducción */
+   /* Reglas de traducción */
 
-    /* Reglas genéricas */
-    {letter}                      { printf("%s is a LETTER\n", yytext); }
-    {digit}                       { printf("%s is a DIGIT\n", yytext); }
-    {end_of_instr}                {
-                                    printf("%s is a END_OF_INSTR\n", yytext);
-                                    yylineno++;
-                                  }
-    {separator}                   { printf("%s is a SEPARATOR\n", yytext); }
-    {context_tag}                 { printf("%s is a CONTEXT_TAG\n", yytext); }
-    {ID}                          { printf("%s is a ID\n", yytext); }
+   /* Reglas para las palabras reservadas */
+{new}                         {
+                                printf("%s is a NEW\n", yytext);
+                                return NEW;
+                              }
+{continue}                    {
+                                printf("%s is a CONTINUE\n", yytext);
+                                return CONTINUE;
+                              }
+{break}                       {
+                                printf("%s is a BREAK\n", yytext);
+                                return BREAK;
+                              }
+{return}                      {
+                                printf("%s is a RETURN\n", yytext);
+                                return RETURN;
+                              }
+{void}                        {
+                                printf("%s is a VOID\n", yytext);
+                                return VOID;
+                              }
+{fun}                         {
+                                printf("%s is a FUN\n", yytext);
+                                return FUN;
+                              }
 
 
-    /* Reglas para los tipos de dato */
-    {int_val}                     { printf("%s is a INT_VAL\n", yytext); }
-    {real_val}                    { printf("%s is a REAL_VAL\n", yytext); }
-    {bool_val}                    { printf("%s is a BOOL_VAL\n", yytext); }
-    {char_val}                    { printf("%s is a CHAR_VAL\n", yytext); }
-    {string_val}                  { printf("%s is a STRING_VAL\n", yytext); }
-    {int_type}                    { printf("%s is a INT_TYPE\n", yytext); }
-    {real_type}                   { printf("%s is a REAL_TYPE\n", yytext); }
-    {bool_type}                   { printf("%s is a BOOL_TYPE\n", yytext); }
-    {char_type}                   { printf("%s is a CHAR_TYPE\n", yytext); }
+   /* Reglas para los valores segun el tipo de dato */
+{int_val}                     {
+                                printf("%s is a INT_VAL\n", yytext);
+                                return INT_VAL; }
 
-    /* Reglas para los arrays */
-    {array_declare}               { printf("%s is a ARRAY_DECLARE\n", yytext); }
-    {array_declare_size}          { printf("%s is a ARRAY_DECLARE_SIZE\n", yytext); }
+{real_val}                    {
+                                printf("%s is a REAL_VAL\n", yytext);
+                                return REAL_VAL;
+                              }
+{bool_val}                    {
+                                printf("%s is a BOOL_VAL\n", yytext);
+                                return BOOL_VAL;
+                              }
+{char_val}                    {
+                                printf("%s is a CHAR_VAL\n", yytext);
+                                return CHAR_VAL;
+                              }
+{string_val}                  {
+                                printf("%s is a STRING_VAL\n", yytext);
+                                return STRING_VAL;
+                              }
 
-    /* Reglas para las palabras reservadas */
-    {new}                         { printf("%s is a NEW\n", yytext); }
-    {continue}                    { printf("%s is a CONTINUE\n", yytext); }
-    {break}                       { printf("%s is a BREAK\n", yytext); }
-    {return}                      { printf("%s is a RETURN\n", yytext); }
-    {void}                        { printf("%s is a VOID\n", yytext); }
-    {fun}                         { printf("%s is a FUN\n", yytext); }
 
-    /* Reglas para los operadores aritméticos */
-    {preincrement}                { printf("%s is a PREINCREMENT\n", yytext); }
-    {postincrement}               { printf("%s is a POSTINCREMENT\n", yytext); }
-    {predecrement}                { printf("%s is a PREDECREMENT\n", yytext); }
-    {postdecrement}               { printf("%s is a POSTDECREMENT\n", yytext); }
+   /* Reglas segun el tipo de dato */
+{int_type}                    {
+                                printf("%s is a INT_TYPE\n", yytext);
+                                return INT_TYPE;
+                              }
+{real_type}                   {
+                                printf("%s is a REAL_TYPE\n", yytext);
+                                return REAL_TYPE;
+                              }
+{bool_type}                   {
+                                printf("%s is a BOOL_TYPE\n", yytext);
+                                return BOOL_TYPE;
+                              }
+{char_type}                   {
+                                printf("%s is a CHAR_TYPE\n", yytext);
+                                return CHAR_TYPE;
+                              }
 
-    /* Reglas para los comentarios */
-    ",\."                         { BEGIN(COMMENT_BLOCK); }
-    <COMMENT_BLOCK>"\.,"          { BEGIN(INITIAL); }
-    <COMMENT_BLOCK>([^\.]|\n)+|.
-    <COMMENT_BLOCK><<EOF>>        /* Do something */
-    <COMMENT_LINE>"\.\."          { BEGIN(COMMENT_LINE); }
-    <COMMENT_LINE>(\n)            { BEGIN(INITIAL); }
-    <COMMENT_LINE>([^\n]|.)+
-    <COMMENT_LINE><<EOF>>         /* Do something */
 
-    /* Unknowns */
-    .                             { printf("%s is an unknown\n", yytext); }
+   /* Regla de asignación */
+"="                           {
+                                printf("%s is an ASSIGN\n", yytext);
+                                return ASSIGN;
+                              }
+
+
+   /* Reglas para los operadores aritméticos */
+"\+"                          {
+                                printf("%s is a SUM\n", yytext);
+                                return SUM;
+                              }
+"-"                           {
+                                printf("%s is a SUBSTRACT\n", yytext);
+                               return SUBSTRACT;
+                              }
+"\*"                          {
+                                printf("%s is a PRODUCT\n", yytext);
+                               return PRODUCT;
+                              }
+"/"                           {
+                                printf("%s is a DIVIDE\n", yytext);
+                               return DIVIDE;
+                              }
+"%"                           {
+                                printf("%s is a MODULUS\n", yytext);
+                               return MODULUS;
+                              }
+"\*\*"                        {
+                                printf("%s is a POWER\n", yytext);
+                               return POWER;
+                              }
+"#"                           {
+                                printf("%s is a RADICAL\n", yytext);
+                               return RADICAL;
+                              }
+"++"                          {
+                                printf("%s is a INCREMENT\n", yytext);
+                                return INCREMENT;
+                              }
+"--"                          {
+                                printf("%s is a DECREMENT\n", yytext);
+                                return DECREMENT;
+                              }
+
+
+  /* Reglas para los operadores bit a bit */
+"&"                           {
+                                printf("%s is a AND_BIT\n", yytext);
+                                return AND_BIT;
+                              }
+"|"                           {
+                                printf("%s is a OR_BIT\n", yytext);
+                                return OR_BIT;
+                              }
+"^"                           {
+                                printf("%s is a XOR_BIT\n", yytext);
+                                return XOR_BIT;
+                              }
+"<<"                          {
+                                printf("%s is a LEFT_SHIFT\n", yytext);
+                                return LEFT_SHIFT;
+                              }
+">>"                          {
+                                printf("%s is a RIGHT_SHIFT\n", yytext);
+                                return RIGHT_SHIFT;
+                              }
+
+
+   /* Reglas para los operadores lógicos */
+"&&"                          {
+                                printf("%s is a AND\n", yytext);
+                                return AND;
+                              }
+"||"                          {
+                                printf("%s is a OR\n", yytext);
+                                return OR;
+                              }
+"!"                           {
+                                printf("%s is a NOT\n", yytext);
+                                return NOT;
+                              }
+"=="                          {
+                                printf("%s is a EQUALS\n", yytext);
+                                return EQUALS;
+                              }
+"!="                          {
+                                printf("%s is a NOT_EQUALS\n", yytext);
+                                return NOT_EQUALS;
+                              }
+">"                           {
+                                printf("%s is a GREATER\n", yytext);
+                                return GREATER;
+                              }
+">="                          {
+                                printf("%s is a GREATER_EQUALS\n", yytext);
+                                return GREATER_EQUALS;
+                              }
+"<"                           {
+                                printf("%s is a LESS\n", yytext);
+                                return LESS;
+                              }
+"<="                          {
+                                printf("%s is a LESS_EQUALS\n", yytext);
+                                return LESS_EQUALS;
+                              }
+
+
+   /* Expresiones regulares delimitadoras */
+"\["                          {
+                                printf("%s is an ARRAY_OPEN\n", yytext);
+                                return ARRAY_OPEN;
+                              }
+"\]"                          {
+                                printf("%s is an ARRAY_CLOSE\n", yytext);
+                                return ARRAY_CLOSE;
+
+                              }
+"\{"                          {
+                                printf("%s is an ARRAY_ELEM_OPEN\n", yytext);
+                                return ARRAY_ELEM_OPEN;
+                              }
+"\}"                          {
+                                printf("%s is an ARRAY_ELEM_CLOSE\n", yytext);
+                                return ARRAY_ELEM_CLOSE;
+                              }
+","                           {
+                                printf("%s is an ELEM_SEPARATOR\n", yytext);
+                                return ELEM_SEPARATOR;
+                              }
+"\("                          {
+                                printf("%s is an FUN_PARAM_OPEN\n", yytext);
+                                return FUN_PARAM_OPEN;
+                              }
+"\)"                          {
+                                printf("%s is an FUN_PARAM_CLOSE\n", yytext);
+                                return FUN_PARAM_CLOSE;
+                              }
+"\r\n"                        {
+                                printf("%s is a END_OF_INSTR\n", yytext);
+                                return END_OF_INSTR;
+                                yylineno++;
+                              }
+{blank_space}                 {
+                                printf("%s is a BLANK_SPACE\n", yytext);
+                                return BLANK_SPACE;
+                              }
+{context_tag}                 {
+                                printf("%s is a CONTEXT_TAG\n", yytext);
+                                return CONTEXT_TAG;
+                              }
+
+
+  /* Identificador */
+{id}                          { printf("%s is a ID\n", yytext);
+                                return ID;
+                              }
+
+
+  /* Reglas para los comentarios */
+\.\.                          {
+                                BEGIN(COMMENT_LINE);
+                                printf("COMMENT_LINE_START\n");
+                              }
+<COMMENT_LINE>(\n)            {
+                                printf("COMMENT_LINE_END\n");
+                                BEGIN(INITIAL);
+                              }
+<COMMENT_LINE>([^\n]|.)+      { printf("THIS IS A COMMENT_LINE\n");}
+<COMMENT_LINE><<EOF>>         /* Do error */
+
+",\."                         {
+                                BEGIN(COMMENT_BLOCK);
+                                printf("COMMENT_BLOCK_START\n");
+                              }
+<COMMENT_BLOCK>"\.,\n"        {
+                                printf("COMMENT_BLOCK_END\n");
+                                BEGIN(INITIAL);
+                              }
+<COMMENT_BLOCK>([^\.]|\n)+|.
+<COMMENT_BLOCK><<EOF>>        /* Do error */
+
+
+   /* Unknowns */
+.                             { printf("%s is an unknown\n", yytext); }
 
 %%
 
-    /* Funciones auxiliares */
-
-    int yywrap(){}
+/* Funciones y declaraciones auxiliares */

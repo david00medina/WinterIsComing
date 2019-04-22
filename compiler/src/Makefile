@@ -6,19 +6,23 @@
 
 all:
 					$(MAKE) bison
-					$(MAKE) flex
+					$(MAKE) flex $(F)
 					$(MAKE) compile
-					./wic $(F)
 
-bison: 		wic.y
+bison:
 					bison -d wic.y
 
-flex: 		wic.l
+flex:
 					flex wic.l
-					gcc -o wic lex.yy.c -lfl
 
-compile:	wic $(F)
-					gcc -o wic wic.tab.c lex.yy.c -lfl
+compile:
+					gcc -o wic lex.yy.c wic.tab.c -lfl
+					#gcc -c wic.tab.c lex.yy.c
+					#ar rvs wic.a wic.tab.o lex.yy.o
+					#g++ -std-c++=11 -Wall -Wextra main.cpp wic.a
+
+clean:
+					rm wic.tab.* lex.yy.c wic
 
 # "No rule to make target" T si no encuentra ni puede crear T.
 # Por supuesto, no regenera milex si no es necesario.

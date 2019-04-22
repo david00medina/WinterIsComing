@@ -1,8 +1,13 @@
 #include <iostream>
 
-extern int yyparse();
+extern "C"
+  int yylineno;
+  int yyparse();
+  void yyerror(const char*);
+  int yylex();
+}
 
-int int main(int argc, char const *argv[]) {
+int main(int argc, char const *argv[]) {
   int result = yyparse();
   if (result) {
     std::out << "The input is valid." << std::endl;
