@@ -8,17 +8,32 @@
     extern int yyparse(void);
     extern int yylex(void);
     extern FILE* yyin;
+    extern int yylineno;
 
     void yyerror(const char* s);
 %}
 
+/* Definición de tipo de valores */
+%union
+{
+  int integer;
+  float real;
+  char bool;
+  char character[2];
+  char string[512];
+};
+
 /* Declaración de tokens */
 
 /* Tokens para las palabras reservadas */
-%token NEW CONTINUE BREAK RETURN VOID FUN
+%token NEW CONTINUE BREAK RETURN VOID FUN GLOBAL STATIC
 
 /* Tokens de valores según el tipo de dato */
-%token INT_VAL REAL_VAL BOOL_VAL CHAR_VAL STRING_VAL
+%token <integer> INT_VAL
+%token <real> REAL_VAL
+%token <bool> BOOL_VAL
+%token <character> CHAR_VAL
+%token <string> STRING_VAL
 
 /* Tokens de tipo de dato */
 %token INT_TYPE REAL_TYPE BOOL_TYPE CHAR_TYPE
@@ -35,13 +50,16 @@
 /* Tokens de los operadores bit a bit */
 %token AND_BIT OR_BIT XOR_BIT LEFT_SHIFT RIGHT_SHIFT
 
+/* Tokens de los operadores de arrays */
+%token UNION DIFFERENCE INTERSECTION
+
 /* Tokens para estructuras de control y bucles */
 %token IF_CLAUSE FOR_WHILE_CLAUSE HEADER_END ELSE_IF_FOR_WHILE_CLAUSE
 
 /* Tokens delimitadores */
 %token ARRAY_OPEN ARRAY_CLOSE ARRAY_ELEM_OPEN ARRAY_ELEM_CLOSE
 %token ELEM_SEPARATOR FUN_PARAM_OPEN FUN_PARAM_CLOSE
-%token END_OF_INSTR BLANK_SPACE CONTEXT_TAG
+%token END_OF_INSTR BLANK_SPACE CONTEXT_TAG CHAR_QUOTE STRING_QUOTE
 
 /* Token identificador */
 %token ID
@@ -66,6 +84,7 @@ void yyerror(char const* x) {
 int main(int argc, char const *argv[]) {
   while (1) {
     yylex();
+    printf("Numero de linea : %d\n", yylineno);
   }
 
   //yylex_destroy();

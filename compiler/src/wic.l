@@ -2,6 +2,8 @@
 
 %x COMMENT_BLOCK
 %x COMMENT_LINE
+%x CHAR_STATE
+%x STRING_STATE
 
 %option noyywrap
 
@@ -9,6 +11,7 @@
 
     /* Declaraciones */
 
+    #include <string.h>
     #include "wic.tab.h"
 
 %}
@@ -26,13 +29,15 @@ break                         (break)
 return                        (return)
 void                          (void)
 fun                           (fun)
+global                        (global)
+static                        (static)
 
 /* Valores segun el tipo de dato */
 int_val                       {digit}+
 real_val                      ({digit}+\.){digit}*|\.{digit}+
 bool_val                      (true|false)
-char_val                      \'.?\'
-string_val                    \".*\"
+char_val                      [^']?|(\\[nrtvb'"])
+string_val                    [^"]|(\\[nrtvb'"])
 
 /* Tipos de dato */
 int_type                      (int)
@@ -51,7 +56,7 @@ blank_space                   [ ]{1,3}
 context_tag                   [\t]|[ ]{4}
 
 /* Identificador */
-id                            {letter}({letter}|{digit})+
+id                            {letter}({letter}|{digit})*
 
 %%
 
@@ -82,28 +87,33 @@ id                            {letter}({letter}|{digit})+
                                 printf("%s is a FUN\n", yytext);
                                 return FUN;
                               }
+{global}                         {
+                                printf("%s is a GLOBAL\n", yytext);
+                                return GLOBAL;
+                              }
+{static}                         {
+                                printf("%s is a STATIC\n", yytext);
+                                return STATIC;
+                              }
 
 
    /* Reglas para los valores segun el tipo de dato */
 {int_val}                     {
-                                printf("%s is a INT_VAL\n", yytext);
-                                return INT_VAL; }
+                                yylval.integer = atoi(yytext);
+                                printf("%d is a INT_VAL\n", yylval.integer);
+                                return INT_VAL;
+                              }
 
 {real_val}                    {
-                                printf("%s is a REAL_VAL\n", yytext);
+                                yylval.real = atof(yytext);
+                                printf("%f is a REAL_VAL\n", yylval.real);
                                 return REAL_VAL;
                               }
 {bool_val}                    {
-                                printf("%s is a BOOL_VAL\n", yytext);
+                                if (strcmp("true", yytext) == 0) yylval.bool = '\x01';
+                                else yylval.bool = '\x00';
+                                printf("%d is a BOOL_VAL\n", yylval.bool);
                                 return BOOL_VAL;
-                              }
-{char_val}                    {
-                                printf("%s is a CHAR_VAL\n", yytext);
-                                return CHAR_VAL;
-                              }
-{string_val}                  {
-                                printf("%s is a STRING_VAL\n", yytext);
-                                return STRING_VAL;
                               }
 
 
@@ -234,7 +244,22 @@ id                            {letter}({letter}|{digit})+
                               }
 
 
-  /* Expresiones regulares para estructuras de control y bucles */
+   /* Reglas para los operadores de array */
+"U"                           {
+                                printf("%s is an UNION\n", yytext);
+                                return UNION;
+                              }
+"D"                           {
+                                printf("%s is a DIFFERENCE\n", yytext);
+                                return DIFFERENCE;
+                              }
+"I"                           {
+                                printf("%s is an INTERSECTION\n", yytext);
+                                return INTERSECTION;
+                              }
+
+
+   /* Expresiones regulares para estructuras de control y bucles */
 {if}                          {
                                 printf("%s is an IF_CLAUSE\n", yytext);
                                 return IF_CLAUSE;
@@ -284,10 +309,14 @@ id                            {letter}({letter}|{digit})+
                                 printf("%s is an FUN_PARAM_CLOSE\n", yytext);
                                 return FUN_PARAM_CLOSE;
                               }
-"\r\n"                        {
+"\)"                          {
+                                printf("%s is an FUN_PARAM_CLOSE\n", yytext);
+                                return FUN_PARAM_CLOSE;
+                              }
+"\n"                          {
                                 printf("%s is a END_OF_INSTR\n", yytext);
-                                return END_OF_INSTR;
                                 yylineno++;
+                                return END_OF_INSTR;
                               }
 {blank_space}                 {
                                 printf("%s is a BLANK_SPACE\n", yytext);
@@ -300,8 +329,48 @@ id                            {letter}({letter}|{digit})+
 
 
   /* Identificador */
-{id}                          { printf("%s is a ID\n", yytext);
+{id}                          {
+                                printf("%s is a ID\n", yytext);
                                 return ID;
+                              }
+
+
+  /* Reglas para los caracteres */
+\'                            {
+                                 BEGIN(CHAR_STATE);
+                                 printf("CHAR_STATE_START\n");
+                                 printf("%s is a CHAR_QUOTE\n", yytext);
+                                 return CHAR_QUOTE;
+                              }
+<CHAR_STATE>{char_val}        {
+                                memcpy(yylval.character, yytext, sizeof(yytext));
+                                printf("%s is a CHAR_VAL\n", yylval.character);
+                                return CHAR_VAL;
+                              }
+<CHAR_STATE>'                 {
+                                printf("%s is a CHAR_QUOTE\n", yytext);
+                                printf("CHAR_STATE_END\n");
+                                BEGIN(INITIAL);
+                                return CHAR_QUOTE;
+                              }
+
+  /* Reglas para los strings */
+\"                            {
+                                BEGIN(STRING_STATE);
+                                printf("STRING_STATE_START\n");
+                                printf("%s is a STRING_QUOTE\n", yytext);
+                                return STRING_QUOTE;
+                              }
+<STRING_STATE>{string_val}    {
+                                memcpy(yylval.string, yytext, sizeof(yytext));
+                                printf("%s is a STRING_VAL\n", yylval.string);
+                                return CHAR_VAL;
+                              }
+<STRING_STATE>\"              {
+                                printf("%s is a STRING_QUOTE\n", yytext);
+                                printf("STRING_STATE_END\n");
+                                BEGIN(INITIAL);
+                                return STRING_QUOTE;
                               }
 
 
@@ -310,26 +379,33 @@ id                            {letter}({letter}|{digit})+
                                 BEGIN(COMMENT_LINE);
                                 printf("COMMENT_LINE_START\n");
                               }
-<COMMENT_LINE>(\n)            {
+<COMMENT_LINE>.+              {
+                                printf("THIS IS A COMMENT_LINE\n");
+                              }
+<COMMENT_LINE>\n              {
                                 printf("COMMENT_LINE_END\n");
+                                yylineno++;
                                 BEGIN(INITIAL);
                               }
-<COMMENT_LINE>([^\n]|.)+      { printf("THIS IS A COMMENT_LINE\n");}
 <COMMENT_LINE><<EOF>>         /* Do error */
+
 
 ",\."                         {
                                 BEGIN(COMMENT_BLOCK);
                                 printf("COMMENT_BLOCK_START\n");
                               }
-<COMMENT_BLOCK>"\.,\n"        {
+<COMMENT_BLOCK>"\.,"          {
                                 printf("COMMENT_BLOCK_END\n");
                                 BEGIN(INITIAL);
                               }
-<COMMENT_BLOCK>([^\.]|\n)+|.
+<COMMENT_BLOCK>[^\n]
+<COMMENT_BLOCK>\n             {
+                                yylineno++;
+                              }
 <COMMENT_BLOCK><<EOF>>        /* Do error */
 
 
-   /* Unknowns */
+   /* Unknowns & errors */
 .                             { printf("%s is an unknown\n", yytext); }
 
 %%
