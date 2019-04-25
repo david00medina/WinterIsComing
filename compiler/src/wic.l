@@ -281,37 +281,33 @@ id                            {letter}({letter}|{digit})*
 
    /* Expresiones regulares delimitadoras */
 "\["                          {
-                                printf("%s is an ARRAY_OPEN\n", yytext);
-                                return ARRAY_OPEN;
+                                printf("%s is an SQUARE_BRACKET_OPEN\n", yytext);
+                                return SQUARE_BRACKET_OPEN;
                               }
 "\]"                          {
-                                printf("%s is an ARRAY_CLOSE\n", yytext);
-                                return ARRAY_CLOSE;
+                                printf("%s is an SQUARE_BRACKET_CLOSE\n", yytext);
+                                return SQUARE_BRACKET_CLOSE;
 
                               }
 "\{"                          {
-                                printf("%s is an ARRAY_ELEM_OPEN\n", yytext);
-                                return ARRAY_ELEM_OPEN;
+                                printf("%s is an CURLY_BRACKET_OPEN\n", yytext);
+                                return CURLY_BRACKET_OPEN;
                               }
 "\}"                          {
-                                printf("%s is an ARRAY_ELEM_CLOSE\n", yytext);
-                                return ARRAY_ELEM_CLOSE;
+                                printf("%s is an CURLY_BRACKET_CLOSE\n", yytext);
+                                return CURLY_BRACKET_CLOSE;
                               }
 ","                           {
                                 printf("%s is an ELEM_SEPARATOR\n", yytext);
                                 return ELEM_SEPARATOR;
                               }
 "\("                          {
-                                printf("%s is an FUN_PARAM_OPEN\n", yytext);
-                                return FUN_PARAM_OPEN;
+                                printf("%s is an PARETHESES_OPEN\n", yytext);
+                                return PARETHESES_OPEN;
                               }
 "\)"                          {
-                                printf("%s is an FUN_PARAM_CLOSE\n", yytext);
-                                return FUN_PARAM_CLOSE;
-                              }
-"\)"                          {
-                                printf("%s is an FUN_PARAM_CLOSE\n", yytext);
-                                return FUN_PARAM_CLOSE;
+                                printf("%s is an PARETHESES_CLOSE\n", yytext);
+                                return PARETHESES_CLOSE;
                               }
 "\n"                          {
                                 printf("%s is a END_OF_INSTR\n", yytext);
