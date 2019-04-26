@@ -685,4 +685,97 @@ boolean b2 = equal(s1,s3)					..b2 = false
 \subsection{Código ejemplo}\label{example-code}
 Aquí va el código de ejemplo con el que probaremos nuestro compilador.
 
+\section{Análisis léxico}\label{Definicion-lenguaje}
+En esta sección se describen todos los detalles que describen al analizador léxico. \texttt{WiC}.
+
+\subsection{Introducción}\label{Introdución}
+El analizador léxico es la parte del compilador que se encarga de leer el flujo de caracteres que componen el programa fuente y agruparlos en tokens, que son agrupaciones de secuencias que guardan cierto significado; produciendo, para cada lexema, un token con la estructura (nombre-token, valor-atributo). Cada token pasará a la fase del análisis sintáctico.
+En cada token, el primer componente (nombre-token) se utiliza para el análisis sintáctico, y el segundo (valor-atributo) apunta a una entrada de la tabla de símbolos para dicho token.
+
+\begin{lstlisting}[caption=Ejemplo de conversión de un conjunto de caracteres de un programa WiC en tokens]
+
+int doble = total * 2
+
+(int) 	-> 	INT_TYPE
+(doble) -> 	ID
+= 		-> 	ASSIGN
+(total) -> 	ID
+* 		-> 	PRODUCT
+2		->	INT_VAL
+
+\end{lstlisting}
+
+\subsection{Tabla de tokens}\label{Tabla de tokens}
+
+\begin{table}[H]
+	\begin{tabular}{l|l|l}
+		\toprule
+		\textbf{Nombre-Token} & \textbf{Valor-Atributo} & \textbf{Expresión-Regular}\\
+		\midrule
+		NEW                                                      & NO                                                                   & (new)                                                               \\
+		CONTINUE                                                 & NO                                                                   & (continue)                                                          \\
+		BREAK                                                    & NO                                                                   & (break)                                                             \\
+		RETURN                                                   & NO                                                                   & (return)                                                            \\
+		VOID                                                     & NO                                                                   & (void)                                                              \\
+		FUN                                                      & NO                                                                   & (fun)                                                               \\
+		INT\_VAL                                                 & SI                                                                   & {[}0-9{]}+                                                          \\
+		REAL\_VAL                                                & SI                                                                   & ({[}0-9{]}+\textbackslash{}.){[}0-9{]}*|\textbackslash{}.{[}0-9{]}+ \\
+		BOOL\_VAR                                                & SI                                                                   & (true|false)                                                        \\
+		CHAR\_VAL                                                & SI                                                                   & \textbackslash{}'.?\textbackslash{}'                                \\
+		STRING\_VAL                                              & SI                                                                   & \textbackslash{}".*\textbackslash{}"                                \\
+		INT\_TYPE                                                & NO                                                                   & (int)                                                               \\
+		REAL\_TYPE                                               & NO                                                                   & (real)                                                              \\
+		BOOL\_TYPE                                               & NO                                                                   & (bool)                                                              \\
+		CHAR\_TYPE                                               & NO                                                                   & (char)                                                              \\
+		IF\_CLAUSE                                               & NO                                                                   & (\textbackslash{}?)\{1\}                                            \\
+		FOR\_WHILE\_CLAUSE                                       & NO                                                                   & (\textbackslash{}?)\{2\}                                            \\
+		HEADER\_ON                                               & NO                                                                   & :                                                                   \\
+		ELSE\_IF\_FOR\_WHILE\_CLAUSE                             & NO                                                                   & (\textbackslash{}.)\{1\}                                            \\
+		BLANK\_SPACE                                             & NO                                                                   & {[} {]}\{1,3\}                                                      \\
+		CONTEXT\_TYPE                                            & NO                                                                   & {[}\textbackslash{}t{]}|{[} {]}\{4\}                                \\
+		ID                                                       & SI                                                                   & {[}a-zA-Z{]}({[}a-zA-Z{]}|{[}0-9{]})+                               \\
+		ASSIGN                                                   & NO                                                                   & "="                                                                 \\
+		SUM                                                      & NO                                                                   & \textbackslash{}+                                                   \\
+		SUBSTRACT                                                & NO                                                                   & -                                                                   \\
+		PRODUCT                                                  & NO                                                                   & \textbackslash{}*                                                   \\
+		DIVIDE                                                   & NO                                                                   & /                                                                   \\
+		MODULUS                                                  & NO                                                                   & \%                                                                  \\
+		POWER                                                    & NO                                                                   & \textbackslash{}*\textbackslash{}*                                  \\
+		RADICAL                                                  & NO                                                                   & \#                                                                  \\
+		INCREMENT                                                & NO                                                                   & ++                                                                  \\
+		DECREMENT                                                & NO                                                                   & --                                                                  \\
+		AND\_BIT                                                 & NO                                                                   & \&                                                                  \\
+		OR\_BIT                                                  & NO                                                                   & |                                                                   \\
+		XOR\_BIT                                                 & NO                                                                   & \textasciicircum{}                                                  \\
+		LEFT\_SHIFT                                              & NO                                                                   & \textless{}\textless{}                                              \\
+		RIGHT\_SHIFT                                             & NO                                                                   & \textgreater{}\textgreater{}                                        \\
+		AND                                                      & NO                                                                   & \&\&                                                                \\
+		OR                                                       & NO                                                                   & ||                                                                  \\
+		NOT                                                      & NO                                                                   & !                                                                   \\
+		EQUALS                                                   & NO                                                                   & "=="                                                                \\
+		NOT\_EQUALS                                              & NO                                                                   & !=                                                                  \\
+		GREATER                                                  & NO                                                                   & \textless{}                                                         \\
+		GREATER\_EQUALS                                          & NO                                                                   & \textgreater{}=                                                     \\
+		LESS                                                     & NO                                                                   & \textless{}                                                         \\
+		LESS\_EQUALS                                             & NO                                                                   & \textless{}=                                                        \\
+		UNION                                                    & NO                                                                   & U                                                                   \\
+		DIFFERENCE                                               & NO                                                                   & D                                                                   \\
+		INTERSECTION                                             & NO                                                                   & I                                                                   \\
+		SQUARE\_BRACKET\_OPEN                                    & NO                                                                   & [                                                                  \\
+		SQUARE\_BRACKET\_CLOSE                                   & NO                                                                   & ]                                                                  \\
+		CURLY\_BRACKET\_OPEN                                     & NO                                                                   & \{                                                                  \\
+		CURLY\_BRACKET\_CLOSE                                    & NO                                                                   & \}                                                                  \\
+		ELEM\_SEPARATOR                                          & NO                                                                   & ,                                                                   \\
+		PARETHESES\_OPEN                                         & NO                                                                   & \textbackslash{}(                                                   \\
+		PARETHESES\_CLOSE                                        & NO                                                                   & \textbackslash{})                                                   \\
+		END\_OF\_INSTR                                           & NO                                                                   & \textbackslash{}n                                                   \\
+		CHAR\_QUOTE                                              & NO                                                                   & \textbackslash{}'                                                   \\
+		STRING\_QUOTE                                            & NO                                                                   & \textbackslash{}"                                                    
+	\end{tabular}
+\end{table}
+
+\subsection{Estados}\label{Estados}
+
 \end{document}
+
+
