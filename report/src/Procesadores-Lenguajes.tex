@@ -686,11 +686,13 @@ boolean b2 = equal(s1,s3)					..b2 = false
 Aquí va el código de ejemplo con el que probaremos nuestro compilador.
 
 \section{Análisis léxico}\label{Definicion-lenguaje}
-En esta sección se describen todos los detalles que describen al analizador léxico. \texttt{WiC}.
+En esta sección se describen todos los detalles que describen al analizador léxico del lenguaje \texttt{WiC}.
 
 \subsection{Introducción}\label{Introdución}
-El analizador léxico es la parte del compilador que se encarga de leer el flujo de caracteres que componen el programa fuente y agruparlos en tokens, que son agrupaciones de secuencias que guardan cierto significado; produciendo, para cada lexema, un token con la estructura (nombre-token, valor-atributo). Cada token pasará a la fase del análisis sintáctico.
-En cada token, el primer componente (nombre-token) se utiliza para el análisis sintáctico, y el segundo (valor-atributo) apunta a una entrada de la tabla de símbolos para dicho token.
+El analizador léxico es la parte del compilador que se encarga de leer el flujo de caracteres que componen el programa fuente y agruparlos en tokens, que son agrupaciones de secuencias que guardan cierto significado; produciendo, para cada lexema, un token con la estructura $<nombre-token, valor-atributo>$. Cada token pasará a la fase del análisis sintáctico, a partir de la cuál se generará la gramática y el \textit{Árbol Sintáctico Abstracto} (\textit{AST}) asociado.
+
+
+En cada token, el primer componente (nombre-token) se utiliza para el análisis sintáctico, y el segundo (valor-atributo), el cual es opcional, apunta a una entrada de la tabla de símbolos con el valor de dicho token.
 
 \begin{lstlisting}[caption=Ejemplo de conversión de un conjunto de caracteres de un programa WiC en tokens]
 
@@ -742,8 +744,16 @@ int doble = total * 2
 		MODULUS                                                  & NO                                                                   & \%                                                                  \\
 		POWER                                                    & NO                                                                   & \textbackslash{}*\textbackslash{}*                                  \\
 		RADICAL                                                  & NO                                                                   & \#                                                                  \\
-		INCREMENT                                                & NO                                                                   & ++                                                                  \\
-		DECREMENT                                                & NO                                                                   & --                                                                  \\
+		INCREMENT                                                & NO                                                                   & $++$                                                                  \\
+		DECREMENT                                                & NO                                                                   & $--$                                                                  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+\begin{table}[H]
+	\begin{tabular}{l|l|l}
+		\toprule
+		\textbf{Nombre-Token} & \textbf{Valor-Atributo} & \textbf{Expresión-Regular}\\
+		\midrule
 		AND\_BIT                                                 & NO                                                                   & \&                                                                  \\
 		OR\_BIT                                                  & NO                                                                   & |                                                                   \\
 		XOR\_BIT                                                 & NO                                                                   & \textasciicircum{}                                                  \\
@@ -770,7 +780,8 @@ int doble = total * 2
 		PARETHESES\_CLOSE                                        & NO                                                                   & \textbackslash{})                                                   \\
 		END\_OF\_INSTR                                           & NO                                                                   & \textbackslash{}n                                                   \\
 		CHAR\_QUOTE                                              & NO                                                                   & \textbackslash{}'                                                   \\
-		STRING\_QUOTE                                            & NO                                                                   & \textbackslash{}"                                                    
+		STRING\_QUOTE                                            & NO                                                                   & \textbackslash{}"                                                    \\
+		\bottomrule
 	\end{tabular}
 \end{table}
 

@@ -59,10 +59,17 @@
 /* Tokens delimitadores */
 %token SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE CURLY_BRACKET_OPEN CURLY_BRACKET_CLOSE
 %token ELEM_SEPARATOR PARETHESES_OPEN PARETHESES_CLOSE
-%token END_OF_INSTR BLANK_SPACE CONTEXT_TAG CHAR_QUOTE STRING_QUOTE
+%token END_OF_INSTR CONTEXT_TAG CHAR_QUOTE STRING_QUOTE
 
 /* Token identificador */
 %token ID
+
+/* Asociatividad y precedencia de los operadores  */
+%right ASSIGN
+%left SUM SUBSTRACT
+%left PRODUCT DIVIDE MODULUS
+%left RADICAL
+%right POWER
 
 %start input
 
@@ -70,7 +77,27 @@
 
 /* Definición de gramáticas */
 
-input :
+input: instrs END_OF_INSTR input                 { printf("1) Inicializo\n"); }
+    |  /* empty */                               { printf("No encuentro nada\n"); }
+
+instrs: instrs instr                             { printf("2) Instrucciones\n"); }
+    | /* empty */
+
+instr: ID ASSIGN expr                            { printf("3) Asignación\n"); }
+
+expr: expr SUM term                              { printf("4) Suma: %d\n"); }
+    | expr SUBSTRACT term                        { printf("4) Resta\n"); }
+    | term                                       { printf("4) Solo un término\n"); }
+
+term: term PRODUCT factor                        { printf("5) Producto\n"); }
+    | term DIVIDE factor                         { printf("5) División\n"); }
+    | factor                                     { printf("5) Factor\n"); return $1;}
+
+factor: INT_VAL                                  { printf("6) Valor entero\n"); return $1;}
+    | PARETHESES_OPEN expr PARETHESES_CLOSE      { printf("5) Expresión parentesis\n"); return $2;}
+
+/*list: expr SUM term list                       { printf("La suma es igual a %d\n", $1 + $3); }
+    |*/ /* empty */
 
 %%
 
@@ -83,7 +110,7 @@ void yyerror(char const* x) {
 
 int main(int argc, char const *argv[]) {
   while (1) {
-    yylex();
+    yyparse();
     printf("Numero de linea : %d\n", yylineno);
   }
 

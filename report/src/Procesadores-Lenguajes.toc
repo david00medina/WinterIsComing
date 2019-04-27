@@ -13,7 +13,7 @@
 \contentsline {subsection}{\numberline {1.6}Estructuras de control}{9}{subsection.1.6}% 
 \contentsline {subsubsection}{\numberline {1.6.1}Sentencias \texttt {if-ifelse-else}}{9}{subsubsection.1.6.1}% 
 \contentsline {subsubsection}{\numberline {1.6.2}Bucle \texttt {for-forelse-else}}{10}{subsubsection.1.6.2}% 
-\contentsline {subsubsection}{\numberline {1.6.3}Bucle \texttt {while-whileelse-else}}{11}{subsubsection.1.6.3}% 
+\contentsline {subsubsection}{\numberline {1.6.3}Bucle \texttt {while-whileelse-else}}{12}{subsubsection.1.6.3}% 
 \contentsline {subsection}{\numberline {1.7}Declaraci\IeC {\'o}n, definici\IeC {\'o}n y uso de funciones}{12}{subsection.1.7}% 
 \contentsline {subsection}{\numberline {1.8}Funciones primitivas}{13}{subsection.1.8}% 
 \contentsline {subsection}{\numberline {1.9}C\IeC {\'o}digo ejemplo}{15}{subsection.1.9}% 
