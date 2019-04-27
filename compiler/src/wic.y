@@ -91,10 +91,10 @@ expr: expr SUM term                              { printf("4) Suma: %d\n"); }
 
 term: term PRODUCT factor                        { printf("5) Producto\n"); }
     | term DIVIDE factor                         { printf("5) División\n"); }
-    | factor                                     { printf("5) Factor\n"); return $1;}
+    | factor                                     { printf("5) Factor\n"); return $1; }
 
-factor: INT_VAL                                  { printf("6) Valor entero\n"); return $1;}
-    | PARETHESES_OPEN expr PARETHESES_CLOSE      { printf("5) Expresión parentesis\n"); return $2;}
+factor: INT_VAL                                  { printf("6) Valor entero\n"); return $1; }
+    | PARETHESES_OPEN expr PARETHESES_CLOSE      { printf("5) Expresión parentesis\n"); return $2; }
 
 /*list: expr SUM term list                       { printf("La suma es igual a %d\n", $1 + $3); }
     |*/ /* empty */
