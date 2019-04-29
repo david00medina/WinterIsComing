@@ -4,6 +4,7 @@
 
     #include <stdio.h>
     #include <stdlib.h>
+    #include <math.h>
 
     extern int yyparse(void);
     extern int yylex(void);
@@ -34,6 +35,8 @@
 %token <bool> BOOL_VAL
 %token <character> CHAR_VAL
 %token <string> STRING_VAL
+
+%type<integer> expr term factor power
 
 /* Tokens de tipo de dato */
 %token INT_TYPE REAL_TYPE BOOL_TYPE CHAR_TYPE
@@ -77,24 +80,31 @@
 
 /* Definición de gramáticas */
 
-input: instrs END_OF_INSTR input                 { printf("1) Inicializo\n"); }
-    |  /* empty */                               { printf("No encuentro nada\n"); }
+input: instrs END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }*/
+    |  /* empty */                               /*{ printf("No encuentro nada\n"); }*/
 
-instrs: instrs instr                             { printf("2) Instrucciones\n"); }
+instrs: instrs instr                             /*{ printf("2) Instrucciones\n"); }*/
     | /* empty */
 
-instr: ID ASSIGN expr                            { printf("3) Asignación\n"); }
+instr: ID ASSIGN expr                            /*{ printf("3) Asignación\n"); }*/
+    | expr                                       { printf("Instrucción: %d\n", $1); }
 
-expr: expr SUM term                              { printf("4) Suma: %d\n"); }
-    | expr SUBSTRACT term                        { printf("4) Resta\n"); }
-    | term                                       { printf("4) Solo un término\n"); }
+expr: expr SUM term                              { printf("Expresión (Suma): %d\n", $1 + $3); $$ = $1 + $3;}
+    | expr SUBSTRACT term                        { printf("Expresión (Resta): %d\n", $1 - $3); $$ = $1 - $3;}
+    | term                                       { printf("Expresión: %d\n", $1); $$ = $1;}
 
-term: term PRODUCT factor                        { printf("5) Producto\n"); }
-    | term DIVIDE factor                         { printf("5) División\n"); }
-    | factor                                     { printf("5) Factor\n"); return $1; }
+term: term PRODUCT power                        { printf("Término (Producto): %d\n", $1 * $3); $$ = $1 * $3;}
+    | term DIVIDE power                         { printf("Término (División): %d\n", $1 / $3); $$ = $1 / $3;}
+    | power                                     { printf("Término: %d\n", $1); $$ = $1;}
 
-factor: INT_VAL                                  { printf("6) Valor entero\n"); return $1; }
-    | PARETHESES_OPEN expr PARETHESES_CLOSE      { printf("5) Expresión parentesis\n"); return $2; }
+power: power RADICAL factor                       { printf("Potencia/Raiz (Raíz): %f\n", pow((float)$3, 1/$1)); $$ = pow($3, (float)1/$1);}
+    | power POWER factor                          { printf("Potencia/Raiz (Potencia): %f\n", pow((float)$3, $1)); $$ = pow($3, (float)$1);}
+    | factor
+
+factor: PARETHESES_OPEN expr PARETHESES_CLOSE    { printf("Factor (Expresión parentesis): %d\n", $2); $$ = $2; }
+    | SUBSTRACT factor                           { printf("Factor (Numero negativo): %d\n", -$2); $$ = -$2; }
+    | INT_VAL                                    { printf("Factor (Numero): %d\n", $1); $$ = $1; }
+    | REAL_VAL
 
 /*list: expr SUM term list                       { printf("La suma es igual a %d\n", $1 + $3); }
     |*/ /* empty */

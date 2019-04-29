@@ -16,7 +16,7 @@ flex:
 					flex wic.l
 
 compile:
-					gcc -o wic lex.yy.c wic.tab.c -lfl
+					gcc -o wic lex.yy.c wic.tab.c -lfl -lm
 					#gcc -c wic.tab.c lex.yy.c
 					#ar rvs wic.a wic.tab.o lex.yy.o
 					#g++ -std-c++=11 -Wall -Wextra main.cpp wic.a

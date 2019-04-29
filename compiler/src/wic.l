@@ -398,7 +398,7 @@ id                            {letter}({letter}|{digit})*
 
    /* Unknowns & errors */
 .                             {
-                                //printf("%s is an unknown\n", yytext); 
+                                //printf("%s is an unknown\n", yytext);
                               }
 
 %%
