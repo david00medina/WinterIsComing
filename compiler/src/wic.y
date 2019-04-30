@@ -68,11 +68,15 @@
 %token ID
 
 /* Asociatividad y precedencia de los operadores  */
-%right ASSIGN
+%right ASSIGN NOT
+%left UNION DIFFERENCE INTERSECTION
+%left LESS LESS_EQUALS GREATER GREATER_EQUALS EQUALS NOT_EQUALS AND OR
+%left AND_BIT OR_BIT XOR_BIT LEFT_SHIFT RIGHT_SHIFT
 %left SUM SUBSTRACT
 %left PRODUCT DIVIDE MODULUS
 %left RADICAL
 %right POWER
+%nonassoc INCREMENT DECREMENT
 
 %start input
 
@@ -80,21 +84,41 @@
 
 /* Definición de gramáticas */
 
-input: instrs END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }*/
+input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }*/
     |  /* empty */                               /*{ printf("No encuentro nada\n"); }*/
-
-instrs: instrs instr                             /*{ printf("2) Instrucciones\n"); }*/
-    | /* empty */
 
 instr: ID ASSIGN expr                            /*{ printf("3) Asignación\n"); }*/
     | expr                                       { printf("Instrucción: %d\n", $1); }
+    | /* empty */
 
 expr: expr SUM term                              { printf("Expresión (Suma): %d\n", $1 + $3); $$ = $1 + $3;}
     | expr SUBSTRACT term                        { printf("Expresión (Resta): %d\n", $1 - $3); $$ = $1 - $3;}
+    | expr LESS term
+    | INCREMENT ID
+    | ID INCREMENT
+    | DECREMENT ID
+    | ID DECREMENT
+    | expr LESS_EQUALS term
+    | expr GREATER term
+    | expr GREATER_EQUALS term
+    | expr EQUALS term
+    | expr NOT_EQUALS term
+    | expr AND term
+    | expr OR term
+    | NOT term
+    | expr AND_BIT term
+    | expr OR_BIT term
+    | expr XOR_BIT term
+    | expr LEFT_SHIFT term
+    | expr RIGHT_SHIFT term
+    | expr UNION term
+    | expr DIFFERENCE term
+    | expr INTERSECTION term
     | term                                       { printf("Expresión: %d\n", $1); $$ = $1;}
 
 term: term PRODUCT power                        { printf("Término (Producto): %d\n", $1 * $3); $$ = $1 * $3;}
     | term DIVIDE power                         { printf("Término (División): %d\n", $1 / $3); $$ = $1 / $3;}
+    | term MODULUS power                        { printf("Término (Módulo): %d\n", $1 % $3); $$ = $1 % $3;}
     | power                                     { printf("Término: %d\n", $1); $$ = $1;}
 
 power: power RADICAL factor                       { printf("Potencia/Raiz (Raíz): %f\n", pow((float)$3, 1/$1)); $$ = pow($3, (float)1/$1);}
@@ -105,6 +129,7 @@ factor: PARETHESES_OPEN expr PARETHESES_CLOSE    { printf("Factor (Expresión pa
     | SUBSTRACT factor                           { printf("Factor (Numero negativo): %d\n", -$2); $$ = -$2; }
     | INT_VAL                                    { printf("Factor (Numero): %d\n", $1); $$ = $1; }
     | REAL_VAL
+    | ID
 
 /*list: expr SUM term list                       { printf("La suma es igual a %d\n", $1 + $3); }
     |*/ /* empty */
