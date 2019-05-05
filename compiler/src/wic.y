@@ -88,7 +88,16 @@ input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }
     |  /* empty */                               /*{ printf("No encuentro nada\n"); }*/
 
 instr: ID ASSIGN expr                            /*{ printf("3) Asignación\n"); }*/
+    | expr IF_CLAUSE HEADER_END END_OF_INSTR
+      CONTEXT_TAG instrs END_OF_INSTR
+      ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR
+      CONTEXT_TAG instrs END_OF_INSTR
+      ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
+      CONTEXT_TAG instrs END_OF_INSTR             { printf("Instrucción (IF-IFELSE-ELSE)\n");}
     | expr                                       { printf("Instrucción: %d\n", $1); }
+    | /* empty */
+
+instrs: intrs END_OF_INSTR instr
     | /* empty */
 
 expr: expr SUM term                              { printf("Expresión (Suma): %d\n", $1 + $3); $$ = $1 + $3;}
@@ -129,6 +138,9 @@ factor: PARETHESES_OPEN expr PARETHESES_CLOSE    { printf("Factor (Expresión pa
     | SUBSTRACT factor                           { printf("Factor (Numero negativo): %d\n", -$2); $$ = -$2; }
     | INT_VAL                                    { printf("Factor (Numero): %d\n", $1); $$ = $1; }
     | REAL_VAL
+    | BOOL_VAL
+    | CHAR_VAL
+    | STRING_VAL
     | ID
 
 /*list: expr SUM term list                       { printf("La suma es igual a %d\n", $1 + $3); }
