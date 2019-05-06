@@ -85,66 +85,128 @@
 /* Definición de gramáticas */
 
 input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }*/
-    |  /* empty */                               /*{ printf("No encuentro nada\n"); }*/
+    | /* empty */                               /*{ printf("No encuentro nada\n"); }*/
 
-instr: ID ASSIGN expr                            /*{ printf("3) Asignación\n"); }*/
-    | expr IF_CLAUSE HEADER_END END_OF_INSTR
-      CONTEXT_TAG instrs END_OF_INSTR
-      ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR
-      CONTEXT_TAG instrs END_OF_INSTR
+data_init: GLOBAL data_type
+    | STATIC data_type
+    | data_type array_init
+    | data_type
+    | array_init
+
+array_init: data_type SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE
+    | data_type SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+
+data_type: INT_TYPE
+    | REAL_TYPE
+    | BOOL_TYPE
+    | CHAR_TYPE
+
+instr: data_init ID                               { printf("Instrucción (DECLARE VAR)\n"); }
+    | data_init ID ASSIGN expr                    { printf("Instrucción (=)\n"); }
+    | ID array_access ASSIGN expr                 { printf("Instrucción acceso array\n"); }
+    | if_instr                                    { printf("Instrucción (IF-IFELSE-ELSE)\n"); }
+    | for_instr                                   { printf("Instrucción (FOR-FORELSE-ELSE)\n"); }
+    | while_instr                                 { printf("Instrucción (WHILE-WHILEELSE-ELSE)\n"); }
+    | expr                                        { printf("Instrucción EXPR: %d\n", $1); }
+    | CONTEXT_TAG instr
+    | /* empty */
+
+while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      input
+      while_middle_block
+      ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      input
+    | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      input
+      ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      input
+    | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      input
+
+while_middle_block: while_middle_block
+      ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      input
+    | /* empty */
+
+for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
+      input
+      for_middle_block
+      ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      input
+    | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
+      input
+      ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      input
+    | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
+      input
+
+for_middle_block: for_middle_block
+      ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
+      input
+    | /* empty */
+
+if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR
+      input
+      if_middle_block
       ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
-      CONTEXT_TAG instrs END_OF_INSTR             { printf("Instrucción (IF-IFELSE-ELSE)\n");}
-    | expr                                       { printf("Instrucción: %d\n", $1); }
+      input
+    | expr IF_CLAUSE HEADER_END END_OF_INSTR
+      input
+      ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
+      input
+    | expr IF_CLAUSE HEADER_END END_OF_INSTR
+      input
+
+if_middle_block: if_middle_block
+      ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR
+      input
     | /* empty */
 
-instrs: intrs END_OF_INSTR instr
-    | /* empty */
+array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
 
-expr: expr SUM term                              { printf("Expresión (Suma): %d\n", $1 + $3); $$ = $1 + $3;}
-    | expr SUBSTRACT term                        { printf("Expresión (Resta): %d\n", $1 - $3); $$ = $1 - $3;}
-    | expr LESS term
-    | INCREMENT ID
-    | ID INCREMENT
-    | DECREMENT ID
-    | ID DECREMENT
-    | expr LESS_EQUALS term
-    | expr GREATER term
-    | expr GREATER_EQUALS term
-    | expr EQUALS term
-    | expr NOT_EQUALS term
-    | expr AND term
-    | expr OR term
-    | NOT term
-    | expr AND_BIT term
-    | expr OR_BIT term
-    | expr XOR_BIT term
-    | expr LEFT_SHIFT term
-    | expr RIGHT_SHIFT term
-    | expr UNION term
-    | expr DIFFERENCE term
-    | expr INTERSECTION term
-    | term                                       { printf("Expresión: %d\n", $1); $$ = $1;}
+expr: ID ASSIGN expr                              { printf("Expresión (=)\n"); }
+    | expr SUM term                               { printf("Expresión (Suma): %d\n", $1 + $3); $$ = $1 + $3;}
+    | expr SUBSTRACT term                         { printf("Expresión (Resta): %d\n", $1 - $3); $$ = $1 - $3;}
+    | INCREMENT ID                                { printf("Expresión (++ID)\n"); }
+    | ID INCREMENT                                { printf("Expresión (ID++)\n"); }
+    | DECREMENT ID                                { printf("Expresión (--ID)\n"); }
+    | ID DECREMENT                                { printf("Expresión (ID--)\n"); }
+    | expr LESS term                              { printf("Expresión (<)\n"); }
+    | expr LESS_EQUALS term                       { printf("Expresión (<=)\n"); }
+    | expr GREATER term                           { printf("Expresión (>)\n"); }
+    | expr GREATER_EQUALS term                    { printf("Expresión (>=)\n"); }
+    | expr EQUALS term                            { printf("Expresión (==)\n"); }
+    | expr NOT_EQUALS term                        { printf("Expresión (!=)\n"); }
+    | expr AND term                               { printf("Expresión (&&)\n"); }
+    | expr OR term                                { printf("Expresión (||)\n"); }
+    | NOT term                                    { printf("Expresión (!)\n"); }
+    | expr AND_BIT term                           { printf("Expresión (&)\n"); }
+    | expr OR_BIT term                            { printf("Expresión (|)\n"); }
+    | expr XOR_BIT term                           { printf("Expresión (^)\n"); }
+    | expr LEFT_SHIFT term                        { printf("Expresión (<<)\n"); }
+    | expr RIGHT_SHIFT term                       { printf("Expresión (>>)\n"); }
+    | expr UNION term                             { printf("Expresión (U)\n"); }
+    | expr DIFFERENCE term                        { printf("Expresión (D)\n"); }
+    | expr INTERSECTION term                      { printf("Expresión (I)\n"); }
+    | term                                        { printf("Expresión: %d\n", $1); $$ = $1;}
 
-term: term PRODUCT power                        { printf("Término (Producto): %d\n", $1 * $3); $$ = $1 * $3;}
-    | term DIVIDE power                         { printf("Término (División): %d\n", $1 / $3); $$ = $1 / $3;}
-    | term MODULUS power                        { printf("Término (Módulo): %d\n", $1 % $3); $$ = $1 % $3;}
-    | power                                     { printf("Término: %d\n", $1); $$ = $1;}
+term: term PRODUCT power                          { printf("Término (Producto): %d\n", $1 * $3); $$ = $1 * $3;}
+    | term DIVIDE power                           { printf("Término (División): %d\n", $1 / $3); $$ = $1 / $3;}
+    | term MODULUS power                          { printf("Término (Módulo): %d\n", $1 % $3); $$ = $1 % $3;}
+    | power                                       { printf("Término: %d\n", $1); $$ = $1;}
 
 power: power RADICAL factor                       { printf("Potencia/Raiz (Raíz): %f\n", pow((float)$3, 1/$1)); $$ = pow($3, (float)1/$1);}
     | power POWER factor                          { printf("Potencia/Raiz (Potencia): %f\n", pow((float)$3, $1)); $$ = pow($3, (float)$1);}
     | factor
 
-factor: PARETHESES_OPEN expr PARETHESES_CLOSE    { printf("Factor (Expresión parentesis): %d\n", $2); $$ = $2; }
-    | SUBSTRACT factor                           { printf("Factor (Numero negativo): %d\n", -$2); $$ = -$2; }
-    | INT_VAL                                    { printf("Factor (Numero): %d\n", $1); $$ = $1; }
+factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión parentesis): %d\n", $2); $$ = $2; }
+    | SUBSTRACT factor                            { printf("Factor (Numero negativo): %d\n", -$2); $$ = -$2; }
+    | INT_VAL                                     { printf("Factor (Numero): %d\n", $1); $$ = $1; }
     | REAL_VAL
     | BOOL_VAL
     | CHAR_VAL
     | STRING_VAL
     | ID
-
-/*list: expr SUM term list                       { printf("La suma es igual a %d\n", $1 + $3); }
-    |*/ /* empty */
 
 %%
 
@@ -161,6 +223,5 @@ int main(int argc, char const *argv[]) {
     printf("Numero de linea : %d\n", yylineno);
   }
 
-  //yylex_destroy();
   return 0;
 }
