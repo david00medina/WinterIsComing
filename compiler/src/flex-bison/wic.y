@@ -8,6 +8,7 @@
 
     extern int yyparse(void);
     extern int yylex(void);
+    extern int yyless(int);
     extern FILE* yyin;
     extern int yylineno;
 
@@ -62,7 +63,7 @@
 /* Tokens delimitadores */
 %token SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE CURLY_BRACKET_OPEN CURLY_BRACKET_CLOSE
 %token ELEM_SEPARATOR PARETHESES_OPEN PARETHESES_CLOSE
-%token END_OF_INSTR CONTEXT_TAG CHAR_QUOTE STRING_QUOTE
+%token END_OF_INSTR OPEN_CONTEXT_TAG CLOSE_CONTEXT_TAG CHAR_QUOTE STRING_QUOTE
 
 /* Token identificador */
 %token ID
@@ -85,11 +86,11 @@
 /* Definición de gramáticas */
 
 input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }*/
+    | OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input
     | /* empty */                               /*{ printf("No encuentro nada\n"); }*/
 
 data_init: GLOBAL data_type
     | STATIC data_type
-    | data_type array_init
     | data_type
     | array_init
 
@@ -108,7 +109,6 @@ instr: data_init ID                               { printf("Instrucción (DECLAR
     | for_instr                                   { printf("Instrucción (FOR-FORELSE-ELSE)\n"); }
     | while_instr                                 { printf("Instrucción (WHILE-WHILEELSE-ELSE)\n"); }
     | expr                                        { printf("Instrucción EXPR: %d\n", $1); }
-    | CONTEXT_TAG instr
     | /* empty */
 
 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
