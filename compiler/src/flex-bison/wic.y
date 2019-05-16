@@ -8,6 +8,7 @@
 
     extern int yyparse(void);
     extern int yylex(void);
+    extern int yyless(int);
     extern FILE* yyin;
     extern int yylineno;
 
@@ -36,7 +37,7 @@
 %token <character> CHAR_VAL
 %token <string> STRING_VAL
 
-%type<integer> expr term factor power
+%type<integer> expr term factor power data_value
 
 /* Tokens de tipo de dato */
 %token INT_TYPE REAL_TYPE BOOL_TYPE CHAR_TYPE
@@ -62,7 +63,7 @@
 /* Tokens delimitadores */
 %token SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE CURLY_BRACKET_OPEN CURLY_BRACKET_CLOSE
 %token ELEM_SEPARATOR PARETHESES_OPEN PARETHESES_CLOSE
-%token END_OF_INSTR CONTEXT_TAG CHAR_QUOTE STRING_QUOTE
+%token END_OF_INSTR OPEN_CONTEXT_TAG CLOSE_CONTEXT_TAG CHAR_QUOTE STRING_QUOTE
 
 /* Token identificador */
 %token ID
@@ -85,11 +86,11 @@
 /* Definición de gramáticas */
 
 input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }*/
+    | OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input
     | /* empty */                               /*{ printf("No encuentro nada\n"); }*/
 
 data_init: GLOBAL data_type
     | STATIC data_type
-    | data_type array_init
     | data_type
     | array_init
 
@@ -108,7 +109,6 @@ instr: data_init ID                               { printf("Instrucción (DECLAR
     | for_instr                                   { printf("Instrucción (FOR-FORELSE-ELSE)\n"); }
     | while_instr                                 { printf("Instrucción (WHILE-WHILEELSE-ELSE)\n"); }
     | expr                                        { printf("Instrucción EXPR: %d\n", $1); }
-    | CONTEXT_TAG instr
     | /* empty */
 
 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
@@ -196,17 +196,19 @@ term: term PRODUCT power                          { printf("Término (Producto):
     | power                                       { printf("Término: %d\n", $1); $$ = $1;}
 
 power: power RADICAL factor                       { printf("Potencia/Raiz (Raíz): %f\n", pow((float)$3, 1/$1)); $$ = pow($3, (float)1/$1);}
-    | power POWER factor                          { printf("Potencia/Raiz (Potencia): %f\n", pow((float)$3, $1)); $$ = pow($3, (float)$1);}
+    | power POWER factor                          { printf("Potencia/Raiz (Potencia): %f\n", pow((float)$1, $3)); $$ = pow($1, (float)$3);}
     | factor
 
 factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión parentesis): %d\n", $2); $$ = $2; }
     | SUBSTRACT factor                            { printf("Factor (Numero negativo): %d\n", -$2); $$ = -$2; }
-    | INT_VAL                                     { printf("Factor (Numero): %d\n", $1); $$ = $1; }
+    | data_value
+    | ID
+
+data_value: INT_VAL                               { printf("Factor (Numero): %d\n", $1); $$ = $1; }
     | REAL_VAL
     | BOOL_VAL
     | CHAR_VAL
     | STRING_VAL
-    | ID
 
 %%
 

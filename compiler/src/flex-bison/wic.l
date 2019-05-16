@@ -4,6 +4,7 @@
 %x COMMENT_LINE
 %x CHAR_STATE
 %x STRING_STATE
+%x CHECK_LVL
 
 %option noyywrap
 
@@ -13,6 +14,12 @@
 
     #include <string.h>
     #include "wic.tab.h"
+    int level = 0;
+    int enter_special = 1;
+
+    /* Declaraciones de funciones */
+    int countTabs(char* pattern);
+    int countSpaces(char* pattern);
 
 %}
 
@@ -52,14 +59,62 @@ header_end                    :
 else_if_for_while             (\.){1}
 
 /* Expresiones regulares delimitadoras */
-context_tag                   [\t]|[ ]{4}
 
+context_tag                   [ ]*
 /* Identificador */
 id                            {letter}({letter}|{digit})*
 
 %%
+  if (enter_special) {
+    BEGIN(CHECK_LVL);
+    printf("Inicio, %d", YY_START);
+    enter_special = 0;
+  }
+
 
    /* Reglas de traducción */
+
+   /* Cambios de ámbito */
+
+<CHECK_LVL>\n?{context_tag}    {
+                                printf("Procesando... \n<%s>\n", yytext);
+                                int level_change = countSpaces(yytext);
+                                printf("%d\n", level_change);
+
+                                if (level < level_change) {
+                                  level++;
+                                  if (level != level_change) yyless(0);
+                                  printf("Level <OPEN_CONTEXT_TAG> : %d\n", level);
+                                  return OPEN_CONTEXT_TAG;
+                                } else if (level > level_change) {
+                                   level--;
+                                   if (level != level_change) yyless(0);
+                                   printf("Level <CLOSE_CONTEXT_TAG> : %d\n", level);
+                                   return CLOSE_CONTEXT_TAG;
+                                }
+                                printf("Level : %d\n", level);
+                                BEGIN(INITIAL);
+                              }
+<CHECK_LVL><<EOF>>            {
+                                if (level > 0) {
+                                  level--;
+                                  return CLOSE_CONTEXT_TAG;
+                                } else return 0;
+                              }
+<CHECK_LVL>[^ \n]             {
+                                printf("Vamos para atrás\n");
+                                BEGIN(INITIAL);
+                                yyless(0);
+                              }
+<<EOF>>                       {
+                                BEGIN(CHECK_LVL);
+                              }
+"\n"                          {
+                                BEGIN(CHECK_LVL);
+                                yyless(0);
+                                printf("Nueva línea\n");
+                                return END_OF_INSTR;
+                              }
 
    /* Reglas para las palabras reservadas */
 {new}                         {
@@ -86,7 +141,7 @@ id                            {letter}({letter}|{digit})*
                                 //printf("%s is a FUN\n", yytext);
                                 return FUN;
                               }
-{global}                         {
+{global}                      {
                                 //printf("%s is a GLOBAL\n", yytext);
                                 return GLOBAL;
                               }
@@ -308,15 +363,6 @@ id                            {letter}({letter}|{digit})*
                                 //printf("%s is an PARETHESES_CLOSE\n", yytext);
                                 return PARETHESES_CLOSE;
                               }
-"\n"                          {
-                                //printf("%s is a END_OF_INSTR\n", yytext);
-                                yylineno++;
-                                return END_OF_INSTR;
-                              }
-{context_tag}                 {
-                                //printf("%s is a CONTEXT_TAG\n", yytext);
-                                return CONTEXT_TAG;
-                              }
 
 
   /* Identificador */
@@ -396,11 +442,42 @@ id                            {letter}({letter}|{digit})*
 <COMMENT_BLOCK><<EOF>>        /* Do error */
 
 
+"\t"+                          {
+                                printf("Esto es un tabulado\n");
+                              }
+
    /* Unknowns & errors */
 .                             {
-                                //printf("%s is an unknown\n", yytext);
+                                printf("<%s> is an unknown\n", yytext);
                               }
 
 %%
 
 /* Funciones y declaraciones auxiliares */
+
+/*void countContextLevel(char* pattern) {
+  level += countTabs(pattern);
+  level += countSpaces(pattern);
+}*/
+
+int countTabs(char* pattern) {
+  int i = 0;
+  int total = 0;
+  while (pattern[i] != '\0') {
+    if (pattern[i] == '\t') total++;
+    i++;
+  }
+  return total;
+}
+
+int countSpaces(char* pattern) {
+  int i = 0;
+  int numSpaces = 0;
+  int total = 0;
+  while (pattern[i] != '\0') {
+    if (pattern[i] == ' ') numSpaces++;
+    if ((numSpaces % 4) == 0 && numSpaces > 0) total++;
+    i++;
+  }
+  return total;
+}
