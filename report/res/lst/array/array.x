@@ -20,8 +20,8 @@ bool[5] booleano5
 	En este bloque se declara un array de cada tipo y se instancia cada uno de los valores de los elementos que lo componen
 .,
 
-int[] entero2 = new int[2]{ 0, 1}
-real[] real2 = new real[2]{0.0, 1.0}
+int[2] entero2 = { 0, 1}
+real[2] real2 = {0.0, 1.0}
 char[] string2_ab = "ab"	..Declaracion con asignacion alternativo al tipo string
-char[] string2_cd = new char[2]{'c','d'}
-bool[] booleano2 = new bool[2]{true, false}
+char[2] string2_cd = {'c','d'}
+bool[4] booleano2 = {true, false, true, true}

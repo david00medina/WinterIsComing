@@ -350,7 +350,7 @@ int suma = 0
 5 <= a < 10 ?:
 	suma = 4 * a
 
-suma > 20 > a && 2*suma != 32 < a
+suma > 20 > a && 2*suma  < a
 	suma++
 \end{lstlisting}
 
@@ -424,14 +424,14 @@ Los operadores de arrays nos permiten realizar operaciones con arrays, tratándo
 
 A continuación mostramos un ejemplo de uso de los operadores de array para un caso trivial meramente ejemplificativo:
 \begin{lstlisting}[caption=Ejemplo de uso de operadores de array]
-int[6] a = new int[6]{0,1,2,3,4,5}
-int[7] b = new int[7]{3,4,5,6,7,8,9}
+int[6] a = {0,1,2,3,4,5}
+int[7] b = {3,4,5,6,7,8,9}
 
-int[] c = a U b ..c = {0,1,2,3,4,5,6,7,8,9}
-int[] d = a D b ..d = {0,1,2}
-int[] e = a I b ..e = {3,4,5}
-int[] f = (a U b) D (a I b) ..f = {0,1,2,6,7,8,9}
-int[] g = d + f + a ..g = {0,1,2,0,1,2,6,7,8,9,0,1,2,3,4,5}
+int[] c = a U b 					..c = {0,1,2,3,4,5,6,7,8,9}
+int[] d = a D b 					..d = {0,1,2}
+int[] e = a I b 					..e = {3,4,5}
+int[] f = (a U b) D (a I b) 			..f = {0,1,2,6,7,8,9}
+int[] g = d + f + a 				..g = {0,1,2,0,1,2,6,7,8,9,0,1,2,3,4,5}
 \end{lstlisting}
 
 \subsection{Estructuras de control}
@@ -599,7 +599,7 @@ En nuestro lenguaje, Van a existir predefinidas un conjunto de funciones primiti
 	\begin{description}
 
 		\item[\texttt{bool print(T salida)}] Esta función permite mostrar por pantalla el valor de \texttt{salida}, cuyo tipo \texttt{T} puede ser \texttt{int, real, bool, char} o una string (\texttt{char[]}). Si la operación termina correctamente la primitiva devolverá \texttt{true}, en caso contrario, devuelve \texttt{false}.
-		\item[\texttt{bool scan(char[] entrada)}] Esta rutina permite leer el valor pasado por teclado una vez se pulse \texttt{ENTER} (\texttt{0x0D}). Si la operación termina satisfactoriamente la primitiva devolverá \texttt{true}, en caso contrario, devuelve \texttt{false}.
+		\item[\texttt{T scan(T entrada)}] Esta rutina permite leer el valor pasado por teclado una vez se pulse \texttt{ENTER} (\texttt{0x0D}). Si la operación termina satisfactoriamente la primitiva devolverá un valor de tipo  \texttt{T}, y en caso de que no se especifique, devuelve el valor en formato \texttt{string}.
 
 		\begin{lstlisting}[caption=Ejemplo de uso de la función \texttt{print()} y \texttt{scan()}]
 		int number
@@ -614,20 +614,11 @@ En nuestro lenguaje, Van a existir predefinidas un conjunto de funciones primiti
 
 	% De aquí hacia abajo puede que no de tiempo de implementarlo
 
-	\item [Funciones para arrays numéricos] Las funciones para arrays numéricos permiten operaciones que impliquen el uso de arrays de enteros, números en coma flotante o combinar ambos tipos. El tipo \texttt{T} de las siguientes funciones indica que el tipo del parámetro de entrada o el tipo de retorno de la función puede ser \texttt{int} o \texttt{real}:
+	\item [Funciones para arrays numéricos] Las funciones para arrays numéricos permiten operaciones que impliquen el uso de arrays. El tipo \texttt{T} de las siguientes funciones indica que el tipo del parámetro de entrada o el tipo de retorno de la función puede ser \texttt{int} ,  \texttt{real} ,  \texttt{bool} o \texttt{string}:
 
 	\begin{description}
 		\item [\texttt{int length(array)}] Devuelve el número de elementos del array.
-		\item [\texttt{T sum(array)}] Devuelve la suma de todos los elementos contenidos en el array.
-		\item [\texttt{T res(T[] array)}] Devuelve el resultado de restar todos los elementos del array.
-		\item [\texttt{real prod(T[] array)}] Devuelve el producto de todos los elementos contenidos en el array.
-		\item [\texttt{int prod(T[] array1, T[] array2)}] Devuelve el producto escalar de los dos arrays.
-		\item [\texttt{real coc(T[] array)}] Devuelve el cociente de todos los elementos contenidos en el array.
-		\item [\texttt{T[] append(T[] array, T[] element, int position)}] Coloca en la posición \texttt{position} del array un elemento que debe ser del mismo tipo que el resto del array. Los demás elementos a partir de la posición especificada serán desplazados una posición a la derecha.
-Se devuelve la referencia al array resultante.
 		\item [\texttt{T[] delete(T[] array, int position)}] Elimina el elemento de la posición \texttt{position} del array y devuelve la referencia al array resultante. Los demás elementos a partir de la posición especificada serán desplazados una posición a la izquierda.
-		\item [\texttt{T[] find(array,element)}] Devuelve una referencia a un array de enteros, que representan las posiciones donde se encuentra un elemento en el array.
-		\item [\texttt{T[] sort(T[] array, T[] ascendent)}] Devuelve la referencia a un array con los elementos ordenados de forma ascendente si \texttt{ascendent} es igual a \texttt{true}; en caso contrario, los ordenará de forma descendente.
 		\item [\texttt{bool equal(T[] array1, T[] array2)}] Devuelve \texttt{true} si los dos arrays son iguales en tamaño y los elementos están dispuestos en el mismo orden. En caso contrario, devuelve \texttt{false}.
 	\end{description}
 \end{description}
@@ -635,55 +626,64 @@ Se devuelve la referencia al array resultante.
 \begin{lstlisting}[caption=Ejemplo de uso de funciones primitivas para arrays numéricos]
 int[] v1 = {2,5,9,5}
 int[] v2 = {5,4,8,9,3}
-int tam = length(v1)		..tam = 4
-int n1 = sum(v1)			..n1 = 21
-int n2 = sum(v2)			..n2 = 29
-int[] v3 = sum(v1,v2)		..v3 = {7,9,17,14,3}
-int[] v4 = res(v1,v2)		..v4 = {-3,1,1,-4,-3}
-int n3 = prod(v1)			..n3 = 450
-int n4 = prod(v2)			..n4 = 4320
-int[] v5 = prod(v1,v2)		..v5 = {10,20,72,45,0}
-int[] v6 = coc(v3,v2)		..v6 = {2,5,9,5,0}
-float[] v7 = coc(v1,v2)		..v7 = {0.4,1.25,1.125,0.5555555556,0.0}
-append(v1,6,3)				..v1 = {2,5,6,9,5}
-delete(v1,3)				..v1 = {2,5,9,5}
-int[] found1 = find(v1,5)	..found1 = {2,4}
-int[] found2 = find(v1,8)	..found2 = {}
-sort(v2,true)				..v2 = {3,4,5,8,9}
-sort(v2,false)				..v2 = {9,8,5,4,3}
-boolean b1 = equal(v2,v3)	..b1 = false
-boolean b2 = equal(v1,v1)	..b2 = true
+int tam = length(v1)			..tam = 4
+delete(v1,1)				..v1 = {5,9,5}
+boolean b1 = equal(v2,v1)		..b1 = false
+boolean b2 = equal(v1,v1)		..b2 = true
 \end{lstlisting}
 
-\begin{description}
-	\item[Funciones para strings] Las funciones para strings permiten realizar operaciones sobre strings. Las funciones principales son:
-	\begin{description}
-		\item[\texttt{int length(char[] string)}] Devuelve el número de caracteres de la string.
-		\item[\texttt{char[] substring(char[] string, int position)}] Devuelve la referencia a la substring que se encuentra entre \texttt{position} y el final de \texttt{string}.
-		\item[\texttt{char[] substring(char[] string, int beginning, int end)}] Devuelve la referencia a un substring ubicado entre la posición \texttt{beginning} y la posición anterior al índice \texttt{end}.
-		\item[\texttt{char[] trim(char[] string)}] Elimina todos los espacios (\texttt{0x20}) de la string.
-		\item[\texttt{bool equal(char[] string1, char[] string2)}] Devuelve \texttt{true} si las dos strings son iguales en tamaño y los caracteres que lo conforman están dispuestos en el mismo orden. En caso contrario, devuelve \texttt{false}.
-	\end{description}
-\end{description}
-
-\begin{lstlisting}[caption=Ejemplo de uso de funciones primitivas para strings]
-char[] s1 = "Hola"
-char[] s2 = " mundo"
-char[] s3 = s1 + s2							..s3 = "Hola mundo"
-int tam1 = length(s1)						..tam1 = 4
-int tam2 = length(s3)						..tam1 = 10
-char[] s4 = substring(s3,6)					..s4 = "mundo"
-char[] s5 = substring(s3,4,8)				..s5 = "a mu"
-char[] s6 = " " + s1 + "  " + s2 + "    "	..s6 = " Hola   mundo    "
-int tam3 = length(s6)						..tam3 = 17
-trim(s6)									..s6 = "Hola mundo"
-int tam4 = length(s6)						..tam4 = 10
-boolean b1 = equal(s3,s6)					..b1 = true
-boolean b2 = equal(s1,s3)					..b2 = false
-\end{lstlisting}
 
 \subsection{Código ejemplo}\label{example-code}
-Aquí va el código de ejemplo con el que probaremos nuestro compilador.
+Por último, mostraremos varios ejemplos de programas en WiC con la finalidad de abarcar las subsecciones anteriores y tener una visión general de como funciona el lenguaje de programación.
+
+\vspace{5mm}
+El primer código de ejemplo consiste en mostrar por pantalla una suscesión de fibonacci que termina cuando un valor de la serie alcanza el valor de un dato introducido por teclado.
+
+\begin{lstlisting}[caption=Ejemplo de la función Fibonacci con parametros introducidos.]
+
+.. Variable global que contiene el resultado
+global int a = 0
+
+.. Funcion que actualiza los valores de a y b en funcion de sus valores anteriores
+fun void fibo()
+	static int b = 1
+	int aux = b
+	b = a + b
+	a = aux
+	
+.. Leer de teclado un entero
+n = scan(int)
+
+.. Bucle que finaliza cuando a alcanza el valor introducido por teclado.
+( a < n ) ??:
+	print(a)
+	print(', ')
+	fibo()
+	print(crlf)
+
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Salida en consola para '' n -> \  6 ''.]
+ 0, 1, 1, 2, 3, 5
+\end{lstlisting}
+\vspace{5mm}
+A continuación, mostramos el código de un programa que invierte el contenido de un array. Además, añadimos la condición de que en las posiciones impares, se sustituye el valor por un 0.
+
+\begin{lstlisting}[caption=Cambiar el orden de los elementos en un Array con condición.]
+
+int [10] miVector = new int [10] {0,1,2,3,4,5,6,7,8,9}
+int tamaño = length(miVector)
+int contador = 0
+
+contador < tamaño ?? contador++:
+	miVector []
+
+
+
+
+\end{lstlisting}
+
+
 
 \section{Análisis léxico}\label{Definicion-lenguaje}
 En esta sección se describen todos los detalles que describen al analizador léxico del lenguaje \texttt{WiC}.
@@ -793,7 +793,7 @@ El estado de un analizador léxico es la situación en la que se encuentra a la 
 \begin{description}
 	\item[INITIAL] Este estado viene por defecto. En él, los caracteres son interpretados normalmente y se generan los tokens correspondientes.
 	\item[COMMENT\_BLOCK] Este estado corresponde a los comentarios de bloque. Se llega a este estado cuando se detecta la expresión regular ",\.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta la expresión regular "\.,", se vuelve al estado INITIAL.
-	\item[COMMENT\_LINE] Este estado corresponde a los comentarios de línea. Se llega a este estado cuando se detecta la expresión regular "\.\.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta , se vuelve al estado INITIAL.
+	%\item[COMMENT\_LINE] Este estado corresponde a los comentarios de línea. Se llega a este estado cuando se detecta la expresión regular "\.\.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta , se vuelve al estado INITIAL.
 	\item[CHAR\_STATE] Este estado corresponde a los caracteres. Se llega a este estado cuando se detecta el caracter comilla simple ("\'"). En este estado, solo es permitido que aparezca como máximo un caracter o dos si el primero es la barra invertida ('\'). Cuando se detecta otro caracter comilla simple, se vuelve al estado INITIAL.
 	\item[STRING\_STATE] Este estado corresponde a las strings o cadenas de caracteres. Se llega a este estado cuando se detecta un caracter comillas dobles ("\""). A partir de este estado, todos los caracteres consecuentes formarán parte de una string. Cuando se detecta otro caracter comillas dobles, se vuelve al estado INITIAL.
 \end{description}
