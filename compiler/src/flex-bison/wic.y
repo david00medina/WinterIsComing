@@ -37,7 +37,7 @@
 %token <character> CHAR_VAL
 %token <string> STRING_VAL
 
-%type<integer> expr term factor power
+%type<integer> expr term factor power data_value
 
 /* Tokens de tipo de dato */
 %token INT_TYPE REAL_TYPE BOOL_TYPE CHAR_TYPE
@@ -196,17 +196,19 @@ term: term PRODUCT power                          { printf("Término (Producto):
     | power                                       { printf("Término: %d\n", $1); $$ = $1;}
 
 power: power RADICAL factor                       { printf("Potencia/Raiz (Raíz): %f\n", pow((float)$3, 1/$1)); $$ = pow($3, (float)1/$1);}
-    | power POWER factor                          { printf("Potencia/Raiz (Potencia): %f\n", pow((float)$3, $1)); $$ = pow($3, (float)$1);}
+    | power POWER factor                          { printf("Potencia/Raiz (Potencia): %f\n", pow((float)$1, $3)); $$ = pow($1, (float)$3);}
     | factor
 
 factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión parentesis): %d\n", $2); $$ = $2; }
     | SUBSTRACT factor                            { printf("Factor (Numero negativo): %d\n", -$2); $$ = -$2; }
-    | INT_VAL                                     { printf("Factor (Numero): %d\n", $1); $$ = $1; }
+    | data_value
+    | ID
+
+data_value: INT_VAL                               { printf("Factor (Numero): %d\n", $1); $$ = $1; }
     | REAL_VAL
     | BOOL_VAL
     | CHAR_VAL
     | STRING_VAL
-    | ID
 
 %%
 
