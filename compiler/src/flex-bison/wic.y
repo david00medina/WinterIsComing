@@ -96,6 +96,7 @@ data_init: GLOBAL data_type
     | array_init
 
 array_init: data_type SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+    | data_type SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE
 
 data_type: INT_TYPE
     | REAL_TYPE
@@ -120,6 +121,7 @@ comma_exp: comma_exp ELEM_SEPARATOR comma_exp     { printf("Función llamada (,)
     | factor                                      { printf("Función llamada (factor)\n"); }
     | data_value                                  { printf("Función llamada (valor)\n"); }
     | ID                                          { printf("Función llamada (variable)\n"); }
+    | expr                                        { printf("Función llamada (término)\n"); }
 
 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE    { printf("Función (tipo=%s,nombre=%s)\n"); }
 
@@ -203,11 +205,13 @@ expr: ID ASSIGN expr                              { printf("Expresión (=)\n"); 
     | expr DIFFERENCE term                        { printf("Expresión (D)\n"); }
     | expr INTERSECTION term                      { printf("Expresión (I)\n"); }
     | term                                        { printf("Expresión: %d\n", $1); $$ = $1;}
+    | data_vector                                 { printf("Expresión (vector)\n"); }
 
 term: term PRODUCT power                          { printf("Término (Producto): %d\n", $1 * $3); $$ = $1 * $3;}
     | term DIVIDE power                           { printf("Término (División): %d\n", $1 / $3); $$ = $1 / $3;}
     | term MODULUS power                          { printf("Término (Módulo): %d\n", $1 % $3); $$ = $1 % $3;}
     | power                                       { printf("Término: %d\n", $1); $$ = $1;}
+    | ID array_access                             { printf("Término (VectorVal)");}
 
 power: power RADICAL factor                       { printf("Potencia/Raiz (Raíz): %f\n", pow((float)$3, 1/$1)); $$ = pow($3, (float)1/$1);}
     | power POWER factor                          { printf("Potencia/Raiz (Potencia): %f\n", pow((float)$1, $3)); $$ = pow($1, (float)$3);}
@@ -223,7 +227,8 @@ data_value: INT_VAL                               { printf("Factor (Numero): %d\
     | BOOL_VAL                                    { printf("Factor (BOOLEAN): %d\n"); }
     | CHAR_QUOTE CHAR_VAL CHAR_QUOTE              { printf("Factor (CARACTER): %d\n"); }
     | STRING_QUOTE STRING_VAL STRING_QUOTE        { printf("Factor (STRING): %d\n"); }
-    | CURLY_BRACKET_OPEN comma_exp CURLY_BRACKET_CLOSE        { printf("Factor (VECTOR): %d\n"); }
+
+data_vector: CURLY_BRACKET_OPEN comma_exp CURLY_BRACKET_CLOSE        { printf("Factor (VECTOR): %d\n"); }
 
 %%
 
