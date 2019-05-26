@@ -761,7 +761,7 @@ int doble = total * 2
 		ELSE\_IF\_FOR\_WHILE\_CLAUSE                             & NO                                                                   & (\textbackslash{}.)\{1\}                                            \\
 		CONTEXT\_TYPE                                            & NO                                                                   & {[}\textbackslash{}t{]}|{[} {]}\{4\}                                \\
 		ID                                                       & SI                                                                   & {[}a-zA-Z{]}({[}a-zA-Z{]}|{[}0-9{]})+                               \\
-		ASSIGN                                                   & NO                                                                   & "="                                                                 \\
+		ASSIGN                                                   & NO                                                                   & =                                                                \\
 		SUM                                                      & NO                                                                   & \textbackslash{}+                                                   \\
 		SUBSTRACT                                                & NO                                                                   & -                                                                   \\
 		PRODUCT                                                  & NO                                                                   & \textbackslash{}*                                                   \\
@@ -787,7 +787,7 @@ int doble = total * 2
 		AND                                                      & NO                                                                   & \&\&                                                                \\
 		OR                                                       & NO                                                                   & ||                                                                  \\
 		NOT                                                      & NO                                                                   & !                                                                   \\
-		EQUALS                                                   & NO                                                                   & "=="                                                                \\
+		EQUALS                                                   & NO                                                                   & ==                                                                \\
 		NOT\_EQUALS                                              & NO                                                                   & !=                                                                  \\
 		GREATER                                                  & NO                                                                   & \textless{}                                                         \\
 		GREATER\_EQUALS                                          & NO                                                                   & \textgreater{}=                                                     \\
@@ -806,6 +806,8 @@ int doble = total * 2
 		END\_OF\_INSTR                                           & NO                                                                   & \textbackslash{}n                                                   \\
 		CHAR\_QUOTE                                              & NO                                                                   & \textbackslash{}'                                                   \\
 		STRING\_QUOTE                                            & NO                                                                   & \textbackslash{}"                                                    \\
+		OPEN\_CONTEXT\_TAG                                            & NO                                                                   & <CHECK\_LVL>\textbackslash{}n?['\textbackslash{}s']*                                                    \\
+		CLOSE\_CONTEXT\_TAG                                            & NO                                                                   & <CHECK\_LVL>\textbackslash{}n?['\textbackslash{}s']*                                                  \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -817,9 +819,10 @@ int doble = total * 2
 El estado de un analizador léxico es la situación en la que se encuentra a la hora de interpretar los caracteres del programa fuente. Los estados posibles del analizador léxico son:
 
 \begin{description}
-	\item[INITIAL] Este estado viene por defecto. En él, los caracteres son interpretados normalmente y se generan los tokens correspondientes.
+	\item[CHECK\_LVL] Este estado viene por defecto. En él, se comprueba el nivel en el que se encuentra el programa. Se llega a este estado al principio del programa o cuando se detecta un caracter de salto de línea. En todo estado de CHECK\_LVL, se comprueba el número de tabuladores (tomando el valor de un tabulador equivalente a cuatro espacios); con cada tabulador encontrado, se devuelve un token OPEN\_CONTEXT\_TAG si accedemos a un nivel estrictamente superior al que ya estábamos, y se devuelve CLOSE\_CONTEXT\_TAG si accedemos a un nivel estrictamente inferior al que ya estábamos. En caso de que ambos niveles sean exactamente iguales, no se devuelve ningún token, interpretando que no hay cambio de nivel.
+	\item[INITIAL] En este estado, los caracteres son interpretados normalmente y se generan los tokens correspondientes.
 	\item[COMMENT\_BLOCK] Este estado corresponde a los comentarios de bloque. Se llega a este estado cuando se detecta la expresión regular ",\.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta la expresión regular "\.,", se vuelve al estado INITIAL.
-	%\item[COMMENT\_LINE] Este estado corresponde a los comentarios de línea. Se llega a este estado cuando se detecta la expresión regular "\.\.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta , se vuelve al estado INITIAL.
+	item[COMMENT\_LINE] Este estado corresponde a los comentarios de línea. Se llega a este estado cuando se detecta la expresión regular "\textbackslash{}.\textbackslash{}.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta , se vuelve al estado INITIAL.
 	\item[CHAR\_STATE] Este estado corresponde a los caracteres. Se llega a este estado cuando se detecta el caracter comilla simple ("\'"). En este estado, solo es permitido que aparezca como máximo un caracter o dos si el primero es la barra invertida ('\'). Cuando se detecta otro caracter comilla simple, se vuelve al estado INITIAL.
 	\item[STRING\_STATE] Este estado corresponde a las strings o cadenas de caracteres. Se llega a este estado cuando se detecta un caracter comillas dobles ("\""). A partir de este estado, todos los caracteres consecuentes formarán parte de una string. Cuando se detecta otro caracter comillas dobles, se vuelve al estado INITIAL.
 \end{description}
