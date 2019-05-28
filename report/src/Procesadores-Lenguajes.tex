@@ -833,6 +833,16 @@ El estado de un analizador léxico es la situación en la que se encuentra a la 
 
 \section{Análisis sintáctico}
 
+\subsection{El analizador sintáctico}
+
+El analizador sintáctico o parser constituye una representación intermedia del análisis de un programa. Su función es construir un árbol de análisis a partir de los componentes léxicos que recibe, aplicando las producciones de la gramática con el objetivo de comprobar la correctitud sintáctica del programa. Su salida es una representación de la cadena de componentes léxicos en forma de árbol sintáctico.
+\newline
+\newline
+Dicho de otro modo: el analizador sintáctico comprueba que el orden en que el analizador léxico le va entregando es válido, y para ello verifica que la cadena pueda ser generada por la gramática del lenguaje fuente.
+\newline
+\newline
+Otra de las funciones del analizador sintáctico es la de informar acerca de los errores en la sintaxis; recuperándose de los mismos, siempre que sea posible, para continuar procesando la entrada.
+
 \newpage
 
 \section{Descenso recursivo}
@@ -909,7 +919,30 @@ A partir de este ejemplo, se generan los siguientes tokens:
 
 En este caso en concreto, se harán uso de las siguientes gramáticas:
 
+\begin{lstlisting}
+
+	input 		:= instr END_OF_INSTR input | /*empty*/
+	instr 		:= data_init ID ASSIGN expr | for_instr | expr | /*empty*/
+	data_init 	:= data_type
+	data_type	:= INT_TYPE
+	expr 		:= expr SUM term | ID INCREMENT | term
+	for_instr	:= expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR input
+	term		:= power
+	power		:= factor
+	factor		:= data_value
+	data_value	:= INT_VAL
+
+\end{lstlisting}
+
+\newpage
+
 \section{Tabla de símbolos}
+
+\subsection{Introducción}
+
+La tabla de símbolos almacena la información que en cada momento se necesita sobre las variables del programa y otra información, como el nombre, el tipo, el tamaño... También sirve para guardar información referente a cualquier clase, enumerado, identificador, etc. creado por el usuario.
+
+La gestión de la tabla de símbolos es muy importante, ya que consume gran parte del tiempo de compilación; de ahí que su eficiencia sea crítica.
 
 \end{document}
 

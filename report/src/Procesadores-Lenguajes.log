@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.3.13)  28 MAY 2019 16:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.3.13)  28 MAY 2019 22:58
 entering extended mode
 **./Procesadores-Lenguajes.tex
 (Procesadores-Lenguajes.tex
@@ -453,12 +453,12 @@ LaTeX Info: Redefining \% on input line 78.
 
 ABD: EverySelectfont initializing macros
 LaTeX Info: Redefining \selectfont on input line 78.
-<../res/pics/logo.jpg, id=107, 332.15292pt x 102.55113pt>
+<../res/pics/logo.jpg, id=111, 332.15292pt x 102.55113pt>
 File: ../res/pics/logo.jpg Graphic file (type jpg)
 <use ../res/pics/logo.jpg>
 Package pdftex.def Info: ../res/pics/logo.jpg  used on input line 86.
 (pdftex.def)             Requested size: 284.52756pt x 87.85266pt.
-<../res/pics/LogoEscuela.jpg, id=108, 2055.68pt x 1418.29875pt>
+<../res/pics/LogoEscuela.jpg, id=112, 2055.68pt x 1418.29875pt>
 File: ../res/pics/LogoEscuela.jpg Graphic file (type jpg)
 <use ../res/pics/LogoEscuela.jpg>
 Package pdftex.def Info: ../res/pics/LogoEscuela.jpg  used on input line 114.
@@ -487,7 +487,7 @@ l.122 \newpage
 
 LaTeX Warning: Command \textendash invalid in math mode on input line 149.
 
-<../res/pics/data-types/float_diag.png, id=153, 888.31876pt x 113.42375pt>
+<../res/pics/data-types/float_diag.png, id=158, 888.31876pt x 113.42375pt>
 File: ../res/pics/data-types/float_diag.png Graphic file (type png)
 <use ../res/pics/data-types/float_diag.png>
 Package pdftex.def Info: ../res/pics/data-types/float_diag.png  used on input l
@@ -698,41 +698,59 @@ LaTeX Warning: Command \textless invalid in math mode on input line 800.
 
 LaTeX Warning: Command \textless invalid in math mode on input line 801.
 
-[16] [17] [18] [19] [20] (D:\MikTex\tex/latex/base\latin1.def
+[16] [17] [18] [19]
+Underfull \hbox (badness 10000) in paragraph at lines 838--845
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 838--845
+
+ []
+
+[20] (D:\MikTex\tex/latex/base\latin1.def
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) (D:\MikTex\tex/latex/base\latin1.def
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) [21] (D:\MikTex\tex/latex/base\latin1.def
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 )
 (D:\MikTex\tex/latex/base\latin1.def
 File: latin1.def 2018/08/11 v1.3c Input encoding file
-) [21] (D:\MikTex\tex/latex/base\latin1.def
-File: latin1.def 2018/08/11 v1.3c Input encoding file
 ) (D:\MikTex\tex/latex/base\latin1.def
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 914.
- [22]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 914.
+[22]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 947.
+ [23]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 947.
  (Procesadores-Lenguajes.aux
 LaTeX Info: Redefining \. on input line 23.
 LaTeX Info: Redefining \% on input line 23.
 LaTeX Info: Redefining \. on input line 24.
 LaTeX Info: Redefining \% on input line 24.
 )
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 914.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 914.
-Package rerunfilecheck Info: File `Procesadores-Lenguajes.out' has not changed.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 947.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 947.
 
-(rerunfilecheck)             Checksum: 400D8E02D0F66B3F8DFDB4CDBA014686;1916.
 
+Package rerunfilecheck Warning: File `Procesadores-Lenguajes.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `Procesadores-Lenguajes.out':
+(rerunfilecheck)             Before: A24047B0594BF2A4DABAEF211C041EF4;1994
+(rerunfilecheck)             After:  22E86316806FE244FBB7ED93E2E0EF38;2060.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 914.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 947.
  ) 
 Here is how much of TeX's memory you used:
- 10515 strings out of 492946
- 145359 string characters out of 3143492
+ 10553 strings out of 492946
+ 145893 string characters out of 3143492
  473296 words of memory out of 3000000
- 13841 multiletter control sequences out of 15000+200000
+ 13862 multiletter control sequences out of 15000+200000
  21051 words of font info for 49 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  33i,15n,60p,767b,2372s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -761,9 +779,9 @@ Tex/fonts/type1/public/amsfonts/cm/cmr7.pfb><D:/MikTex/fonts/type1/public/amsfo
 nts/cm/cmr8.pfb><D:/MikTex/fonts/type1/public/amsfonts/cm/cmsy10.pfb><D:/MikTex
 /fonts/type1/public/amsfonts/cm/cmsy7.pfb><D:/MikTex/fonts/type1/public/amsfont
 s/cm/cmsy8.pfb>
-Output written on Procesadores-Lenguajes.pdf (23 pages, 1544424 bytes).
+Output written on Procesadores-Lenguajes.pdf (24 pages, 1549199 bytes).
 PDF statistics:
- 1269 PDF objects out of 1440 (max. 8388607)
- 339 named destinations out of 1000 (max. 500000)
- 224 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1294 PDF objects out of 1440 (max. 8388607)
+ 354 named destinations out of 1000 (max. 500000)
+ 232 words of extra memory for PDF output out of 10000 (max. 10000000)
 
