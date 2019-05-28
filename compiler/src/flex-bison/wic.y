@@ -87,7 +87,7 @@
 
 input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }*/
     | OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input
-    | /* empty */                               /*{ printf("No encuentro nada\n"); }*/
+    | /* empty */
 
 data_init: GLOBAL data_type
     | STATIC data_type
@@ -164,7 +164,7 @@ if_middle_block: if_middle_block
 
 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
 
-expr: ID ASSIGN expr                              { printf("Expresión (=)\n"); }
+expr: ID ASSIGN term                              { printf("Expresión (=)\n"); }
     | expr SUM term                               { printf("Expresión (Suma): %d\n", $1 + $3); $$ = $1 + $3;}
     | expr SUBSTRACT term                         { printf("Expresión (Resta): %d\n", $1 - $3); $$ = $1 - $3;}
     | INCREMENT ID                                { printf("Expresión (++ID)\n"); }

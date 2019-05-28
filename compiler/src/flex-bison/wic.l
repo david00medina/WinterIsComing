@@ -401,7 +401,7 @@ id                            {letter}({letter}|{digit})*
 <STRING_STATE>{string_val}    {
                                 memcpy(yylval.string, yytext, sizeof(yytext));
                                 //printf("%s is a STRING_VAL\n", yylval.string);
-                                return CHAR_VAL;
+                                return STRING_VAL;
                               }
 <STRING_STATE>\"              {
                                 //printf("%s is a STRING_QUOTE\n", yytext);
