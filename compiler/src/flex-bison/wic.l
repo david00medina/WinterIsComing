@@ -44,7 +44,7 @@ int_val                       {digit}+
 real_val                      ({digit}+\.){digit}*|\.{digit}+
 bool_val                      (true|false)
 char_val                      [^']?|(\\[nrtvb'"])
-string_val                    [^"]|(\\[nrtvb'"])
+string_val                    [^"]*|(\\[nrtvb'"])
 
 /* Tipos de dato */
 int_type                      (int)
@@ -384,7 +384,7 @@ id                            {letter}({letter}|{digit})*
                                 //printf("%s is a CHAR_VAL\n", yylval.character);
                                 return CHAR_VAL;
                               }
-<CHAR_STATE>'                 {
+<CHAR_STATE>\'                 {
                                 //printf("%s is a CHAR_QUOTE\n", yytext);
                                 //printf("CHAR_STATE_END\n");
                                 BEGIN(INITIAL);
