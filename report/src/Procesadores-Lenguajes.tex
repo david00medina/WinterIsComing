@@ -824,11 +824,124 @@ El estado de un analizador léxico es la situación en la que se encuentra a la 
 	\item[CHECK\_LVL] Este estado viene por defecto. En él, se comprueba el nivel en el que se encuentra el programa. Se llega a este estado al principio del programa o cuando se detecta un caracter de salto de línea. En todo estado de CHECK\_LVL, se comprueba el número de tabuladores (tomando el valor de un tabulador equivalente a cuatro espacios); con cada tabulador encontrado, se devuelve un token OPEN\_CONTEXT\_TAG si accedemos a un nivel estrictamente superior al que ya estábamos, y se devuelve CLOSE\_CONTEXT\_TAG si accedemos a un nivel estrictamente inferior al que ya estábamos. En caso de que ambos niveles sean exactamente iguales, no se devuelve ningún token, interpretando que no hay cambio de nivel.
 	\item[INITIAL] En este estado, los caracteres son interpretados normalmente y se generan los tokens correspondientes.
 	\item[COMMENT\_BLOCK] Este estado corresponde a los comentarios de bloque. Se llega a este estado cuando se detecta la expresión regular ",\.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta la expresión regular "\.,", se vuelve al estado INITIAL.
-	item[COMMENT\_LINE] Este estado corresponde a los comentarios de línea. Se llega a este estado cuando se detecta la expresión regular "\textbackslash{}.\textbackslash{}.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta , se vuelve al estado INITIAL.
+	\item[COMMENT\_LINE] Este estado corresponde a los comentarios de línea. Se llega a este estado cuando se detecta la expresión regular "\textbackslash{}.\textbackslash{}.". A partir de este estado, todos los caracteres serán considerados como parte de un comentario y no se tendrán en cuenta en la generación de tokens. Cuando se detecta , se vuelve al estado INITIAL.
 	\item[CHAR\_STATE] Este estado corresponde a los caracteres. Se llega a este estado cuando se detecta el caracter comilla simple ("\'"). En este estado, solo es permitido que aparezca como máximo un caracter o dos si el primero es la barra invertida ('\'). Cuando se detecta otro caracter comilla simple, se vuelve al estado INITIAL.
 	\item[STRING\_STATE] Este estado corresponde a las strings o cadenas de caracteres. Se llega a este estado cuando se detecta un caracter comillas dobles ("\""). A partir de este estado, todos los caracteres consecuentes formarán parte de una string. Cuando se detecta otro caracter comillas dobles, se vuelve al estado INITIAL.
 \end{description}
 
+\newpage
+
+\section{Análisis sintáctico}
+
+\subsection{El analizador sintáctico}
+
+El analizador sintáctico o parser constituye una representación intermedia del análisis de un programa. Su función es construir un árbol de análisis a partir de los componentes léxicos que recibe, aplicando las producciones de la gramática con el objetivo de comprobar la correctitud sintáctica del programa. Su salida es una representación de la cadena de componentes léxicos en forma de árbol sintáctico.
+\newline
+\newline
+Dicho de otro modo: el analizador sintáctico comprueba que el orden en que el analizador léxico le va entregando es válido, y para ello verifica que la cadena pueda ser generada por la gramática del lenguaje fuente.
+\newline
+\newline
+Otra de las funciones del analizador sintáctico es la de informar acerca de los errores en la sintaxis; recuperándose de los mismos, siempre que sea posible, para continuar procesando la entrada.
+
+\newpage
+
+\section{Descenso recursivo}
+
+\subsection{Introducción}
+
+El análisis sintáctico por descenso recursivo consiste en realizar un conjunto de procedimientos, uno para cada nodo no terminal. El algoritmo para un nodo terminal general tiene la siguiente estructura:
+
+\begin{lstlisting}
+	
+	void A () {
+		elegir una producción A, A -> X1X2...Xk;
+		for (i = 1 a k) {
+			if (X es un nodo no terminal) {
+				llamar al procedimiento Xi();
+			} else if (X es igual al símbolo de entrada actual a) {
+				avanzar la entrada hasta el siguiente símbolo;
+			} else {
+				/*No ha ocurrido ningún error*/
+			}
+		}
+	}
+	
+\end{lstlisting}
+
+Para volver recursivo este algoritmo, se elige más de una opción de producción. Para poder probar otra producción A, debemos establecer el apuntador de entrada a la posición inicial.
+
+\begin{lstlisting}
+
+void A () {
+	elegir una producción A|B, A -> X1X2...Xk, B -> Y1Y2...Yk;
+	for (i = 1 a k) {
+		if (X es un nodo no terminal) {
+			llamar al procedimiento Xi();
+		} else if (X es igual al símbolo de entrada actual a) {
+			avanzar la entrada hasta el siguiente símbolo;
+		} else {
+			return 1;
+		}
+	}
+}
+
+NOTA: el fallo del else (return 1) no sugiere que el análisis finaliza ahí.
+
+\end{lstlisting}
+
+\newpage
+
+\subsection{Ejemplo de análisis sintáctico por descenso recursivo}
+
+Tenemos un código formado por estas instrucciones
+
+\begin{lstlisting}
+
+	int i = 0
+	int sum = 0
+	5 > i ?? i++:
+		sum = sum + i
+	return sum
+	
+\end{lstlisting}
+
+A partir de este ejemplo, se generan los siguientes tokens:
+
+\begin{lstlisting}
+	
+	int i = 0 			-> INT_TYPE, ID, ASSIGN, INT_VAL, END_OF_INSTR
+	int sum = 0			-> INT_TYPE, ID, ASSIGN, INT_VAL, END_OF_INSTR
+	5 > i ?? i++:		-> INT_VAL, GREATER, ID, FOR_WHILE_CLAUSE, ID, INCREMENT, HEADER_END, END_OF_INSTR
+		sum = sum + i	-> ID, 	ASSIGN, ID, SUM, ID, END_OF_INSTR
+	return sum 			-> RETURN, ID, END_OF_INSTR
+	
+\end{lstlisting}
+
+En este caso en concreto, se harán uso de las siguientes gramáticas:
+
+\begin{lstlisting}
+
+	input 		:= instr END_OF_INSTR input | /*empty*/
+	instr 		:= data_init ID ASSIGN expr | for_instr | expr | /*empty*/
+	data_init 	:= data_type
+	data_type	:= INT_TYPE
+	expr 		:= expr SUM term | ID INCREMENT | term
+	for_instr	:= expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR input
+	term		:= power
+	power		:= factor
+	factor		:= data_value
+	data_value	:= INT_VAL
+
+\end{lstlisting}
+
+\newpage
+
+\section{Tabla de símbolos}
+
+\subsection{Introducción}
+
+La tabla de símbolos almacena la información que en cada momento se necesita sobre las variables del programa y otra información, como el nombre, el tipo, el tamaño... También sirve para guardar información referente a cualquier clase, enumerado, identificador, etc. creado por el usuario.
+
+La gestión de la tabla de símbolos es muy importante, ya que consume gran parte del tiempo de compilación; de ahí que su eficiencia sea crítica.
+
 \end{document}
-
-
