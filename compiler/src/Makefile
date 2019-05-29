@@ -7,7 +7,7 @@
 all:
 					mkdir build
 					$(MAKE) bison
-					$(MAKE) flex $(F)
+					$(MAKE) flex #$(F)
 					$(MAKE) compile
 
 bison:
@@ -19,10 +19,11 @@ flex:
 					mv lex.yy.c build
 
 compile:
-					gcc -o wic build/lex.yy.c build/wic.tab.c -lfl -lm
-					#gcc -c build/wic.tab.c build/lex.yy.c
-					#ar rvs wic.a wic.tab.o lex.yy.o
-					#g++ -std-c++=11 -Wall -Wextra main.cpp wic.a
+					#gcc -o wic build/lex.yy.c build/wic.tab.c -lfl -lm
+					g++ -std=gnu++11 -c build/wic.tab.c build/lex.yy.c
+					mv *.o build
+					ar rvs build/wic.a build/wic.tab.o build/lex.yy.o
+					g++ -std=gnu++11 -Wall -Wextra main.cpp build/wic.a -o wic
 					#mv *.a *.o build
 
 clean:

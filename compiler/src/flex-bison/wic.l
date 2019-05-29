@@ -14,11 +14,12 @@
 
     #include <string.h>
     #include "wic.tab.h"
+
     int level = 0;
     int enter_special = 1;
 
     /* Declaraciones de funciones */
-    int countTabs(char* pattern);
+
     int countSpaces(char* pattern);
 
 %}
@@ -67,7 +68,6 @@ id                            {letter}({letter}|{digit})*
 %%
   if (enter_special) {
     BEGIN(CHECK_LVL);
-    printf("Inicio, %d", YY_START);
     enter_special = 0;
   }
 
@@ -135,6 +135,8 @@ id                            {letter}({letter}|{digit})*
                               }
 {void}                        {
                                 //printf("%s is a VOID\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
                                 return VOID;
                               }
 {fun}                         {
@@ -164,9 +166,9 @@ id                            {letter}({letter}|{digit})*
                                 return REAL_VAL;
                               }
 {bool_val}                    {
-                                if (strcmp("true", yytext) == 0) yylval.bool = '\x01';
-                                else yylval.bool = '\x00';
-                                //printf("%d is a BOOL_VAL\n", yylval.bool);
+                                if (strcmp("true", yytext) == 0) yylval.boolean = '\x01';
+                                else yylval.boolean = '\x00';
+                                //printf("%d is a BOOL_VAL\n", yylval.boolean);
                                 return BOOL_VAL;
                               }
 
@@ -174,18 +176,26 @@ id                            {letter}({letter}|{digit})*
    /* Reglas segun el tipo de dato */
 {int_type}                    {
                                 //printf("%s is a INT_TYPE\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
                                 return INT_TYPE;
                               }
 {real_type}                   {
                                 //printf("%s is a REAL_TYPE\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
                                 return REAL_TYPE;
                               }
 {bool_type}                   {
                                 //printf("%s is a BOOL_TYPE\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
                                 return BOOL_TYPE;
                               }
 {char_type}                   {
                                 //printf("%s is a CHAR_TYPE\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
                                 return CHAR_TYPE;
                               }
 
@@ -368,6 +378,8 @@ id                            {letter}({letter}|{digit})*
   /* Identificador */
 {id}                          {
                                 //printf("%s is a ID\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
                                 return ID;
                               }
 
@@ -454,21 +466,6 @@ id                            {letter}({letter}|{digit})*
 %%
 
 /* Funciones y declaraciones auxiliares */
-
-/*void countContextLevel(char* pattern) {
-  level += countTabs(pattern);
-  level += countSpaces(pattern);
-}*/
-
-int countTabs(char* pattern) {
-  int i = 0;
-  int total = 0;
-  while (pattern[i] != '\0') {
-    if (pattern[i] == '\t') total++;
-    i++;
-  }
-  return total;
-}
 
 int countSpaces(char* pattern) {
   int i = 0;

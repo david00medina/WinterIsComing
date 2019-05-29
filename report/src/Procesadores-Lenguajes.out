@@ -19,3 +19,13 @@
 \BOOKMARK [2][-]{subsection.2.1}{Introducci\363n}{section.2}% 19
 \BOOKMARK [2][-]{subsection.2.2}{Tabla de tokens}{section.2}% 20
 \BOOKMARK [2][-]{subsection.2.3}{Estados}{section.2}% 21
+\BOOKMARK [1][-]{section.3}{An\341lisis sint\341ctico}{}% 22
+\BOOKMARK [2][-]{subsection.3.1}{El analizador sint\341ctico}{section.3}% 23
+\BOOKMARK [2][-]{subsection.3.2}{Ejemplo de an\341lisis sint\341ctico}{section.3}% 24
+\BOOKMARK [1][-]{section.4}{Descenso recursivo}{}% 25
+\BOOKMARK [2][-]{subsection.4.1}{Introducci\363n}{section.4}% 26
+\BOOKMARK [2][-]{subsection.4.2}{Ejemplo de an\341lisis sint\341ctico por descenso recursivo}{section.4}% 27
+\BOOKMARK [1][-]{section.5}{Tabla de s\355mbolos}{}% 28
+\BOOKMARK [2][-]{subsection.5.1}{Introducci\363n}{section.5}% 29
+\BOOKMARK [2][-]{subsection.5.2}{Operaciones de la tabla de s\355mbolos}{section.5}% 30
+\BOOKMARK [2][-]{subsection.5.3}{Ejemplo de uso de la tabla de s\355mbolos}{section.5}% 31
