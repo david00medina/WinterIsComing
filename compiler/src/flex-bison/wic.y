@@ -132,7 +132,7 @@ fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADE
 fun_body: OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
     | /* empty */
 
-fun_call: ID PARETHESES_OPEN comma_exp PARETHESES_CLOSE         { printf("Función llamada (nombre=%s)\n"); }
+fun_call: ID PARETHESES_OPEN comma_exp PARETHESES_CLOSE         { printf("Función llamada (nombre=%s)\n", $1); }
 
 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
       input
@@ -226,14 +226,14 @@ power: power RADICAL factor                       { printf("Potencia/Raiz (Raíz
 
 factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión parentesis): %d\n", $2); $$ = $2; }
     | SUBSTRACT factor                            { printf("Factor (Numero negativo): %d\n", -$2); $$ = -$2; }
-    | data_value                                  { printf("Factor (DATA_VALUE): %d\n"); }
-    | ID                                          { printf("Factor (ID): %d\n"); }
+    | data_value                                  { printf("Factor (DATA_VALUE): %d\n", $1); }
+    | ID                                          { printf("Factor (ID): %d\n", $1); }
 
 data_value: INT_VAL                               { printf("Factor (Numero): %d\n", $1); $$ = $1; }
-    | REAL_VAL                                    { printf("Factor (REAL): %d\n"); }
-    | BOOL_VAL                                    { printf("Factor (BOOLEAN): %d\n"); }
-    | CHAR_QUOTE CHAR_VAL CHAR_QUOTE              { printf("Factor (CARACTER): %d\n"); }
-    | STRING_QUOTE STRING_VAL STRING_QUOTE        { printf("Factor (STRING): %d\n"); }
+    | REAL_VAL                                    { printf("Factor (REAL): %d\n", $1); }
+    | BOOL_VAL                                    { printf("Factor (BOOLEAN): %d\n", $1); }
+    | CHAR_QUOTE CHAR_VAL CHAR_QUOTE              { printf("Factor (CARACTER): %d\n", $2); }
+    | STRING_QUOTE STRING_VAL STRING_QUOTE        { printf("Factor (STRING): %d\n", $2); }
 
 data_vector: CURLY_BRACKET_OPEN comma_exp CURLY_BRACKET_CLOSE        { printf("Factor (VECTOR): %d\n"); }
 
