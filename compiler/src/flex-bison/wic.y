@@ -123,14 +123,11 @@ comma_exp: comma_exp ELEM_SEPARATOR comma_exp     { printf("Función llamada (,)
     | expr                                        { printf("Función llamada (término)\n"); }
 
 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR
-      fun_body                                    { printf("Función (tipo=%s,nombre=%s)\n", $2, $3); }
+      input                                    { printf("Función (tipo=%s,nombre=%s)\n", $2, $3); }
     | FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR
-      fun_body                                    { printf("Función (tipo=%s,nombre=%s)\n", $2, $3); }
+      input                                    { printf("Función (tipo=%s,nombre=%s)\n", $2, $3); }
     | FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR { printf("Función (tipo=%s,nombre=%s)\n", $2, $3); }
     | FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR { printf("Función (tipo=%s,nombre=%s)\n", $2, $3); }
-
-fun_body: OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-    | /* empty */
 
 fun_call: ID PARETHESES_OPEN comma_exp PARETHESES_CLOSE         { printf("Función llamada (nombre=%s)\n", $1); }
 
