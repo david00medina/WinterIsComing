@@ -856,7 +856,7 @@
 	
 	\subsection{Ejemplo de análisis sintáctico}
 	
-	Esta instrucción genera los siguientes tokens
+	Esta instrucción genera los siguientes tokens:
 	
 	\begin{lstlisting}
 	
@@ -868,8 +868,8 @@
 	
 	\begin{lstlisting}
 	
-	input 		:= instr END_OF_INSTR input | /*empty*/
-	instr 		:= data_init ID ASSIGN expr /*empty*/
+	input 		:= instr END_OF_INSTR input | instr END_OF_INSTR
+	instr 		:= data_init ID ASSIGN expr
 	data_init 	:= data_type
 	data_type	:= INT_TYPE
 	expr 		:= INT_VAL
@@ -944,29 +944,15 @@
 	
 	\newpage
 	
+	
+	
 	\subsection{Ejemplo de análisis sintáctico por descenso recursivo}
 	
-	Tenemos un código formado por estas instrucciones
+	Esta instrucción genera los siguientes tokens:
 	
 	\begin{lstlisting}
 	
-	int i = 0
-	int sum = 0
-	5 > i ?? i++:
-	sum = sum + i
-	return sum
-	
-	\end{lstlisting}
-	
-	A partir de este ejemplo, se generan los siguientes tokens:
-	
-	\begin{lstlisting}
-	
-	int i = 0 			-> INT_TYPE, ID, ASSIGN, INT_VAL, END_OF_INSTR
-	int sum = 0			-> INT_TYPE, ID, ASSIGN, INT_VAL, END_OF_INSTR
-	5 > i ?? i++:		-> INT_VAL, GREATER, ID, FOR_WHILE_CLAUSE, ID, INCREMENT, HEADER_END, END_OF_INSTR
-	sum = sum + i		-> ID, 	ASSIGN, ID, SUM, ID, END_OF_INSTR
-	return sum 			-> RETURN, ID, END_OF_INSTR
+	5 > i ?? i++:	-> INT_VAL, GREATER, ID, FOR_WHILE_CLAUSE, ID, INCREMENT, HEADER_END, END_OF_INSTR
 	
 	\end{lstlisting}
 	
@@ -974,16 +960,11 @@
 	
 	\begin{lstlisting}
 	
-	input 		:= instr END_OF_INSTR input | /*empty*/
-	instr 		:= data_init ID ASSIGN expr | for_instr | expr | /*empty*/
-	data_init 	:= data_type
-	data_type	:= INT_TYPE
-	expr 		:= expr SUM term | ID INCREMENT | term
+	input 		:= instr END_OF_INSTR input | instr END_OF_INSTR
+	instr 		:= for_instr
 	for_instr	:= expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR input
-	term		:= power
-	power		:= factor
-	factor		:= data_value
-	data_value	:= INT_VAL
+	expr 		:= expr SUM term | ID INCREMENT | term
+	term		:= INT_VAL
 	
 	\end{lstlisting}
 	
@@ -994,7 +975,86 @@
 	\subsection{Introducción}
 	
 	La tabla de símbolos almacena la información que en cada momento se necesita sobre las variables del programa y otra información, como el nombre, el tipo, el tamaño... También sirve para guardar información referente a cualquier clase, enumerado, identificador, etc. creado por el usuario.
-	
+	\newline
 	La gestión de la tabla de símbolos es muy importante, ya que consume gran parte del tiempo de compilación; de ahí que su eficiencia sea crítica.
+	\newline
+	Respecto a las variables de usuario, la información que puede ser almacenada en la tabla de símbolos se divide en:
+	
+	\begin{description}
+		
+		\item[Nombre] Se puede hacer con o sin límite. Si se hace con límite, emplearemos una longitud fija para cada variable, lo cual aumenta la velocidad de creación, pero limita la longitud en unos casos, y desperdicia espacio en la mayoría. Otro método es habilitar la memoria que necesitemos en cada caso para guardar el nombre.\newline
+		\item[Tipo] Tipo de dato de la variable.\newline
+		\item[Dirección de memoria] Esta dirección es necesaria, porque las instrucciones que referencian a una variable deben saber donde encontrar el valor de esa variable en tiempo de ejecución, también cuando se trata de variables globales.\newline
+		\item[Número de dimensiones de una variable array, o el de parámetros de una función o procedimiento y tipo de cada uno de ellos] Puede ser útil para el chequeo semántico.\newline
+		
+	\end{description}
+
+	\newpage
+	
+	\subsection{Operaciones de la tabla de símbolos}
+
+	La tabla de símbolos consta de una estructura llamada símbolo. Las operaciones que puede realizar son:
+	
+	\begin{description}
+		
+		\item[Crear] Crea una tabla vacía.\newline
+		\item[Insertar] Añade un nodo a la cabeza de la tabla.\newline
+		\item[Buscar] Busca el nodo que contiene el nombre pasado por parámetro.\newline
+		\item[Imprimir] Devuelve una lista con los valores que tiene los identificadores de usuario, recorriendo la tabla de símbolos.\newline
+		
+	\end{description}
+
+	\subsection{Ejemplo de uso de la tabla de símbolos}
+	
+	Suponemos que queremos hacer las siguientes operaciones:
+	
+		a = 7 * 3
+		b = 3 * a
+		a = a + b
+	
+	En la segunda instrucción necesitamos saber cuanto vale 'a'; es decir, el valor de 'a' debe estar guardado en algún sitio. Para ello utilizaremos una lista de pares nombre, valor; de forma que, cuando nos encontremos con la instrucción a = 7 * 3, miremos en la tabla y, si no está 'a' en la tabla, creamos un nodo para introducirla.
+	\newline
+	\begin{table}[H]
+		\begin{center}
+			\begin{tabular}{l|l}
+				\toprule
+				\textbf{Nombre} & \textbf{Valor}\\
+				\midrule
+				a	& 	21\\
+				\bottomrule
+			\end{tabular}
+		\end{center}
+	\end{table}
+	\newline
+	A continuación nos encontramos con b = 3 * a. Buscamos 'a' en la tabla de símbolos y vemos que el valor de 'a' es 21. Ahora buscamos 'b' en la tabla de símbolos y como no está lo creamos.
+	\newline
+	\begin{table}[H]
+		\begin{center}
+			\begin{tabular}{l|l}
+				\toprule
+				\textbf{Nombre} & \textbf{Valor}\\
+				\midrule
+				a	& 	21\\
+				b	&	63\\
+				\bottomrule
+			\end{tabular}
+		\end{center}
+	\end{table}
+	\newline
+	Ejecutamos ahora la instrucción a = a + b. Tendríamos a 'a' y 'b' en la tabla de símbolos con lo cual solo tendríamos que modificar	el valor de 'a'.
+	\newline
+	\begin{table}[H]
+		\begin{center}
+			\begin{tabular}{l|l}
+				\toprule
+				\textbf{Nombre} & \textbf{Valor}\\
+				\midrule
+				a	& 	84\\
+				b	&	63\\
+				\bottomrule
+			\end{tabular}
+		\end{center}
+	\end{table}
+	\newline
 	
 \end{document}
