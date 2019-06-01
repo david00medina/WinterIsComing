@@ -1,28 +1,37 @@
+#ifndef SYMBOL_HPP
+#define SYMBOL_HPP
+
 typedef enum {
-  INT, REAL, BOOL, CHAR, STRING, ARRAY_INT, ARRAY_REAL, ARRAY_BOOL
+    INT,
+    REAL,
+    BOOL,
+    CHAR,
+    VOID,
+    STRING,
+    ARRAY_INT,
+    ARRAY_REAL,
+    ARRAY_BOOL,
+    FUNCTION
 } data_type;
 
-typedef struct {
-  char* name;
-  data_type data_type;
-  uint32_t offset;
-  uint32_t addr;
-  bool isGlobal;
-  bool isStatic;
-  uint32_t scope;
+typedef struct variable {
+    data_type type;
+    unsigned int offset;
+    unsigned int array_size;
+    unsigned int addr;
 } variable;
 
-typedef struct {
-  variable var;
-  uint32_t next;
-} variable_list;
+typedef struct param_list {
+    variable var;
+    struct param_list* next;
+} param_list;
 
-typede struct {
-  char* label;
-  data_type return_type;
-  variable_list local_vars;
-  variable_list static_vars;
-  uint32_t init_addr;
-  uint32_t return_addr;
-  uint32_t scope;
+typedef struct function {
+    data_type return_type;
+    unsigned int params_no;
+    param_list params;
+    unsigned int init_addr;
+    unsigned int return_addr;
 } function;
+
+#endif

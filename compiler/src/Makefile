@@ -23,7 +23,7 @@ compile:
 					g++ -std=gnu++11 -c build/wic.tab.c build/lex.yy.c
 					mv *.o build
 					ar rvs build/wic.a build/wic.tab.o build/lex.yy.o
-					g++ -std=gnu++11 -Wall -Wextra main.cpp build/wic.a -o wic
+					g++ -std=gnu++11 -Wall -Wextra main.cpp build/wic.a symbol-table/wic.table.cpp -o wic
 					#mv *.a *.o build
 
 clean:
