@@ -598,17 +598,17 @@
 		\item [Interacción entrada-salida] Las funciones básicas de E/S son:
 		\begin{description}
 			
-			\item[\texttt{bool print(T salida)}] Esta función permite mostrar por pantalla el valor de \texttt{salida}, cuyo tipo \texttt{T} puede ser \texttt{int, real, bool, char} o una string (\texttt{char[]}). Si la operación termina correctamente la primitiva devolverá \texttt{true}, en caso contrario, devuelve \texttt{false}.
-			\item[\texttt{T scan(T entrada)}] Esta rutina permite leer el valor pasado por teclado una vez se pulse \texttt{ENTER} (\texttt{0x0D}). Si la operación termina satisfactoriamente la primitiva devolverá un valor de tipo  \texttt{T}, y en caso de que no se especifique, devuelve el valor en formato \texttt{string}.
+			\item[\texttt{bool print(T salida)}] Esta función permite mostrar por pantalla el valor de \texttt{salida}, cuyo tipo \texttt{T} puede ser \texttt{int (\%d), real(\%r), bool(\%b), char(\%c)} o una string (\texttt{\%s}). Si la operación termina correctamente la primitiva devolverá \texttt{true}, en caso contrario, devuelve \texttt{false}.
+			\item[\texttt{T scan(T entrada)}] Esta rutina permite leer el valor pasado por teclado una vez se pulse \texttt{ENTER} (\texttt{0x0D}). Si la operación termina satisfactoriamente la primitiva devolverá un valor de tipo  \texttt{T}, y en caso de que no se especifique, devuelve el valor en formato \texttt{string}. Por defecto se lee como una String, pero se le puede indicar que tipo de dato se quiere leer: \%d , \%r , \%b , \%c o \%s.
 			
 			\begin{lstlisting}[caption=Ejemplo de uso de la función \texttt{print()} y \texttt{scan()}]
 			int number
 			char[] name
 			print("Introduzca el primer número: ")
-			a = scan()
+			number = scan(%d)
 			print("¿Cuál es su nombre? ")
-			name = scan()
-			print("El usuario " + name + " ha introducido el número " + number)
+			name = scan(%s)
+			print("El usuario %s ha introducido el número %d'', name, number)
 			\end{lstlisting}
 		\end{description}
 		
@@ -1010,9 +1010,9 @@
 	
 	Suponemos que queremos hacer las siguientes operaciones:
 	
-		a = 7 * 3
-		b = 3 * a
-		a = a + b
+		a = 7 * 3 \\
+		b = 3 * a \\
+		a = a + b \\
 	
 	En la segunda instrucción necesitamos saber cuanto vale 'a'; es decir, el valor de 'a' debe estar guardado en algún sitio. Para ello utilizaremos una lista de pares nombre, valor; de forma que, cuando nos encontremos con la instrucción a = 7 * 3, miremos en la tabla y, si no está 'a' en la tabla, creamos un nodo para introducirla.
 	\newline
