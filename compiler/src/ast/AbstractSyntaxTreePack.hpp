@@ -44,6 +44,7 @@ namespace wic
         int int_val;
         float real_val;
         bool bool_val;
+        char char_val;
         char* str_val;
         int* int_array_val;
         float* real_array_val;

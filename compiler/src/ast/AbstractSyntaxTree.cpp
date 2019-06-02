@@ -23,14 +23,14 @@ namespace wic
     }
 
 
-    void AbstractSyntaxTree::connect(ASTNode * ptr1, ASTNode** ptr2, ASTNode* ptr3)
+    void AbstractSyntaxTree::connect(ASTNode* ptr1, ASTNode** ptr2, ASTNode* ptr3)
     {
         node->ptr1 = ptr1;
         node->ptr2 = ptr2;
         node->ptr3 = ptr3;
     }
 
-    void AbstractSyntaxTree::add_args(wic::ASTNode** args)
+    void AbstractSyntaxTree::add_args(ASTNode** args)
     {
         node->args = args;
     }

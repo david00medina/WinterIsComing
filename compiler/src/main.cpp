@@ -54,6 +54,34 @@ int main(int argc, char const **argv) {
         cg.set_path(mid_code_path);
 
         cg.init();
+
+
+        wic::ASTNode node1;
+        std::string n1("node1");
+        node1.id = n1;
+        node1.data_v.str_val = "rojo";
+
+        wic::ASTNode node2;
+        std::string n2("node2");
+        node2.id = n2;
+        node2.data_v.int_val = 45;
+
+        wic::ASTNode node3;
+        std::string n3("node3");
+        node3.id = n3;
+        node3.data_v.char_val = 'n';
+
+        wic::ASTNode node4;
+        std::string n4("node4");
+        node4.id = n4;
+        node4.data_v.real_val = 5.457f;
+
+        wic::ASTNode node5;
+        std::string n5("node5");
+        node5.id = n5;
+        node5.data_v.bool_val = true;
+
+        cg.print("caballo loco %s loquisimo, %d, %c, %r, %b", 4, node1, node2, node3, node4, node5);
         cg.end();
     }
 

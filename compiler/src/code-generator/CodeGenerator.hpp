@@ -1,28 +1,39 @@
 #ifndef CODEGENERATOR_HPP
 #define CODEGENERATOR_HPP
 
+#include <cstdarg>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "CodeGeneratorPack.hpp"
+#include "../ast/AbstractSyntaxTree.hpp"
 
 namespace wic {
     class CodeGenerator {
     private:
-        std::fstream fout;
-        unsigned int num_label;
+        std::string path;
+        std::fstream fout, fcode, fdata;
+        fstream_p file_p;
+        label_c label;
 
         const std::string initial_spacing = "        ";
-        const std::string instr_spacing = "     ";
+        const std::string instr_spacing = "\t";
+        const std::string code_label = "C";
+        const std::string data_label = "D";
+
+        void save_fstream_p(section_enum);
+        void load_fstream_p(section_enum);
+        std::string get_label(section_enum);
 
     public:
-        CodeGenerator() : fout(nullptr), num_label(0) {};
-        CodeGenerator(const std::string);
+        CodeGenerator();
+        CodeGenerator(const std::string&);
         ~CodeGenerator() = default;
 
         void set_path(const std::string);
 
         void init();
-        void print(std::string, void**);
+        void print(std::string, unsigned int, ...);
         void end();
     };
 }

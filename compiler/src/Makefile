@@ -27,7 +27,7 @@ compile:
 					#mv *.a *.o build
 
 clean:
-					rm -rf build wic
+					rm -rf build wic christian.s
 
 # "No rule to make target" T si no encuentra ni puede crear T.
 # Por supuesto, no regenera milex si no es necesario.

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include "ASTPack.hpp"
+#include "AbstractSyntaxTreePack.hpp"
 
 namespace wic
 {
