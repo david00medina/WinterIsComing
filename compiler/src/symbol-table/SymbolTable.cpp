@@ -1,4 +1,4 @@
-#include "wic.table.hpp"
+#include "SymbolTable.hpp"
 
 namespace wic
 {

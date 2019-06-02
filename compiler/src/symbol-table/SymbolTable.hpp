@@ -1,8 +1,8 @@
 #ifndef WIC_TABLE_HPP
 #define WIC_TABLE_HPP
 
-#include "symbol.hpp"
 #include <iostream>
+#include "SymbolTablePack.hpp"
 
 #define MAX_ENTRIES 128
 #define TYPE_NUM 10
@@ -20,18 +20,18 @@ namespace wic
         TableEntry* next;
 
         const char* type_data_str[TYPE_NUM] =
-                {
-                        "int",
-                        "real",
-                        "bool",
-                        "char",
-                        "void",
-                        "string",
-                        "array_int",
-                        "array_real",
-                        "array_bool",
-                        "function"
-                };
+            {
+                    "int",
+                    "real",
+                    "bool",
+                    "char",
+                    "void",
+                    "string",
+                    "array_int",
+                    "array_real",
+                    "array_bool",
+                    "function"
+            };
 
     public:
         TableEntry() { next = nullptr; }
@@ -82,6 +82,22 @@ namespace wic
     public:
         LSymbolTable() = default;
         ~LSymbolTable() = default;
+    };
+
+
+    class GSymbolTable : public SymbolTable
+    {
+    public:
+        GSymbolTable() = default;
+        ~GSymbolTable() = default;
+    };
+
+
+    class SSymbolTable : public SymbolTable
+    {
+    public:
+        SSymbolTable() = default;
+        ~SSymbolTable() = default;
     };
 }
 

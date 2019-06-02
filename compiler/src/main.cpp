@@ -1,6 +1,7 @@
 #include <iostream>
-#include "symbol-table/symbol.hpp"
-#include "symbol-table/wic.table.hpp"
+#include "symbol-table/SymbolTable.hpp"
+#include "symbol-table/SymbolTablePack.hpp"
+#include "code-generator/CodeGenerator.hpp"
 
 
 extern int yylex();
@@ -10,8 +11,8 @@ extern FILE *yyin;
 extern int yylineno;
 
 int main(int argc, char const **argv) {
-    variable var;
-    var.type = ARRAY_INT;
+    wic::variable var;
+    var.type = wic::ARRAY_INT;
     var.offset = 4;
     var.addr = 1;
 
@@ -37,11 +38,23 @@ int main(int argc, char const **argv) {
 
     lst.show(0);
 
+    wic::CodeGenerator cg;
+
     if (argc > 1) {
         if (!(yyin = fopen(argv[1], "r"))) {
             perror(argv[1]);
             return(1);
         }
+
+        const char* arg;
+        if (argc == 3) arg = argv[2];
+        else arg = argv[0];
+
+        const std::string mid_code_path(arg);
+        cg.set_path(mid_code_path);
+
+        cg.init();
+        cg.end();
     }
 
     int result = 1;
