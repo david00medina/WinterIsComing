@@ -21,6 +21,7 @@ namespace wic
                 GSymbolTable*, SSymbolTable*, LSymbolTable*);
         void connect(ASTNode*, ASTNode**, ASTNode*);
         void add_args(ASTNode**);
+        void toCode();
     };
 }
 

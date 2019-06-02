@@ -34,4 +34,9 @@ namespace wic
     {
         node->args = args;
     }
+
+    void AbstractSyntaxTree::toCode()
+    {
+        // TODO: Aquí generaremos todo el código en ensamblador a partir del AST
+    }
 }
