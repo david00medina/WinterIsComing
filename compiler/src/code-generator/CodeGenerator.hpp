@@ -17,17 +17,15 @@ namespace wic {
         label_c label;
 
         const std::string initial_spacing = "        ";
-        const std::string instr_spacing = "\t";
+        const std::string instr_spacing = "\t\t";
         const std::string code_label = "C";
         const std::string data_label = "D";
 
-        void save_fstream_p(section_enum);
-        void load_fstream_p(section_enum);
         std::string get_label(section_enum);
 
     public:
         CodeGenerator();
-        CodeGenerator(const std::string&);
+        CodeGenerator(const std::string);
         ~CodeGenerator() = default;
 
         void set_path(const std::string);

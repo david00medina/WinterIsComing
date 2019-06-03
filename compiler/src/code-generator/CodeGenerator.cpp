@@ -7,55 +7,27 @@ namespace wic
 {
     CodeGenerator::CodeGenerator() : fout(nullptr)
     {
-//        fdata.open("data.s", fstream::in | fstream::out | fstream::app);
-//        fcode.open("code.s", fstream::in | fstream::out | fstream::app);
+        fdata.open("data.s", std::ios::in | std::ios::out | std::ios::app);
+        fcode.open("code.s", std::ios::in | std::ios::out | std::ios::app);
+
         file_p.data_p = 0;
         file_p.code_p = 0;
+
         label.code_l = 0;
         label.data_l = 0;
     }
 
-    CodeGenerator::CodeGenerator(const std::string &path) : path(path)
+    CodeGenerator::CodeGenerator(const std::string path) : path(path)
     {
-        fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::trunc);
-//        fdata.open("data.s", fstream::in | fstream::out | fstream::app);
-//        fcode.open("code.s", fstream::in | fstream::out | fstream::app);
+        fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::app);
+        fdata.open("data.s", std::ios::in | std::ios::out | std::ios::app);
+        fcode.open("code.s", std::ios::in | std::ios::out | std::ios::app);
+
         file_p.data_p = 0;
         file_p.code_p = 0;
+
         label.code_l = 0;
         label.data_l = 0;
-    }
-
-    void CodeGenerator::save_fstream_p(section_enum selector)
-    {
-        switch (selector)
-        {
-            case DATA:
-                file_p.data_p = fout.tellp();
-                std::cout << "DATA SAVE: " << file_p.data_p << std::endl;
-                break;
-            case CODE:
-                file_p.code_p = fout.tellp();
-                std::cout << "CODE SAVE: " << file_p.code_p << std::endl;
-                break;
-        }
-    }
-
-    void CodeGenerator::load_fstream_p(section_enum selector)
-    {
-        switch (selector)
-        {
-            case DATA:
-                std::cout << "DATA LOAD: " << file_p.data_p << std::endl;
-                fout.seekp(file_p.data_p);
-                fout.seekg(file_p.data_p);
-                break;
-            case CODE:
-                std::cout << "CODE LOAD: " << file_p.code_p << std::endl;
-                fout.seekp(file_p.code_p);
-                fout.seekg(file_p.code_p);
-                break;
-        }
     }
 
     std::string CodeGenerator::get_label(section_enum selector)
@@ -67,28 +39,20 @@ namespace wic
             case CODE:
                 return code_label + std::to_string(label.code_l++);
         }
+        return nullptr;
     }
 
     void CodeGenerator::set_path(const std::string path)
     {
         this->path = path;
-        fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::trunc);
+        fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::app);
     }
 
     void CodeGenerator::init()
     {
-        /*fcode << initial_spacing <<".text" << std::endl;
+        fcode << initial_spacing <<".text" << std::endl;
         fcode << initial_spacing << ".global main" << std::endl << std::endl;
-        fcode << "main:" << std::endl;*/
-        save_fstream_p(DATA);
-
-        fout << std::endl;
-
-        fout << initial_spacing <<".text" << std::endl;
-        fout << initial_spacing << ".global main" << std::endl << std::endl;
-        fout << "main:" << std::endl;
-
-        save_fstream_p(CODE);
+        fcode << "main:" << std::endl;
     }
 
     void CodeGenerator::print(std::string msg, unsigned int argc, ...)
@@ -110,7 +74,18 @@ namespace wic
 
                 if (m.str(0) == "%s") ss << node->data_v.str_val;
 
-                else if (m.str(0) == "%c") ss << node->data_v.char_val;
+                else if (m.str(0) == "%c")
+                {
+                    if (node->data_v.char_val == '\n') ss << "\\n";
+                    if (node->data_v.char_val == '\r') ss << "\\r";
+                    if (node->data_v.char_val == '\b') ss << "\\b";
+                    if (node->data_v.char_val == '\t') ss << "\\t";
+                    if (node->data_v.char_val == '\a') ss << "\\a";
+                    if (node->data_v.char_val == '\v') ss << "\\v";
+                    if (node->data_v.char_val == '\f') ss << "\\f";
+                    if (node->data_v.char_val == '\0') ss << "\\0";
+                    else ss << node->data_v.char_val;
+                }
 
                 else if (m.str(0) == "%d") ss << node->data_v.int_val;
 
@@ -130,38 +105,44 @@ namespace wic
 
         std::string label = get_label(DATA);
 
-        /*fdata << label <<":\n";
-        fdata << initial_spacing << ".asciiz " << "\"" << msg << "\"" << char(10);
+        fdata << label <<":" << std::endl;
+        fdata << initial_spacing << ".asciz " << "\"" << msg << "\"" << std::endl << std::endl;
 
-        fcode << initial_spacing << "mov" << instr_spacing << "$" + label << ", %edi" << char(10);
-        fcode << initial_spacing << "call" << instr_spacing << "puts" << char(10) << char(10);*/
-
-        load_fstream_p(DATA);
-        fout << label <<":" << std::endl;
-        fout << initial_spacing << ".asciiz " << "\"" << msg << "\"" << std::endl;
-        save_fstream_p(DATA);
-
-        load_fstream_p(CODE);
-        fout << initial_spacing << "mov" << instr_spacing << "$" + label << ", %edi" << std::endl;
-        fout << initial_spacing << "call" << instr_spacing << "puts" << std::endl << std::endl;
-        save_fstream_p(CODE);
+        fcode << initial_spacing << "mov" << instr_spacing << "$" + label << ", %edi" << std::endl;
+        fcode << initial_spacing << "call" << instr_spacing << "puts" << std::endl << std::endl;
 
         va_end(argv);
-
-
     }
 
     void CodeGenerator::end()
     {
+        fcode << initial_spacing << "mov" << instr_spacing << "$60" << ", %eax" << std::endl;
+        fcode << initial_spacing << "xor" << instr_spacing << "%edi" << ", %edi" << std::endl;
+        fcode << initial_spacing << "syscall" << std::endl;
 
-//        fout << fdata.rdbuf();
-//        fout << fcode.rdbuf();
+        char ch;
 
-//        fdata.close();
-//        fcode.close();
+        fdata.seekg(0);
+        fdata.seekp(0);
+        while(!fdata.eof())
+        {
+            fdata.get(ch);
+            fout << ch;
+        }
+        fdata.close();
+
+        fcode.seekg(0);
+        fcode.seekp(0);
+        while(!fcode.eof())
+        {
+            fcode.get(ch);
+            fout << ch;
+        }
+        fcode.close();
+
         fout.close();
 
-//        std::remove("data.s");
-//        std::remove("code.s");
+        std::remove("data.s");
+        std::remove("code.s");
     }
 }

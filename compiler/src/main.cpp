@@ -59,7 +59,7 @@ int main(int argc, char const **argv) {
         wic::ASTNode node1;
         std::string n1("node1");
         node1.id = n1;
-        node1.data_v.str_val = "rojo";
+        node1.data_v.str_val = (char*)"rojo";
 
         wic::ASTNode node2;
         std::string n2("node2");
@@ -69,7 +69,7 @@ int main(int argc, char const **argv) {
         wic::ASTNode node3;
         std::string n3("node3");
         node3.id = n3;
-        node3.data_v.char_val = 'n';
+        node3.data_v.char_val = '\n';
 
         wic::ASTNode node4;
         std::string n4("node4");
@@ -101,5 +101,5 @@ int main(int argc, char const **argv) {
 
 /* Funciones auxiliares */
 void yyerror(char const *x) {
-    printf("[!] Error %s\n", x);
+    printf("[!] Error :  %s\n", x);
 }
