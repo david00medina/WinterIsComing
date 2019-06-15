@@ -32,6 +32,7 @@ namespace wic {
 
         void init();
         void print(std::string, unsigned int, ...);
+        void exit();
         void end();
     };
 }

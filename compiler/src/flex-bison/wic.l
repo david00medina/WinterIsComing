@@ -12,11 +12,15 @@
 
     /* Declaraciones */
 
-    #include <string.h>
+    #include <string>
+    #include "../symbol-table/SymbolTablePack.hpp"
+    #include "../ast/AbstractSyntaxTree.hpp"
     #include "wic.tab.h"
 
     int level = 0;
     int enter_special = 1;
+
+    wic::ASTNode* node;
 
     /* Declaraciones de funciones */
 
@@ -44,8 +48,8 @@ static                        (static)
 int_val                       {digit}+
 real_val                      ({digit}+\.){digit}*|\.{digit}+
 bool_val                      (true|false)
-char_val                      [^']?|(\\[nrtvb'"])
-string_val                    [^"]*|(\\[nrtvb'"])
+char_val                      [^']?|(\\[nrtvba0'"\\])
+string_val                    [^"]*
 
 /* Tipos de dato */
 int_type                      (int)
@@ -113,6 +117,7 @@ id                            {letter}({letter}|{digit})*
                                 BEGIN(CHECK_LVL);
                                 yyless(0);
                                 printf("Nueva línea\n");
+                                yylineno++;
                                 return END_OF_INSTR;
                               }
 
@@ -134,13 +139,9 @@ id                            {letter}({letter}|{digit})*
                                 return RETURN;
                               }
 {void}                        {
-                                //printf("%s is a VOID\n", yytext);
-                                yylval.string = (char*)malloc(yyleng);
-                                strcpy(yylval.string, yytext);
                                 return VOID;
                               }
 {fun}                         {
-                                //printf("%s is a FUN\n", yytext);
                                 return FUN;
                               }
 {global}                      {
@@ -155,47 +156,38 @@ id                            {letter}({letter}|{digit})*
 
    /* Reglas para los valores segun el tipo de dato */
 {int_val}                     {
-                                yylval.integer = atoi(yytext);
-                                //printf("%d is a INT_VAL\n", yylval.integer);
+                                wic::data_value data_v;
+                                data_v.int_val = atoi(yytext);
+                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::INT, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
                                 return INT_VAL;
                               }
 
 {real_val}                    {
-                                yylval.real = atof(yytext);
-                                //printf("%f is a REAL_VAL\n", yylval.real);
+                                wic::data_value data_v;
+                                data_v.real_val = atof(yytext);
+                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::REAL, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
                                 return REAL_VAL;
                               }
 {bool_val}                    {
-                                if (strcmp("true", yytext) == 0) yylval.boolean = '\x01';
-                                else yylval.boolean = '\x00';
-                                //printf("%d is a BOOL_VAL\n", yylval.boolean);
+                                wic::data_value data_v;
+                                if (strcmp("true", yytext) == 0) data_v.bool_val = true;
+                                else data_v.bool_val = false;
+                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::BOOL, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
                                 return BOOL_VAL;
                               }
 
 
    /* Reglas segun el tipo de dato */
 {int_type}                    {
-                                //printf("%s is a INT_TYPE\n", yytext);
-                                yylval.string = (char*)malloc(yyleng);
-                                strcpy(yylval.string, yytext);
                                 return INT_TYPE;
                               }
 {real_type}                   {
-                                //printf("%s is a REAL_TYPE\n", yytext);
-                                yylval.string = (char*)malloc(yyleng);
-                                strcpy(yylval.string, yytext);
                                 return REAL_TYPE;
                               }
 {bool_type}                   {
-                                //printf("%s is a BOOL_TYPE\n", yytext);
-                                yylval.string = (char*)malloc(yyleng);
-                                strcpy(yylval.string, yytext);
                                 return BOOL_TYPE;
                               }
 {char_type}                   {
-                                //printf("%s is a CHAR_TYPE\n", yytext);
-                                yylval.string = (char*)malloc(yyleng);
-                                strcpy(yylval.string, yytext);
                                 return CHAR_TYPE;
                               }
 
@@ -344,7 +336,10 @@ id                            {letter}({letter}|{digit})*
 
 
    /* Expresiones regulares delimitadoras */
-"\["                          {
+"\["                          {//
+//
+//
+//
                                 //printf("%s is an SQUARE_BRACKET_OPEN\n", yytext);
                                 return SQUARE_BRACKET_OPEN;
                               }
@@ -377,9 +372,8 @@ id                            {letter}({letter}|{digit})*
 
   /* Identificador */
 {id}                          {
-                                //printf("%s is a ID\n", yytext);
-                                yylval.string = (char*)malloc(yyleng);
-                                strcpy(yylval.string, yytext);
+                                std::string id = yytext;
+                                yylval = reinterpret_cast<void *>(new wic::ASTNode(&id, wic::ID, wic::UNKNOWN, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
                                 return ID;
                               }
 
@@ -387,18 +381,32 @@ id                            {letter}({letter}|{digit})*
   /* Reglas para los caracteres */
 \'                            {
                                  BEGIN(CHAR_STATE);
-                                 //printf("CHAR_STATE_START\n");
-                                 //printf("%s is a CHAR_QUOTE\n", yytext);
                                  return CHAR_QUOTE;
                               }
 <CHAR_STATE>{char_val}        {
-                                memcpy(yylval.character, yytext, sizeof(yytext));
-                                //printf("%s is a CHAR_VAL\n", yylval.character);
+                                wic::data_value data_v;
+                                if (yytext[0] == '\\')
+                                {
+                                    if (yytext[1] == '0') data_v.char_val = '\0';
+                                    else if (yytext[1] == 'a') data_v.char_val = '\a';
+                                    else if (yytext[1] == 'b') data_v.char_val = '\b';
+                                    else if (yytext[1] == 't') data_v.char_val = '\t';
+                                    else if (yytext[1] == 'n') data_v.char_val = '\n';
+                                    else if (yytext[1] == 'v') data_v.char_val = '\v';
+                                    else if (yytext[1] == 'f') data_v.char_val = '\f';
+                                    else if (yytext[1] == 'r') data_v.char_val = '\r';
+                                    else if (yytext[1] == '\"') data_v.char_val = '\"';
+                                    else if (yytext[1] == '\'') data_v.char_val = '\'';
+                                    else if (yytext[1] == '\\') data_v.char_val = '\\';
+                                }
+                                else
+                                {
+                                    data_v.char_val = yytext[0];
+                                }
+                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::CHAR, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
                                 return CHAR_VAL;
                               }
-<CHAR_STATE>\'                 {
-                                //printf("%s is a CHAR_QUOTE\n", yytext);
-                                //printf("CHAR_STATE_END\n");
+<CHAR_STATE>\'                {
                                 BEGIN(INITIAL);
                                 return CHAR_QUOTE;
                               }
@@ -406,51 +414,37 @@ id                            {letter}({letter}|{digit})*
   /* Reglas para los strings */
 \"                            {
                                 BEGIN(STRING_STATE);
-                                //printf("STRING_STATE_START\n");
-                                //printf("%s is a STRING_QUOTE\n", yytext);
                                 return STRING_QUOTE;
                               }
 <STRING_STATE>{string_val}    {
-                                memcpy(yylval.string, yytext, sizeof(yytext));
-                                //printf("%s is a STRING_VAL\n", yylval.string);
+                                wic::data_value data_v ;
+                                data_v.str_val = new char[yyleng];
+                                data_v.str_val = strcpy(data_v.str_val, yytext);
+                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::STRING, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
                                 return STRING_VAL;
                               }
 <STRING_STATE>\"              {
-                                //printf("%s is a STRING_QUOTE\n", yytext);
-                                //printf("STRING_STATE_END\n");
                                 BEGIN(INITIAL);
                                 return STRING_QUOTE;
                               }
 
 
   /* Reglas para los comentarios */
-\.\.                          {
-                                BEGIN(COMMENT_LINE);
-                                //printf("COMMENT_LINE_START\n");
-                              }
-<COMMENT_LINE>.+              {
-                                //printf("THIS IS A COMMENT_LINE\n");
-                              }
+\.\.                          { BEGIN(COMMENT_LINE); }
+<COMMENT_LINE>.+              { }
 <COMMENT_LINE>\n              {
-                                //printf("COMMENT_LINE_END\n");
                                 yylineno++;
                                 BEGIN(INITIAL);
                               }
 <COMMENT_LINE><<EOF>>         /* Do error */
 
 
-",\."                         {
-                                BEGIN(COMMENT_BLOCK);
-                                //printf("COMMENT_BLOCK_START\n");
-                              }
+",\."                         { BEGIN(COMMENT_BLOCK); }
 <COMMENT_BLOCK>"\.,"          {
-                                //printf("COMMENT_BLOCK_END\n");
                                 BEGIN(INITIAL);
                               }
 <COMMENT_BLOCK>[^\n]
-<COMMENT_BLOCK>\n             {
-                                yylineno++;
-                              }
+<COMMENT_BLOCK>\n             { yylineno++; }
 <COMMENT_BLOCK><<EOF>>        /* Do error */
 
 

@@ -13,18 +13,20 @@ namespace wic
         ARRAY_INT,
         ARRAY_REAL,
         ARRAY_BOOL,
-        FUNCTION
+        FUNCTION,
+        UNKNOWN
     } data_type;
 
     typedef struct variable {
         data_type type;
         unsigned int offset;
-        unsigned int array_size;
-        unsigned int addr;
+        unsigned int size;
+        unsigned int array_length;
     } variable;
 
     typedef struct param_list {
-        variable var;
+        char* id;
+        data_type type;
         struct param_list *next;
     } param_list;
 
@@ -35,6 +37,11 @@ namespace wic
         unsigned int init_addr;
         unsigned int return_addr;
     } function;
+
+    typedef union entry_data {
+        variable var;
+        function fun;
+    } entry_data;
 }
 
 #endif

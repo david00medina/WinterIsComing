@@ -12,7 +12,7 @@ namespace wic
         ID,
         SUM,
         SUB,
-        MUL,
+        PROD,
         DIV,
         POWER,
         RADICAL,
@@ -50,21 +50,6 @@ namespace wic
         float* real_array_val;
         bool* bool_array_val;
     } data_value;
-
-    typedef struct ASTNode
-    {
-        std::string id;
-        node_type node_t;
-        data_type data_t;
-        data_value data_v;
-        ASTNode* ptr1;
-        ASTNode** ptr2;
-        ASTNode* ptr3;
-        ASTNode** args;
-        GSymbolTable* gst;
-        SSymbolTable* sst;
-        LSymbolTable* lst;
-    } ASTNode;
 }
 
 #endif

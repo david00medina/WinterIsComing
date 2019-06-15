@@ -14,10 +14,10 @@ namespace wic
         return hash % MAX_ENTRIES;
     }
 
-    bool SymbolTable::insert(const char* id, variable* var, function* fun, unsigned int line, unsigned int scope)
+    bool SymbolTable::insert(const char* id, entry_data entry_d, unsigned int line, unsigned int scope)
     {
         int i = hash(id);
-        TableEntry* tEntry = new TableEntry(id, var, fun, line, scope);
+        TableEntry* tEntry = new TableEntry(id, entry_d, line, scope);
 
         if (head[i] == nullptr) head[i] = tEntry;
         else
@@ -62,7 +62,7 @@ namespace wic
     }
 
 
-    bool SymbolTable::modify(const char* id, variable* var, function* fun, unsigned int line, unsigned int scope)
+    bool SymbolTable::modify(const char* id, entry_data entry_d, unsigned int line, unsigned int scope)
     {
         int i = hash(id);
         TableEntry* start = head[i];
@@ -73,8 +73,7 @@ namespace wic
         {
             if (start->id == id)
             {
-                start->var = var;
-                start->fun = fun;
+                start->entry_d = entry_d;
                 start->line = line;
                 start->scope = scope;
                 return true;

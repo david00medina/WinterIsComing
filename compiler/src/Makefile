@@ -12,18 +12,22 @@ all:
 
 bison:
 					bison -d flex-bison/wic.y
-					mv wic.tab* build
+					mv wic.tab.* build
 
 flex:
 					flex flex-bison/wic.l
-					mv lex.yy.c build
+					mv lex.yy.* build
 
 compile:
 					#gcc -o wic build/lex.yy.c build/wic.tab.c -lfl -lm
 					g++ -std=gnu++11 -c build/wic.tab.c build/lex.yy.c
 					mv *.o build
 					ar rvs build/wic.a build/wic.tab.o build/lex.yy.o
-					g++ -std=gnu++11 -Wall -Wextra main.cpp build/wic.a symbol-table/SymbolTable.cpp code-generator/CodeGenerator.cpp ast/AbstractSyntaxTree.cpp -o wic
+
+					g++ -std=gnu++11 -Wall -Wextra Main.cpp build/wic.a symbol-table/SymbolTable.cpp \
+					code-generator/CodeGenerator.cpp ast/AbstractSyntaxTree.cpp ast/ASTNode.cpp  \
+					ast/ASTSymbolTableNode.cpp ast/ASTOperatorNode.cpp ast/ASTLeafNode.cpp -o wic
+
 					#mv *.a *.o build
 
 clean:

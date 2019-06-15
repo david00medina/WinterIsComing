@@ -69,31 +69,35 @@ namespace wic
             {
                 std::string val;
                 std::stringstream ss;
-                ASTNode* node = static_cast<ASTNode*>(va_arg(argv, void*));
+                ASTNode* node = reinterpret_cast<ASTNode*>(va_arg(argv, void*));
+                data_value data_v = node->get_data_value();
 
 
-                if (m.str(0) == "%s") ss << node->data_v.str_val;
+                if (m.str(0) == "%s") ss << data_v.str_val;
 
                 else if (m.str(0) == "%c")
                 {
-                    if (node->data_v.char_val == '\n') ss << "\\n";
-                    if (node->data_v.char_val == '\r') ss << "\\r";
-                    if (node->data_v.char_val == '\b') ss << "\\b";
-                    if (node->data_v.char_val == '\t') ss << "\\t";
-                    if (node->data_v.char_val == '\a') ss << "\\a";
-                    if (node->data_v.char_val == '\v') ss << "\\v";
-                    if (node->data_v.char_val == '\f') ss << "\\f";
-                    if (node->data_v.char_val == '\0') ss << "\\0";
-                    else ss << node->data_v.char_val;
+                    if (data_v.char_val == '\n') ss << "\\n";
+                    else if (data_v.char_val == '\r') ss << "\\r";
+                    else if (data_v.char_val == '\b') ss << "\\b";
+                    else if (data_v.char_val == '\t') ss << "\\t";
+                    else if (data_v.char_val == '\a') ss << "\\a";
+                    else if (data_v.char_val == '\v') ss << "\\v";
+                    else if (data_v.char_val == '\f') ss << "\\f";
+                    else if (data_v.char_val == '\0') ss << "\\0";
+                    else if (data_v.char_val == '\'') ss << "\\\'";
+                    else if (data_v.char_val == '\"') ss << "\\\"";
+                    else if (data_v.char_val == '\\') ss << "\\\\";
+                    else ss << data_v.char_val;
                 }
 
-                else if (m.str(0) == "%d") ss << node->data_v.int_val;
+                else if (m.str(0) == "%d") ss << data_v.int_val;
 
-                else if (m.str(0) == "%r") ss << node->data_v.real_val;
+                else if (m.str(0) == "%r") ss << data_v.real_val;
 
                 else if (m.str(0) == "%b")
                 {
-                    if (node->data_v.bool_val) ss << "True";
+                    if (data_v.bool_val) ss << "True";
                     else ss << "False";
                 }
 
@@ -114,12 +118,15 @@ namespace wic
         va_end(argv);
     }
 
-    void CodeGenerator::end()
+    void CodeGenerator::exit()
     {
         fcode << initial_spacing << "mov" << instr_spacing << "$60" << ", %eax" << std::endl;
         fcode << initial_spacing << "xor" << instr_spacing << "%edi" << ", %edi" << std::endl;
         fcode << initial_spacing << "syscall" << std::endl;
+    }
 
+    void CodeGenerator::end()
+    {
         char ch;
 
         fdata.seekg(0);

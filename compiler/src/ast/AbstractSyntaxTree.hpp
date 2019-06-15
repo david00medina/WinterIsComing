@@ -1,26 +1,23 @@
 #ifndef ABSTRACTSYNTAXTREE_HPP
 #define ABSTRACTSYNTAXTREE_HPP
 
-#include <iostream>
-#include <string>
-#include "AbstractSyntaxTreePack.hpp"
+#include "ASTNode.hpp"
 
 namespace wic
 {
     class AbstractSyntaxTree
     {
     private:
-        ASTNode* node;
+        ASTNode* root;
 
     public:
-        AbstractSyntaxTree() : node(nullptr) {};
-        AbstractSyntaxTree(ASTNode* node) : node(node) {};
-        ~AbstractSyntaxTree() { delete node; };
+        AbstractSyntaxTree();
+        AbstractSyntaxTree(ASTNode* root) : root(root) {};
+        ~AbstractSyntaxTree() { delete root; };
 
-        ASTNode* tree_create(std::string, node_type, data_type, data_value, ASTNode*, ASTNode**, ASTNode*, ASTNode**,
-                GSymbolTable*, SSymbolTable*, LSymbolTable*);
-        void connect(ASTNode*, ASTNode**, ASTNode*);
-        void add_args(ASTNode**);
+        ASTNode* tree_build(ASTNode*);
+        ASTNode* get_root();
+        void print();
         void toCode();
     };
 }

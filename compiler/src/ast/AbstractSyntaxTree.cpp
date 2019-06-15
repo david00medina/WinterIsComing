@@ -1,38 +1,41 @@
+#include <queue>
 #include "AbstractSyntaxTree.hpp"
 
 namespace wic
 {
-    ASTNode * AbstractSyntaxTree::tree_create(std::string id, node_type node_t, data_type data_t, data_value data_v,
-                                              ASTNode* ptr1, ASTNode** ptr2, ASTNode* ptr3, ASTNode** args,
-                                              GSymbolTable* gst, SSymbolTable* sst, LSymbolTable* lst)
-
+    ASTNode* AbstractSyntaxTree::tree_build(ASTNode *node)
     {
-        node->id = id;
-        node->node_t = node_t;
-        node->data_t = data_t;
-        node->data_v = data_v;
-        node->ptr1 = ptr1;
-        node->ptr2 = ptr2;
-        node->ptr3 = ptr3;
-        node->args = args;
-        node->gst = gst;
-        node->sst = sst;
-        node->lst = lst;
-
-        return node;
+        root = node;
+        return root;
     }
 
-
-    void AbstractSyntaxTree::connect(ASTNode* ptr1, ASTNode** ptr2, ASTNode* ptr3)
+    ASTNode* AbstractSyntaxTree::get_root()
     {
-        node->ptr1 = ptr1;
-        node->ptr2 = ptr2;
-        node->ptr3 = ptr3;
+        return root;
     }
 
-    void AbstractSyntaxTree::add_args(ASTNode** args)
+    void AbstractSyntaxTree::print()
     {
-        node->args = args;
+        std::queue<ASTNode *> nodes;
+        nodes.push(root);
+
+        while (!nodes.empty())
+        {
+            // Pop & print
+            ASTNode* curr = nodes.front();
+            curr->print();
+            nodes.pop();
+
+            // Expand left --> continue
+            // Save to queue
+            if (curr->ptr1 != nullptr) nodes.push(curr->ptr1);
+            // Expand middle --> continue
+            // Save to queue
+            for (int i = 0; curr->ptr2[i] != nullptr; i++) nodes.push(curr->ptr2[i]);
+            // Expand right --> continue
+            // Save to queue
+            if (curr->ptr3 != nullptr) nodes.push(curr->ptr3);
+        }
     }
 
     void AbstractSyntaxTree::toCode()

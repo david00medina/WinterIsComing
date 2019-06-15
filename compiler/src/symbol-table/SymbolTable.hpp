@@ -5,7 +5,7 @@
 #include "SymbolTablePack.hpp"
 
 #define MAX_ENTRIES 128
-#define TYPE_NUM 10
+#define TYPE_NUM 11
 
 namespace wic
 {
@@ -13,44 +13,38 @@ namespace wic
     {
     private:
         const char* id;
-        variable* var;
-        function* fun;
+        entry_data entry_d;
         unsigned int line;
         unsigned int scope;
         TableEntry* next;
 
         const char* type_data_str[TYPE_NUM] =
-            {
-                    "int",
-                    "real",
-                    "bool",
-                    "char",
-                    "void",
-                    "string",
-                    "array_int",
-                    "array_real",
-                    "array_bool",
-                    "function"
-            };
+        {
+            "int",
+            "real",
+            "bool",
+            "char",
+            "void",
+            "string",
+            "array_int",
+            "array_real",
+            "array_bool",
+            "function",
+            "unknown"
+        };
 
     public:
         TableEntry() { next = nullptr; }
-        TableEntry(const char* id, variable* var, function* fun, unsigned int line, unsigned int scope)
-            : id(id), var(var), fun(fun), line(line), scope(scope) {}
+        TableEntry(const char* id, entry_data entry_d, unsigned int line, unsigned int scope)
+            : id(id), entry_d(entry_d), line(line), scope(scope) {}
 
-        ~TableEntry()
-        {
-            delete id;
-            delete var;
-            delete fun;
-            delete next;
-        }
+        ~TableEntry() { delete next; }
 
 
         void print()
         {
-            if (var != nullptr) std::cout << "(" << id << ", " << type_data_str[var->type] << ", " << line << ", " << scope << ")";
-            else if (fun != nullptr) std::cout << "(" << id << ", " << type_data_str[fun->return_type] << ", " << line << ", " << scope << ")";
+            if (sizeof(entry_d) == sizeof(variable)) std::cout << "(" << id << ", " << type_data_str[entry_d.var.type] << ", " << line << ", " << scope << ")";
+            else if (sizeof(entry_d) == sizeof(function)) std::cout << "(" << id << ", " << type_data_str[entry_d.fun.return_type] << ", " << line << ", " << scope << ")";
         }
 
         friend class SymbolTable;
@@ -68,9 +62,9 @@ namespace wic
         SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
         ~SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
 
-        virtual bool insert(const char*, variable*, function*, unsigned int, unsigned int);
+        virtual bool insert(const char*, entry_data entry_d, unsigned int, unsigned int);
         virtual bool erase(const char*);
-        virtual bool modify(const char*, variable*, function*, unsigned int, unsigned int);
+        virtual bool modify(const char*, entry_data entry_d, unsigned int, unsigned int);
         virtual TableEntry* lookup(const char*);
         virtual void show(const char*);
         virtual void show(int);
