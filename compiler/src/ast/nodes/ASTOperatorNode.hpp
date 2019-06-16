@@ -2,7 +2,7 @@
 #define ASTOPERATORNODE_HPP
 
 #include "ASTNode.hpp"
-#include "AbstractSyntaxTreePack.hpp"
+#include "../AbstractSyntaxTreePack.hpp"
 
 namespace wic {
     class ASTOperatorNode : public ASTNode
@@ -17,100 +17,65 @@ namespace wic {
 
     class ASTSumNode : public ASTOperatorNode
     {
-    private:
-        const char *name = "SUM";
-
     public:
         ASTSumNode() = default;
-        ASTSumNode(node_type, data_type, ASTNode*, ASTNode*) = default;
+        ASTSumNode(data_type, ASTNode*, ASTNode*);
         ~ASTSumNode() = default;
     };
 
     class ASTSubNode : public ASTOperatorNode
     {
-    private:
-        const char *name = "SUBTRACT";
-
     public:
         ASTSubNode() = default;
-        ASTSubNode(node_type, data_type, ASTNode*, ASTNode*) = default;
+        ASTSubNode(data_type, ASTNode*, ASTNode*);
         ~ASTSubNode() = default;
     };
 
     class ASTProdNode : public ASTOperatorNode
     {
-    private:
-        const char *name = "PRODUCT";
-
     public:
         ASTProdNode() = default;
-        ASTProdNode(node_type, data_type, ASTNode*, ASTNode*) = default;
+        ASTProdNode(data_type, ASTNode*, ASTNode*);
         ~ASTProdNode() = default;
     };
 
     class ASTDivNode : public ASTOperatorNode
     {
-    private:
-        const char *name = "DIVISION";
-
     public:
         ASTDivNode() = default;
-        ASTDivNode(node_type, data_type, ASTNode*, ASTNode*) = default;
+        ASTDivNode(data_type, ASTNode*, ASTNode*);
         ~ASTDivNode() = default;
     };
 
     class ASTPowerNode : public ASTOperatorNode
     {
-    private:
-        const char *name = "POWER";
-
     public:
         ASTPowerNode() = default;
-        ASTPowerNode(node_type, data_type, ASTNode*, ASTNode*) = default;
+        ASTPowerNode(data_type, ASTNode*, ASTNode*);
         ~ASTPowerNode() = default;
     };
 
     class ASTRadicalNode : public ASTOperatorNode
     {
-    private:
-        const char *name = "RADICAL";
-
     public:
         ASTRadicalNode() = default;
-        ASTRadicalNode(node_type, data_type, ASTNode*, ASTNode*) = default;
+        ASTRadicalNode(data_type, ASTNode*, ASTNode*);
         ~ASTRadicalNode() = default;
-    };
-
-    class ASTProdNode : public ASTOperatorNode
-    {
-    private:
-        const char *name = "PRODUCT";
-
-    public:
-        ASTProdNode() = default;
-        ASTProdNode(node_type, data_type, ASTNode*, ASTNode*) = default;
-        ~ASTProdNode() = default;
     };
 
     class ASTModNode : public ASTOperatorNode
     {
-    private:
-        const char *name = "MODULUS";
-
     public:
         ASTModNode() = default;
-        ASTModNode(node_type, data_type, ASTNode*, ASTNode*) = default;
+        ASTModNode(data_type, ASTNode*, ASTNode*);
         ~ASTModNode() = default;
     };
 
     class ASTAssignNode : public ASTOperatorNode
     {
-    private:
-        const char *name = "ASSIGN";
-
     public:
         ASTAssignNode() = default;
-        ASTAssignNode(node_type, data_type, ASTNode*, ASTNode*);
+        ASTAssignNode(data_type, ASTNode*, ASTNode*);
         ~ASTAssignNode() = default;
     };
 }

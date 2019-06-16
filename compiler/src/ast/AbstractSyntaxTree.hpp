@@ -1,7 +1,10 @@
 #ifndef ABSTRACTSYNTAXTREE_HPP
 #define ABSTRACTSYNTAXTREE_HPP
 
-#include "ASTNode.hpp"
+#include "nodes/ASTNode.hpp"
+#include "nodes/ASTLeafNode.hpp"
+#include "nodes/ASTOperatorNode.hpp"
+#include "nodes/ASTSymbolTableNode.hpp"
 
 namespace wic
 {

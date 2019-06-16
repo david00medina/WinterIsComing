@@ -60,30 +60,25 @@ int main(int argc, char const **argv) {
         cg.set_path(mid_code_path);
 
         cg.init();
-        std::string n1 = "node1";
         wic::data_value d1;
         d1.str_val = (char*)"rojo";
-        wic::ASTNode node1(&n1, wic::LEAF, wic::STRING, &d1, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+        wic::ASTLeafNode node1(wic::STRING, &d1);
 
-        std::string n2 = "node2";
         wic::data_value d2;
         d2.int_val = 45;
-        wic::ASTNode node2(&n2, wic::LEAF, wic::INT, &d2, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+        wic::ASTLeafNode node2(wic::INT, &d2);
 
-        std::string n3 = "node3";
         wic::data_value d3;
         d3.char_val = '\n';
-        wic::ASTNode node3(&n3, wic::LEAF, wic::STRING, &d3, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+        wic::ASTLeafNode node3(wic::STRING, &d3);
 
-        std::string n4 = "node4";
         wic::data_value d4;
         d4.real_val = 5.457f;
-        wic::ASTNode node4(&n4, wic::LEAF, wic::STRING, &d4, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+        wic::ASTLeafNode node4(wic::STRING, &d4);
 
-        std::string n5 = "node5";
         wic::data_value d5;
         d5.bool_val = true;
-        wic::ASTNode node5(&n5, wic::LEAF, wic::STRING, &d5, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+        wic::ASTLeafNode node5(wic::STRING, &d5);
 
         cg.print("caballo loco %s loquisimo, %d, %c, %r, %b", 4, node1, node2, node3, node4, node5);
         cg.exit();

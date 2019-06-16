@@ -14,7 +14,8 @@
 
     #include <string>
     #include "../symbol-table/SymbolTablePack.hpp"
-    #include "../ast/AbstractSyntaxTree.hpp"
+    #include "../ast/nodes/ASTLeafNode.hpp"
+    #include "../ast/nodes/ASTSymbolTableNode.hpp"
     #include "wic.tab.h"
 
     int level = 0;
@@ -158,21 +159,21 @@ id                            {letter}({letter}|{digit})*
 {int_val}                     {
                                 wic::data_value data_v;
                                 data_v.int_val = atoi(yytext);
-                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::INT, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
+                                yylval = reinterpret_cast<void *>(new wic::ASTLeafNode(wic::INT, &data_v));
                                 return INT_VAL;
                               }
 
 {real_val}                    {
                                 wic::data_value data_v;
                                 data_v.real_val = atof(yytext);
-                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::REAL, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
+                                yylval = reinterpret_cast<void *>(new wic::ASTLeafNode(wic::REAL, &data_v));
                                 return REAL_VAL;
                               }
 {bool_val}                    {
                                 wic::data_value data_v;
                                 if (strcmp("true", yytext) == 0) data_v.bool_val = true;
                                 else data_v.bool_val = false;
-                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::BOOL, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
+                                yylval = reinterpret_cast<void *>(new wic::ASTLeafNode(wic::BOOL, &data_v));
                                 return BOOL_VAL;
                               }
 
@@ -373,7 +374,7 @@ id                            {letter}({letter}|{digit})*
   /* Identificador */
 {id}                          {
                                 std::string id = yytext;
-                                yylval = reinterpret_cast<void *>(new wic::ASTNode(&id, wic::ID, wic::UNKNOWN, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
+                                yylval = reinterpret_cast<void *>(new wic::ASTIDNode(&id, wic::UNKNOWN));
                                 return ID;
                               }
 
@@ -403,7 +404,7 @@ id                            {letter}({letter}|{digit})*
                                 {
                                     data_v.char_val = yytext[0];
                                 }
-                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::CHAR, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
+                                yylval = reinterpret_cast<void *>(new wic::ASTLeafNode(wic::CHAR, &data_v));
                                 return CHAR_VAL;
                               }
 <CHAR_STATE>\'                {
@@ -420,7 +421,7 @@ id                            {letter}({letter}|{digit})*
                                 wic::data_value data_v ;
                                 data_v.str_val = new char[yyleng];
                                 data_v.str_val = strcpy(data_v.str_val, yytext);
-                                yylval = reinterpret_cast<void *>(new wic::ASTNode(nullptr, wic::LEAF, wic::STRING, &data_v, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr));
+                                yylval = reinterpret_cast<void *>(new wic::ASTLeafNode(wic::STRING, &data_v));
                                 return STRING_VAL;
                               }
 <STRING_STATE>\"              {

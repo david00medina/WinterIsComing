@@ -73,4 +73,16 @@ namespace wic {
     {
         std::cout << "(" << name << ", " << type_data_str[data_t] << ")";
     }
+
+    ASTMainNode::ASTMainNode(wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr2, wic::ASTNode *ptr3) :
+        ASTNode(wic::MAIN, data_t, ptr1, ptr2, ptr3) { name = "MAIN"; }
+
+    ASTBodyNode::ASTBodyNode(wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr2, wic::ASTNode *ptr3) :
+            ASTNode(wic::BODY, data_t, ptr1, ptr2, ptr3) { name = "BODY"; }
+
+    ASTReturnNode::ASTReturnNode(wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr2, wic::ASTNode *ptr3) :
+            ASTNode(wic::RET, data_t, ptr1, ptr2, ptr3) { name = "RETURN"; }
+
+    ASTParamNode::ASTParamNode(wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr2, wic::ASTNode *ptr3) :
+            ASTNode(wic::PARAM, data_t, ptr1, ptr2, ptr3) { name = "PARAM"; }
 }

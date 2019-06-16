@@ -2,7 +2,7 @@
 #define ASTSYMBOLTABLENODE_HPP
 
 #include "ASTNode.hpp"
-#include "AbstractSyntaxTreePack.hpp"
+#include "../AbstractSyntaxTreePack.hpp"
 
 #define MAX_ARGS 512
 
@@ -15,32 +15,30 @@ namespace wic {
         LSymbolTable *lst;
 
     public:
-        ASTSymbolTableNode();
+        ASTSymbolTableNode() = default;
         ASTSymbolTableNode(std::string *, node_type, data_type);
         ASTSymbolTableNode(std::string *, node_type, data_type, SSymbolTable *, LSymbolTable *);
-        ~ASTSymbolTableNode();
+        virtual ~ASTSymbolTableNode();
 
-        virtual const char *get_id();
+        virtual const char* get_id();
         virtual void set_id(std::string *);
-        virtual ASTNode **get_args();
-        virtual void add_arg(ASTNode *);
         virtual SSymbolTable* get_sst();
         virtual void set_sst(SSymbolTable*);
         virtual LSymbolTable* get_lst();
         virtual void set_lst(LSymbolTable*);
+        virtual void print();
     };
 
     class ASTCallNode : public ASTSymbolTableNode
     {
     private:
-        const char *name = "CALL";
         ASTNode *args[MAX_ARGS];
         int args_i;
 
     public:
         ASTCallNode() = default;
-        ASTCallNode(std::string *, node_type, data_type, ASTNode *);
-        ASTCallNode(std::string *, node_type, data_type, ASTNode *, SSymbolTable *, LSymbolTable *);
+        ASTCallNode(std::string *, data_type, ASTNode *);
+        ASTCallNode(std::string *, data_type, ASTNode *, SSymbolTable *, LSymbolTable *);
         ~ASTCallNode();
 
         ASTNode** get_args();
@@ -49,13 +47,10 @@ namespace wic {
 
     class ASTIDNode : public ASTSymbolTableNode
     {
-    private:
-        const char *name = "ID";
-
     public:
         ASTIDNode() = default;
-        ASTIDNode(std::string *, node_type, data_type) = default;
-        ASTIDNode(std::string *, node_type, data_type, SSymbolTable *, LSymbolTable *) = default;
+        ASTIDNode(std::string *, data_type);
+        ASTIDNode(std::string *, data_type, SSymbolTable *, LSymbolTable *);
         ~ASTIDNode() = default;
     };
 }

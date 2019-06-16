@@ -60,7 +60,7 @@ namespace wic
 
     public:
         SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
-        ~SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
+        virtual ~SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
 
         virtual bool insert(const char*, entry_data entry_d, unsigned int, unsigned int);
         virtual bool erase(const char*);

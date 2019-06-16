@@ -2,7 +2,7 @@
 #define ASTNODE_HPP
 
 #include <string>
-#include "AbstractSyntaxTreePack.hpp"
+#include "../AbstractSyntaxTreePack.hpp"
 
 #define DATA_TYPE_NUM 11
 #define NODE_TYPE_NUM 29
@@ -11,7 +11,7 @@
 namespace wic {
     class ASTNode {
     protected:
-        const char* name;
+        std::string name;
         node_type node_t;
         data_type data_t;
         ASTNode *ptr1;
@@ -55,7 +55,7 @@ namespace wic {
     public:
         ASTNode();
         ASTNode(node_type, data_type, ASTNode *, ASTNode *, ASTNode *);
-        ~ASTNode();
+        virtual ~ASTNode();
 
         virtual node_type get_node_type();
         virtual void set_node_type(node_type);
@@ -75,42 +75,30 @@ namespace wic {
     };
 
     class ASTMainNode : public ASTNode {
-    private:
-        const char *name = "MAIN";
-
     public:
         ASTMainNode() = default;
-        ASTMainNode(node_type, data_type, ASTNode *, ASTNode *, ASTNode *) = default;
+        ASTMainNode(data_type, ASTNode *, ASTNode *, ASTNode *);
         ~ASTMainNode() = default;
     };
 
     class ASTBodyNode : public ASTNode {
-    private:
-        const char *name = "BODY";
-
     public:
         ASTBodyNode() = default;
-        ASTBodyNode(node_type, data_type, ASTNode *, ASTNode *, ASTNode *) = default;
+        ASTBodyNode(data_type, ASTNode *, ASTNode *, ASTNode *);
         ~ASTBodyNode() = default;
     };
 
     class ASTReturnNode : public ASTNode {
-    private:
-        const char *name = "RETURN";
-
     public:
         ASTReturnNode() = default;
-        ASTReturnNode(node_type, data_type, ASTNode *) = default;
+        ASTReturnNode(data_type, ASTNode *, ASTNode *, ASTNode *);
         ~ASTReturnNode() = default;
     };
 
     class ASTParamNode : public ASTNode {
-    private:
-        const char *name = "PARAMETER";
-
     public:
         ASTParamNode() = default;
-        ASTParamNode(node_type, data_type, ASTNode *, ASTNode *, ASTNode *) = default;
+        ASTParamNode(data_type, ASTNode *, ASTNode *, ASTNode *);
         ~ASTParamNode() = default;
     };
 }

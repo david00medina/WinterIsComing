@@ -69,7 +69,7 @@ namespace wic
             {
                 std::string val;
                 std::stringstream ss;
-                ASTNode* node = reinterpret_cast<ASTNode*>(va_arg(argv, void*));
+                ASTLeafNode* node = reinterpret_cast<ASTLeafNode*>(va_arg(argv, void*));
                 data_value data_v = node->get_data_value();
 
 

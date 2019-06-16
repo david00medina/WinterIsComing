@@ -25,8 +25,8 @@ compile:
 					ar rvs build/wic.a build/wic.tab.o build/lex.yy.o
 
 					g++ -std=gnu++11 -Wall -Wextra Main.cpp build/wic.a symbol-table/SymbolTable.cpp \
-					code-generator/CodeGenerator.cpp ast/AbstractSyntaxTree.cpp ast/ASTNode.cpp  \
-					ast/ASTSymbolTableNode.cpp ast/ASTOperatorNode.cpp ast/ASTLeafNode.cpp -o wic
+					code-generator/CodeGenerator.cpp ast/AbstractSyntaxTree.cpp ast/nodes/ASTNode.cpp  \
+					ast/nodes/ASTSymbolTableNode.cpp ast/nodes/ASTOperatorNode.cpp ast/nodes/ASTLeafNode.cpp -o wic
 
 					#mv *.a *.o build
 

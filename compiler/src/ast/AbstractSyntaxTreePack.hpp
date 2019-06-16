@@ -31,7 +31,7 @@ namespace wic
         FOR,
         SCAN,
         PRINT,
-        ASSGN,
+        ASSIGN,
         BODY,
         RET,
         CALL,

@@ -3,11 +3,12 @@
 
 namespace wic
 {
-    ASTLeafNode::ASTLeafNode(wic::node_type node_t, wic::data_type data_t, wic::data_value *data_v)
+    ASTLeafNode::ASTLeafNode(wic::data_type data_t, wic::data_value *data_v)
     {
-        this->node_t = node_t;
+        this->node_t = wic::LEAF;
         this->data_t = data_t;
         if (data_v != nullptr) this->data_v = *data_v;
+        name = "LEAF";
     }
 
     data_value ASTLeafNode::get_data_value() {
