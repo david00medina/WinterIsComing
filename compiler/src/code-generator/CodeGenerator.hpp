@@ -8,9 +8,12 @@
 #include "CodeGeneratorPack.hpp"
 #include "../ast/AbstractSyntaxTree.hpp"
 
+#define TOTAL_REG 8
+
 namespace wic {
     class CodeGenerator {
     private:
+        bool register_use[TOTAL_REG];
         std::string path;
         std::fstream fout, fcode, fdata;
         fstream_p file_p;
@@ -29,6 +32,10 @@ namespace wic {
         ~CodeGenerator() = default;
 
         void set_path(const std::string);
+
+        int get_reg();
+        void lock_reg(int);
+        void free_reg(int);
 
         void init();
         void print(std::string, unsigned int, ...);

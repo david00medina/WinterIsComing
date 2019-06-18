@@ -1,4 +1,6 @@
 #include "SymbolTable.hpp"
+#include "../utils/termcolor.hpp"
+#include <string.h>
 
 namespace wic
 {
@@ -17,6 +19,19 @@ namespace wic
     bool SymbolTable::insert(const char* id, entry_data entry_d, unsigned int line, unsigned int scope)
     {
         int i = hash(id);
+
+        // TODO: Buscar variable y si ya existe en el nivel de ámbito dar mensaje de error
+        TableEntry* existing_entry = lookup(id);
+        if (existing_entry != nullptr && existing_entry->scope == scope)
+        {
+            std::cout << termcolor::red << termcolor::bold << "[!] Error: " << termcolor::reset << "Redeclaration of \'"
+            << id << "\'" << std::endl;
+            return false;
+        }
+
+        entry_d.var.offset = memory;
+        memory += entry_d.var.size;
+
         TableEntry* tEntry = new TableEntry(id, entry_d, line, scope);
 
         if (head[i] == nullptr) head[i] = tEntry;
@@ -43,12 +58,12 @@ namespace wic
         {
             TableEntry* next = curr->next;
 
-            if (curr->id == id && prev == nullptr)
+            if (strcmp(curr->id, id) == 0 && prev == nullptr)
             {
                 head[i] = next;
                 return true;
             }
-            else if (curr->id == id)
+            else if (strcmp(curr->id, id) == 0)
             {
                 prev->next = next;
                 return true;
@@ -71,7 +86,7 @@ namespace wic
 
         while (start != nullptr)
         {
-            if (start->id == id)
+            if (strcmp(start->id, id) == 0)
             {
                 start->entry_d = entry_d;
                 start->line = line;
@@ -92,7 +107,7 @@ namespace wic
 
         while (start != nullptr)
         {
-            if (start->id == id) return start;
+            if (strcmp(start->id, id) == 0) return start;
             start = start->next;
         }
 

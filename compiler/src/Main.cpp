@@ -10,7 +10,10 @@ extern void yyerror(const char*);
 extern FILE *yyin;
 extern int yylineno;
 
-extern wic::SSymbolTable* gst;
+extern wic::GSymbolTable* gst;
+extern wic::SSymbolTable* sst;
+extern wic::LSymbolTable* lst;
+
 extern wic::AbstractSyntaxTree* ast;
 
 int main(int argc, char const **argv) {

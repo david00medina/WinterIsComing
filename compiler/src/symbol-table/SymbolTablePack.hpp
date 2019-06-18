@@ -22,6 +22,9 @@ namespace wic
         unsigned int offset;
         unsigned int size;
         unsigned int array_length;
+        bool global;
+        bool stat;
+        bool local;
     } variable;
 
     typedef struct param_list {
@@ -36,6 +39,9 @@ namespace wic
         param_list params;
         unsigned int init_addr;
         unsigned int return_addr;
+        bool global;
+        bool stat;
+        bool local;
     } function;
 
     typedef union entry_data {

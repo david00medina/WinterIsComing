@@ -11,7 +11,7 @@ all:
 					$(MAKE) compile
 
 bison:
-					bison -d flex-bison/wic.y
+					bison -d -v flex-bison/wic.y
 					mv wic.tab.* build
 
 flex:

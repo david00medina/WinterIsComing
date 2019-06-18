@@ -3,6 +3,18 @@
 
 namespace wic
 {
+    typedef enum
+    {
+        EAX,
+        EBX,
+        ECX,
+        EDX,
+        ESI,
+        EDI,
+        ESP,
+        EBP
+    } cpu_registers;
+
     typedef struct fstream_p
     {
         long data_p;

@@ -12,7 +12,12 @@
     int yylex(void);
     void yyerror(char const *);
 
-    wic::GSymbolTable* gst;
+    extern int level;
+    extern int yylineno;
+
+    wic::GSymbolTable* gst = new wic::GSymbolTable();
+    wic::SSymbolTable* sst = new wic::SSymbolTable();
+    wic::LSymbolTable* lst = new wic::LSymbolTable();
     wic::AbstractSyntaxTree* ast;
 
     wic::data_type promote_to_float(wic::ASTNode*, wic::ASTNode*);
@@ -83,21 +88,71 @@ input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }
     | OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input
     | /* empty */
 
-data_init: GLOBAL data_type
-    | STATIC data_type
-    | data_type
+data_init: GLOBAL data_type			  {
+						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
+						    entry_d->var.global = true;
+						    entry_d->var.stat = false;
+						    entry_d->var.local = false;
+						  }
+    | STATIC data_type				  {
+						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
+						    entry_d->var.global = false;
+						    entry_d->var.stat = true;
+						    entry_d->var.local = false;
+    						  }
+    | data_type					  {
+    						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
+    						    entry_d->var.global = false;
+    						    entry_d->var.stat = false;
+    						    entry_d->var.local = true;
+     						  }
+    | GLOBAL array_init
+    | STATIC array_init
     | array_init
 
 array_init: data_type SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
     | data_type SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE
 
-data_type: INT_TYPE
-    | REAL_TYPE
-    | BOOL_TYPE
-    | CHAR_TYPE                                   { printf("Tipo (CHAR)\n"); }
+data_type: INT_TYPE				  {
+						    wic::entry_data* entry_d = new wic::entry_data();
+						    entry_d->var.type = wic::INT;
+						    entry_d->var.size = 4;
+						    $$ = entry_d;
+						  }
+    | REAL_TYPE					  {
+						    wic::entry_data* entry_d = new wic::entry_data();
+						    entry_d->var.type = wic::REAL;
+						    entry_d->var.size = 4;
+						    $$ = entry_d;
+						  }
+    | BOOL_TYPE 				  {
+						    wic::entry_data* entry_d = new wic::entry_data();
+						    entry_d->var.type = wic::BOOL;
+						    entry_d->var.size = 1;
+						    $$ = entry_d;
+						  }
+    | CHAR_TYPE                                   {
+    						    wic::entry_data* entry_d = new wic::entry_data();
+    						    entry_d->var.type = wic::CHAR;
+    						    entry_d->var.size = 1;
+    						    $$ = entry_d;
+    						  }
 
-instr: data_init ID                               { printf("Instrucción (DECLARE VAR)\n"); }
-    | data_init ID ASSIGN expr                    { printf("Instrucción (=)\n"); }
+instr: data_init ID                               {
+						    std::cout << "Instrucción (DECLARE VAR)\n" << std::endl;
+						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
+						    wic::ASTIDNode* node = reinterpret_cast<wic::ASTIDNode *>($2);
+						    if (entry_d->var.global) gst->insert(node->get_id(), *entry_d, yylineno, level);
+						    else if (entry_d->var.local) lst->insert(node->get_id(), *entry_d, yylineno, level);
+						    lst->show(node->get_id());
+						  }
+    | data_init ID ASSIGN expr                    {
+    						    std::cout << "Instrucción (=)\n" << std::endl;
+    						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
+    						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($2);
+    						    if (entry_d->var.global) gst->insert(id->get_id(), *entry_d, yylineno, level);
+						    else if (entry_d->var.local) lst->insert(id->get_id(), *entry_d, yylineno, level);
+    						  }
     | ID array_access ASSIGN expr                 { printf("Instrucción acceso array\n"); }
     | if_instr                                    { printf("Instrucción (IF-IFELSE-ELSE)\n"); }
     | for_instr                                   { printf("Instrucción (FOR-FORELSE-ELSE)\n"); }
@@ -290,14 +345,12 @@ factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión p
     | ID                                          {
                                                     wic::ASTIDNode* node = reinterpret_cast<wic::ASTIDNode *>($1);
                                                     std::cout << "Factor : ID (name=" << node->get_id() << ")" << std::endl;
-                                                    node->print();
                                                     $$ = reinterpret_cast<void *>(node);
                                                   }
 
 data_value: INT_VAL                               {
                                                     wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);
                                                     std::cout << "Factor : INT(value=" << node->get_data_value().int_val << ")" << std::endl;
-                                                    node->print();
                                                     $$ = reinterpret_cast<void *>(node);
                                                   }
     | SUBSTRACT INT_VAL                           {

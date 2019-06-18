@@ -15,6 +15,8 @@ namespace wic
 
         label.code_l = 0;
         label.data_l = 0;
+
+        for (int i = 0; i < TOTAL_REG; ++i) register_use[i] = false;
     }
 
     CodeGenerator::CodeGenerator(const std::string path) : path(path)
@@ -46,6 +48,23 @@ namespace wic
     {
         this->path = path;
         fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::app);
+    }
+
+    int CodeGenerator::get_reg()
+    {
+        int i = 0;
+        while (register_use[i] == false) i++;
+        return i;
+    }
+
+    void CodeGenerator::free_reg(int i)
+    {
+        register_use[i] = false;
+    }
+
+    void CodeGenerator::lock_reg(int i)
+    {
+        register_use[i] = true;
     }
 
     void CodeGenerator::init()
