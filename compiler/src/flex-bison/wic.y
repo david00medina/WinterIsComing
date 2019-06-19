@@ -6,6 +6,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <iostream>
+    #include "../utils/termcolor.hpp"
     #include "../symbol-table/SymbolTable.hpp"
     #include "../ast/AbstractSyntaxTree.hpp"
 
@@ -89,22 +90,25 @@ input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }
     | /* empty */
 
 data_init: GLOBAL data_type			  {
-						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
+						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($2);
 						    entry_d->var.global = true;
 						    entry_d->var.stat = false;
 						    entry_d->var.local = false;
+						    $$ = entry_d;
 						  }
     | STATIC data_type				  {
-						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
+						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($2);
 						    entry_d->var.global = false;
 						    entry_d->var.stat = true;
 						    entry_d->var.local = false;
+						    $$ = entry_d;
     						  }
     | data_type					  {
     						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
     						    entry_d->var.global = false;
     						    entry_d->var.stat = false;
     						    entry_d->var.local = true;
+    						    $$ = entry_d;
      						  }
     | GLOBAL array_init
     | STATIC array_init
@@ -140,18 +144,17 @@ data_type: INT_TYPE				  {
 
 instr: data_init ID                               {
 						    std::cout << "Instrucción (DECLARE VAR)\n" << std::endl;
-						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
-						    wic::ASTIDNode* node = reinterpret_cast<wic::ASTIDNode *>($2);
-						    if (entry_d->var.global) gst->insert(node->get_id(), *entry_d, yylineno, level);
-						    else if (entry_d->var.local) lst->insert(node->get_id(), *entry_d, yylineno, level);
-						    lst->show(node->get_id());
+						    $$ = ast->tree_build($1, $2);
 						  }
     | data_init ID ASSIGN expr                    {
     						    std::cout << "Instrucción (=)\n" << std::endl;
-    						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
-    						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($2);
-    						    if (entry_d->var.global) gst->insert(id->get_id(), *entry_d, yylineno, level);
-						    else if (entry_d->var.local) lst->insert(id->get_id(), *entry_d, yylineno, level);
+    						    wic::ASTNode* node = ast->tree_build($1, $2);
+
+    						    wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($4);
+    						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(node->get_data_type(), node, expr);
+
+    						    $$ = ast->tree_build(assign);
+    						    ast->print();
     						  }
     | ID array_access ASSIGN expr                 { printf("Instrucción acceso array\n"); }
     | if_instr                                    { printf("Instrucción (IF-IFELSE-ELSE)\n"); }
@@ -247,7 +250,25 @@ if_middle_block: if_middle_block
 
 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
 
-expr: ID ASSIGN term                              { printf("Expresión (=)\n"); }
+expr: ID ASSIGN term                              {
+						    std::cout << "Expresión (=)" << std::endl;
+
+						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+
+						    if (!id->is_registered()) {
+						    	std::cout << termcolor::red << termcolor::bold
+						    	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+						    	<< "\' was not declared in this scope"
+						    	<< std::endl;
+						    }
+
+						    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, term);
+
+						    ast->tree_build(assign);
+						    $$ = assign;
+						    lst->show(id->get_id());
+						  }
     | expr SUM term                               {
                                                     std::cout << "Expresión (Suma)" << std::endl;
 
@@ -338,14 +359,21 @@ power: power RADICAL factor                       {
                                                     $$ = ast->tree_build(radical);
                                                   }
     | power POWER factor                          { printf("Potencia/Raiz (Potencia)"); $$ = $1; }
-    | factor                                      { $$ = reinterpret_cast<void *>($1); }
+    | factor                                      { $$ = $1; }
 
 factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión parentesis)\n"); $$ = $2; }
     | data_value                                  { printf("Factor (DATA_VALUE)\n"); $$ = $1; }
     | ID                                          {
-                                                    wic::ASTIDNode* node = reinterpret_cast<wic::ASTIDNode *>($1);
-                                                    std::cout << "Factor : ID (name=" << node->get_id() << ")" << std::endl;
-                                                    $$ = reinterpret_cast<void *>(node);
+                                                    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+                                                    std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
+
+                                                    if (!id->is_registered()) {
+                                                    	std::cout << termcolor::red << termcolor::bold
+                                                    	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+                                                    	<< "\' was not declared in this scope"
+                                                    	<< std::endl;
+                                                    }
+                                                    $$ = id;
                                                   }
 
 data_value: INT_VAL                               {

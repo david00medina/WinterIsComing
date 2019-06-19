@@ -32,7 +32,7 @@
 /* Definiciones regulares */
 
 /* Expresiones regulares reutilizables */
-letter                        [a-zA-Z]
+letter                        [a-zA-Z_]
 digit                         [0-9]
 
 /* Palabras reservadas */

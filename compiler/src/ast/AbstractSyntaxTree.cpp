@@ -1,12 +1,40 @@
 #include <queue>
 #include "AbstractSyntaxTree.hpp"
 
+extern int yylineno;
+extern int level;
+extern wic::GSymbolTable* gst;
+extern wic::SSymbolTable* sst;
+extern wic::LSymbolTable* lst;
 namespace wic
 {
     ASTNode* AbstractSyntaxTree::tree_build(ASTNode *node)
     {
         root = node;
         return root;
+    }
+
+    ASTNode* AbstractSyntaxTree::tree_build(void* elem1, void* elem2){
+        entry_data* entry_d = reinterpret_cast<entry_data *>(elem1);
+        ASTIDNode* node = reinterpret_cast<ASTIDNode *>(elem2);
+
+        if (entry_d->var.global)
+        {
+            gst->insert(node->get_id(), *entry_d, yylineno, level);
+            node->set_global_entry(gst->lookup(node->get_id()));
+        }
+        else if (entry_d->var.local)
+        {
+            lst->insert(node->get_id(), *entry_d, yylineno, level);
+            node->set_local_entry(lst->lookup(node->get_id()));
+        }
+        else if (entry_d->var.stat)
+        {
+            sst->insert(node->get_id(), *entry_d, yylineno, level);
+            node->set_static_entry(sst->lookup(node->get_id()));
+        }
+
+        return tree_build(reinterpret_cast<ASTNode*>(node));
     }
 
     ASTNode* AbstractSyntaxTree::get_root()

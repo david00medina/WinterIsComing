@@ -19,6 +19,7 @@ namespace wic
         ~AbstractSyntaxTree() { delete root; };
 
         ASTNode* tree_build(ASTNode*);
+        ASTNode* tree_build(void*, void*);
         ASTNode* get_root();
         void print();
         void toCode();

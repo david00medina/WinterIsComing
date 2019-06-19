@@ -11,21 +11,25 @@ namespace wic {
     {
     protected:
         std::string id;
-        SSymbolTable *sst;
-        LSymbolTable *lst;
+        TableEntry *global_te;
+        TableEntry *static_te;
+        TableEntry *local_te;
 
     public:
         ASTSymbolTableNode() = default;
         ASTSymbolTableNode(std::string *, node_type, data_type);
-        ASTSymbolTableNode(std::string *, node_type, data_type, SSymbolTable *, LSymbolTable *);
+        ASTSymbolTableNode(std::string *, node_type, data_type, TableEntry*, TableEntry*, TableEntry*);
         virtual ~ASTSymbolTableNode();
 
         virtual const char* get_id();
         virtual void set_id(std::string *);
-        virtual SSymbolTable* get_sst();
-        virtual void set_sst(SSymbolTable*);
-        virtual LSymbolTable* get_lst();
-        virtual void set_lst(LSymbolTable*);
+        virtual TableEntry* get_global_entry();
+        virtual void set_global_entry(TableEntry*);
+        virtual TableEntry* get_static_entry();
+        virtual void set_static_entry(TableEntry*);
+        virtual TableEntry* get_local_entry();
+        virtual void set_local_entry(TableEntry*);
+        virtual bool is_registered();
         virtual void print();
     };
 
@@ -38,7 +42,7 @@ namespace wic {
     public:
         ASTCallNode() = default;
         ASTCallNode(std::string *, data_type, ASTNode *);
-        ASTCallNode(std::string *, data_type, ASTNode *, SSymbolTable *, LSymbolTable *);
+        ASTCallNode(std::string *, data_type, ASTNode *, TableEntry*, TableEntry*, TableEntry*);
         ~ASTCallNode();
 
         ASTNode** get_args();
@@ -50,7 +54,7 @@ namespace wic {
     public:
         ASTIDNode() = default;
         ASTIDNode(std::string *, data_type);
-        ASTIDNode(std::string *, data_type, SSymbolTable *, LSymbolTable *);
+        ASTIDNode(std::string *, data_type, TableEntry*, TableEntry*, TableEntry*);
         ~ASTIDNode() = default;
     };
 }

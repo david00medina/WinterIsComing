@@ -1,5 +1,9 @@
 #include "ASTSymbolTableNode.hpp"
 
+extern wic::GSymbolTable* gst;
+extern wic::SSymbolTable* sst;
+extern wic::LSymbolTable* lst;
+
 namespace wic
 {
     ASTSymbolTableNode::ASTSymbolTableNode(std::string *id, wic::node_type node_t, wic::data_type data_t)
@@ -10,20 +14,22 @@ namespace wic
     }
 
     ASTSymbolTableNode::ASTSymbolTableNode(std::string *id, wic::node_type node_t, wic::data_type data_t,
-                                           wic::SSymbolTable *sst, wic::LSymbolTable *lst)
+                                           wic::TableEntry* global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
     {
         if (id != nullptr) this->id = *id;
         this->node_t = node_t;
         this->data_t = data_t;
 
-        this->sst = sst;
-        this->lst = lst;
+        this->global_te = global_te;
+        this->static_te = static_te;
+        this->local_te = local_te;
     }
 
     ASTSymbolTableNode::~ASTSymbolTableNode()
     {
-        delete sst;
-        delete lst;
+        delete global_te;
+        delete static_te;
+        delete local_te;
     }
 
     const char* ASTSymbolTableNode::get_id()
@@ -36,24 +42,44 @@ namespace wic
         if (id != nullptr) this->id = *id;
     }
 
-    SSymbolTable* ASTSymbolTableNode::get_sst()
+    TableEntry* ASTSymbolTableNode::get_global_entry()
     {
-        return sst;
+        return global_te;
     }
 
-    void ASTSymbolTableNode::set_sst(wic::SSymbolTable *sst)
+    void ASTSymbolTableNode::set_global_entry(wic::TableEntry *global_te)
     {
-        this->sst = sst;
+        this->global_te = global_te;
     }
 
-    LSymbolTable* ASTSymbolTableNode::get_lst()
+    TableEntry* ASTSymbolTableNode::get_static_entry()
     {
-        return lst;
+        return static_te;
     }
 
-    void ASTSymbolTableNode::set_lst(wic::LSymbolTable *lst)
+    void ASTSymbolTableNode::set_static_entry(wic::TableEntry *static_te)
     {
-        this->lst = lst;
+        this->static_te = static_te;
+    }
+
+    TableEntry* ASTSymbolTableNode::get_local_entry()
+    {
+        return local_te;
+    }
+
+    void ASTSymbolTableNode::set_local_entry(wic::TableEntry *local_te)
+    {
+        this->local_te = local_te;
+    }
+
+    bool ASTSymbolTableNode::is_registered()
+    {
+        global_te = gst->lookup(id.c_str());
+        static_te = sst->lookup(id.c_str());
+        local_te = lst->lookup(id.c_str());
+        if (global_te == nullptr && static_te == nullptr && local_te == nullptr) return false;
+
+        return true;
     }
 
     void ASTSymbolTableNode::print()
@@ -71,15 +97,17 @@ namespace wic
         name = "CALL";
     }
 
-    ASTCallNode::ASTCallNode(std::string *id, wic::data_type data_t, wic::ASTNode *arg, wic::SSymbolTable *sst, wic::LSymbolTable *lst)
+    ASTCallNode::ASTCallNode(std::string *id, wic::data_type data_t, wic::ASTNode *arg,
+            wic::TableEntry *global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
     {
         args_i = 0;
         if (id != nullptr) this->id = *id;
         this->node_t = wic::CALL;
         this->data_t = data_t;
         add_arg(arg);
-        this->sst = sst;
-        this->lst = lst;
+        this->global_te = global_te;
+        this->static_te = static_te;
+        this->local_te = local_te;
         name = "CALL";
     }
 
@@ -89,6 +117,9 @@ namespace wic
         delete *ptr2;
         delete ptr3;
         delete *args;
+        delete global_te;
+        delete static_te;
+        delete local_te;
     }
 
     ASTNode** ASTCallNode::get_args()
@@ -103,6 +134,6 @@ namespace wic
 
     ASTIDNode::ASTIDNode(std::string *id, wic::data_type data_t) : ASTSymbolTableNode(id, wic::ID, data_t) { name = "ID"; }
 
-    ASTIDNode::ASTIDNode(std::string *id, wic::data_type data_t, wic::SSymbolTable *sst, wic::LSymbolTable *lst)
-        : ASTSymbolTableNode(id, wic::ID, data_t, sst, lst) { name = "ID"; }
+    ASTIDNode::ASTIDNode(std::string *id, wic::data_type data_t, wic::TableEntry *global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
+        : ASTSymbolTableNode(id, wic::ID, data_t, global_te, static_te, local_te) { name = "ID"; }
 }
