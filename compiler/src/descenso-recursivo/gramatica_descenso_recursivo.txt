@@ -1,0 +1,142 @@
+input: instr END_OF_INSTR input
+input: END_OF_INSTR input
+input: OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input
+input: /* empty */
+
+data_init: GLOBAL data_type
+data_init: STATIC data_type
+data_init: data_type array_init
+
+array_init: SQUARE_BRACKET_OPEN array_init_p SQUARE_BRACKET_CLOSE
+array_init: /* empty */
+
+array_init_p: INT_VAL
+array_init_p: /* empty */
+
+data_type: INT_TYPE
+data_type: REAL_TYPE
+data_type: BOOL_TYPE
+data_type: CHAR_TYPE
+
+...instr: data_init ID
+...instr: data_init ID ASSIGN expr
+...instr: ID array_access ASSIGN expr
+...instr: if_instr
+...instr: for_instr
+...instr: while_instr
+...instr: expr
+...instr: fun_init
+...instr: fun_call
+
+comma_exp_init: data_type ID ELEM_SEPARATOR comma_exp_init
+comma_exp_init: ELEM_SEPARATOR comma_exp_init
+comma_exp_init: /* empty */
+
+comma_exp: factor comma_exp_p
+comma_exp: expr: comma_exp_p
+
+comma_exp_p: ELEM_SEPARATOR comma_exp
+comma_exp_p: /* empty */
+
+fun_init: FUN fun_init_p_1 ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE fun_init_p_2
+
+fun_init_p_1: data_type
+fun_init_p_1: VOID
+
+fun_init_p_2: HEADER_END END_OF_INSTR input
+fun_init_p_2: END_OF_INSTR
+
+fun_call: ID PARETHESES_OPEN comma_exp PARETHESES_CLOSE
+
+while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR input while_instr_p
+
+while_instr_p: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR_INPUT
+while_instr_p: /* empty */
+
+while_middle_block: ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR input while_middle_block
+while_middle_block: /* empty */
+
+for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR input for_instr_p
+
+for_instr_p: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR INPUT input
+for_instr_p: /* empty */
+
+for_middle_block: ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR input for_middle_block
+for_middle_block: /* empty */
+
+if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR input if_instr_p
+
+if_instr_p: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR input
+if_instr: /* empty */
+
+if_middle_block: ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR input if_middle_block
+if_middle_blocK: /* empty */
+
+array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+
+expr: ID expr_p_2 expr_p_1
+expr: INCREMENT ID expr_p_1
+expr: DECREMENT ID expr_p_1
+expr: NOT expr_p_3 expr_p_1
+expr: term expr_p_1
+expr: data_vector expr_p_1
+
+expr_p_1: SUM expr
+expr_p_1: SUBSTRACT expr
+expr_p_1: LESS expr
+expr_p_1: LESS_EQUALS expr
+expr_p_1: GREATER expr
+expr_p_1: GREATER_EQUALS expr
+expr_p_1: EQUALS expr
+expr_p_1: NOT_EQUALS expr
+expr_p_1: AND expr
+expr_p_1: OR expr
+expr_p_1: AND_BIT expr
+expr_p_1: OR_BIT expr
+expr_p_1: XOR_BIT expr
+expr_p_1: LEFT_SHIFT expr
+expr_p_1: RIGHT_SHIFT expr
+expr_p_1: UNION expr
+expr_p_1: DIFFERENCE expr
+expr_p_1: INTERSECTION expr
+expr_p_1: /* empty */
+
+expr_p_2: ASSIGN expr_p_3
+expr_p_2: INCREMENT
+expr_p_2: DECREMENT
+expr_p_2: term_p_1 term_p_2
+
+expr_p_3: term
+expr_p_3: ID term_p_1 term_p_2
+
+term: factor power term_p_2
+
+term_p_1: power
+term_p_1: array_access
+
+term_p_2: PRODUCT term_p_3
+term_p_2: DIVIDE term_p_3
+term_p_2: MODULUS term_p_3
+term_p_2: /* empty */
+
+term_p_3: term
+term_p_3: ID term_p_1 term_p_2
+
+power: RADICAL power
+power: POWER power
+power: /* empty */
+
+factor: PARETHESES_OPEN expr PARETHESES_CLOSE
+factor: SUBSTRACT factor_p
+factor: data_value
+
+factor_p: factor
+factor_p: ID
+
+data_value: INT_VAL
+data_value: REAL_VAL
+data_value: BOOL_VAL
+data_value: CHAR_QUOTE CHAR_VAL CHAR_QUOTE
+data_value: STRING_QUOTE STRING_VAL STRING_QUOTE
+
+data_vector: CURLY_BRACKET_OPEN comma_exp CURLY_BRACKET_CLOSE
