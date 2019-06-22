@@ -1,7 +1,9 @@
 #include <regex>
 #include <cstdio>
 #include <sstream>
+#include <stdlib.h>
 #include "CodeGenerator.hpp"
+#include "../utils/termcolor.hpp"
 
 namespace wic
 {
@@ -16,7 +18,7 @@ namespace wic
         label.code_l = 0;
         label.data_l = 0;
 
-        for (int i = 0; i < TOTAL_REG; ++i) register_use[i] = false;
+        for (int i = 0; i < TOTAL_REG; ++i) reg_use[i] = false;
     }
 
     CodeGenerator::CodeGenerator(const std::string path) : path(path)
@@ -48,23 +50,26 @@ namespace wic
     {
         this->path = path;
         fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::app);
+        std::cout << "HOLA" << std::endl;
     }
 
     int CodeGenerator::get_reg()
     {
-        int i = 0;
-        while (register_use[i] == false) i++;
-        return i;
+        for (int i = 0; i < TOTAL_REG; i++)
+        {
+            if (!reg_use[i]) return static_cast<cpu_registers>(i);
+        }
+        return -1;
     }
 
-    void CodeGenerator::free_reg(int i)
+    void CodeGenerator::free_reg(cpu_registers reg)
     {
-        register_use[i] = false;
+        reg_use[reg] = false;
     }
 
-    void CodeGenerator::lock_reg(int i)
+    void CodeGenerator::lock_reg(cpu_registers reg)
     {
-        register_use[i] = true;
+        reg_use[reg] = true;
     }
 
     void CodeGenerator::init()
@@ -72,6 +77,50 @@ namespace wic
         fcode << initial_spacing <<".text" << std::endl;
         fcode << initial_spacing << ".global main" << std::endl << std::endl;
         fcode << "main:" << std::endl;
+
+        instr("pushl", EBP);
+        instr("movl", ESP, EBP);
+    }
+
+    void CodeGenerator::save_value(void* val, unsigned int addr, bool is_imm)
+    {
+        fcode << initial_spacing << "pushl" << instr_spacing;
+        if (is_imm) fcode << "$" << *static_cast<int*>(val);
+        else fcode << reg[*static_cast<cpu_registers*>(val)];
+        fcode << ", " << "-" << addr << "(" << reg[EBP] << ")" << std::endl;
+    }
+
+    cpu_registers CodeGenerator::get_value(unsigned int addr)
+    {
+        cpu_registers r = static_cast<cpu_registers>(get_reg());
+        if (r == -1) {
+            std::cout << termcolor::red << termcolor::bold << "[!] Error: " << termcolor::reset
+            << "There are no free registers" << std::endl;
+            std::exit(-1);
+        }
+        fcode << initial_spacing << "-" << addr << "(" << reg[EBP] << ")" << ", " << reg[r] << std::endl;
+        lock_reg(r);
+        return r;
+    }
+
+    void CodeGenerator::instr(const std::string instr, wic::cpu_registers r)
+    {
+        fcode << initial_spacing << instr << instr_spacing << reg[r] << std::endl;
+    }
+
+    void CodeGenerator::instr(const std::string instr, unsigned int addr)
+    {
+        fcode << initial_spacing << instr << instr_spacing << reg[get_value(addr)] << std::endl;
+    }
+
+    void CodeGenerator::instr(const std::string instr, wic::cpu_registers r1, wic::cpu_registers r2)
+    {
+        fcode << initial_spacing << instr << instr_spacing << reg[r1] << ", " << reg[r2] << std::endl;
+    }
+
+    void CodeGenerator::instr(const std::string instr, unsigned int addr, wic::cpu_registers r)
+    {
+        fcode << initial_spacing << instr << instr_spacing << reg[r] /*<< ", " << reg[r2]*/ << std::endl;
     }
 
     void CodeGenerator::print(std::string msg, unsigned int argc, ...)

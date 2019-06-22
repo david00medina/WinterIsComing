@@ -1,0 +1,4025 @@
+Terminals unused in grammar
+
+   NEW
+   CONTINUE
+   BREAK
+   RETURN
+
+
+Rules useless in parser due to conflicts
+
+   43 while_middle_block: %empty
+
+   48 for_middle_block: %empty
+
+   53 if_middle_block: %empty
+
+
+State 50 conflicts: 3 reduce/reduce
+State 53 conflicts: 3 reduce/reduce
+State 54 conflicts: 3 reduce/reduce
+State 142 conflicts: 1 shift/reduce
+State 166 conflicts: 1 shift/reduce
+State 171 conflicts: 1 shift/reduce
+State 172 conflicts: 1 shift/reduce
+State 180 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: input $end
+
+    1 input: instr END_OF_INSTR input
+    2      | END_OF_INSTR input
+    3      | OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input
+    4      | %empty
+
+    5 data_init: GLOBAL data_type
+    6          | STATIC data_type
+    7          | data_type
+    8          | GLOBAL array_init
+    9          | STATIC array_init
+   10          | array_init
+
+   11 array_init: data_type SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+   12           | data_type SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE
+
+   13 data_type: INT_TYPE
+   14          | REAL_TYPE
+   15          | BOOL_TYPE
+   16          | CHAR_TYPE
+
+   17 instr: data_init ID
+   18      | data_init ID ASSIGN expr
+   19      | ID array_access ASSIGN expr
+   20      | if_instr
+   21      | for_instr
+   22      | while_instr
+   23      | expr
+   24      | fun_init
+   25      | fun_call
+
+   26 comma_exp_init: comma_exp_init ELEM_SEPARATOR comma_exp_init
+   27               | data_type ID
+   28               | %empty
+
+   29 comma_exp: comma_exp ELEM_SEPARATOR comma_exp
+   30          | factor
+   31          | data_value
+   32          | ID
+   33          | expr
+
+   34 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   35         | FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   36         | FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+   37         | FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+
+   38 fun_call: ID PARETHESES_OPEN comma_exp PARETHESES_CLOSE END_OF_INSTR
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   40            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   41            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   43                   | %empty
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   48                 | %empty
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   50         | expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   51         | expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   53                | %empty
+
+   54 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+
+   55 expr: ID ASSIGN term
+   56     | expr SUM term
+   57     | expr SUBSTRACT term
+   58     | INCREMENT ID
+   59     | ID INCREMENT
+   60     | DECREMENT ID
+   61     | ID DECREMENT
+   62     | expr LESS term
+   63     | expr LESS_EQUALS term
+   64     | expr GREATER term
+   65     | expr GREATER_EQUALS term
+   66     | expr EQUALS term
+   67     | expr NOT_EQUALS term
+   68     | expr AND term
+   69     | expr OR term
+   70     | NOT term
+   71     | expr AND_BIT term
+   72     | expr OR_BIT term
+   73     | expr XOR_BIT term
+   74     | expr LEFT_SHIFT term
+   75     | expr RIGHT_SHIFT term
+   76     | expr UNION term
+   77     | expr DIFFERENCE term
+   78     | expr INTERSECTION term
+   79     | term
+   80     | data_vector
+
+   81 term: term PRODUCT power
+   82     | term DIVIDE power
+   83     | term MODULUS power
+   84     | power
+   85     | ID array_access
+
+   86 power: power RADICAL factor
+   87      | power POWER factor
+   88      | factor
+
+   89 factor: PARETHESES_OPEN expr PARETHESES_CLOSE
+   90       | data_value
+   91       | ID
+
+   92 data_value: INT_VAL
+   93           | SUBSTRACT INT_VAL
+   94           | REAL_VAL
+   95           | SUBSTRACT REAL_VAL
+   96           | BOOL_VAL
+   97           | CHAR_QUOTE CHAR_VAL CHAR_QUOTE
+   98           | STRING_QUOTE STRING_VAL STRING_QUOTE
+
+   99 data_vector: CURLY_BRACKET_OPEN comma_exp CURLY_BRACKET_CLOSE
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+NEW (258)
+CONTINUE (259)
+BREAK (260)
+RETURN (261)
+FUN (262) 34 35 36 37
+GLOBAL (263) 5 8
+STATIC (264) 6 9
+INT_VAL (265) 11 54 92 93
+REAL_VAL (266) 94 95
+BOOL_VAL (267) 96
+CHAR_VAL (268) 97
+STRING_VAL (269) 98
+INT_TYPE (270) 13
+REAL_TYPE (271) 14
+BOOL_TYPE (272) 15
+CHAR_TYPE (273) 16
+VOID (274) 35 37
+ASSIGN (275) 18 19 55
+SUM (276) 56
+SUBSTRACT (277) 57 93 95
+PRODUCT (278) 81
+DIVIDE (279) 82
+MODULUS (280) 83
+POWER (281) 87
+RADICAL (282) 86
+INCREMENT (283) 58 59
+DECREMENT (284) 60 61
+AND (285) 68
+OR (286) 69
+NOT (287) 70
+EQUALS (288) 66
+NOT_EQUALS (289) 67
+GREATER (290) 64
+GREATER_EQUALS (291) 65
+LESS (292) 62
+LESS_EQUALS (293) 63
+AND_BIT (294) 71
+OR_BIT (295) 72
+XOR_BIT (296) 73
+LEFT_SHIFT (297) 74
+RIGHT_SHIFT (298) 75
+UNION (299) 76
+DIFFERENCE (300) 77
+INTERSECTION (301) 78
+IF_CLAUSE (302) 49 50 51 52
+FOR_WHILE_CLAUSE (303) 39 40 41 42 44 45 46 47
+HEADER_END (304) 34 35 39 40 41 42 44 45 46 47 49 50 51 52
+ELSE_IF_FOR_WHILE_CLAUSE (305) 39 40 42 44 45 47 49 50 52
+SQUARE_BRACKET_OPEN (306) 11 12 54
+SQUARE_BRACKET_CLOSE (307) 11 12 54
+CURLY_BRACKET_OPEN (308) 99
+CURLY_BRACKET_CLOSE (309) 99
+ELEM_SEPARATOR (310) 26 29
+PARETHESES_OPEN (311) 34 35 36 37 38 89
+PARETHESES_CLOSE (312) 34 35 36 37 38 89
+END_OF_INSTR (313) 1 2 34 35 36 37 38 39 40 41 42 44 45 46 47 49 50
+    51 52
+OPEN_CONTEXT_TAG (314) 3 34 35 39 40 41 42 44 45 46 47 49 50 51 52
+CLOSE_CONTEXT_TAG (315) 3 34 35 39 40 41 42 44 45 46 47 49 50 51 52
+CHAR_QUOTE (316) 97
+STRING_QUOTE (317) 98
+ID (318) 17 18 19 27 32 34 35 36 37 38 55 58 59 60 61 85 91
+
+
+Nonterminals, with rules where they appear
+
+$accept (64)
+    on left: 0
+input (65)
+    on left: 1 2 3 4, on right: 0 1 2 3 34 35 39 40 41 42 44 45 46
+    47 49 50 51 52
+data_init (66)
+    on left: 5 6 7 8 9 10, on right: 17 18
+array_init (67)
+    on left: 11 12, on right: 8 9 10
+data_type (68)
+    on left: 13 14 15 16, on right: 5 6 7 11 12 27 34 36
+instr (69)
+    on left: 17 18 19 20 21 22 23 24 25, on right: 1
+comma_exp_init (70)
+    on left: 26 27 28, on right: 26 34 35 36 37
+comma_exp (71)
+    on left: 29 30 31 32 33, on right: 29 38 99
+fun_init (72)
+    on left: 34 35 36 37, on right: 24
+fun_call (73)
+    on left: 38, on right: 25
+while_instr (74)
+    on left: 39 40 41, on right: 22
+while_middle_block (75)
+    on left: 42 43, on right: 39 42
+for_instr (76)
+    on left: 44 45 46, on right: 21
+for_middle_block (77)
+    on left: 47 48, on right: 44 47
+if_instr (78)
+    on left: 49 50 51, on right: 20
+if_middle_block (79)
+    on left: 52 53, on right: 49 52
+array_access (80)
+    on left: 54, on right: 19 85
+expr (81)
+    on left: 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72
+    73 74 75 76 77 78 79 80, on right: 18 19 23 33 39 40 41 42 44 45
+    46 47 49 50 51 52 56 57 62 63 64 65 66 67 68 69 71 72 73 74 75
+    76 77 78 89
+term (82)
+    on left: 81 82 83 84 85, on right: 55 56 57 62 63 64 65 66 67 68
+    69 70 71 72 73 74 75 76 77 78 79 81 82 83
+power (83)
+    on left: 86 87 88, on right: 81 82 83 84 86 87
+factor (84)
+    on left: 89 90 91, on right: 30 86 87 88
+data_value (85)
+    on left: 92 93 94 95 96 97 98, on right: 31 90
+data_vector (86)
+    on left: 99, on right: 80
+
+
+State 0
+
+    0 $accept: . input $end
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 22
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 1
+
+   34 fun_init: FUN . data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   35         | FUN . VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   36         | FUN . data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+   37         | FUN . VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+
+    INT_TYPE   shift, and go to state 7
+    REAL_TYPE  shift, and go to state 8
+    BOOL_TYPE  shift, and go to state 9
+    CHAR_TYPE  shift, and go to state 10
+    VOID       shift, and go to state 38
+
+    data_type  go to state 39
+
+
+State 2
+
+    5 data_init: GLOBAL . data_type
+    8          | GLOBAL . array_init
+
+    INT_TYPE   shift, and go to state 7
+    REAL_TYPE  shift, and go to state 8
+    BOOL_TYPE  shift, and go to state 9
+    CHAR_TYPE  shift, and go to state 10
+
+    array_init  go to state 40
+    data_type   go to state 41
+
+
+State 3
+
+    6 data_init: STATIC . data_type
+    9          | STATIC . array_init
+
+    INT_TYPE   shift, and go to state 7
+    REAL_TYPE  shift, and go to state 8
+    BOOL_TYPE  shift, and go to state 9
+    CHAR_TYPE  shift, and go to state 10
+
+    array_init  go to state 42
+    data_type   go to state 43
+
+
+State 4
+
+   92 data_value: INT_VAL .
+
+    $default  reduce using rule 92 (data_value)
+
+
+State 5
+
+   94 data_value: REAL_VAL .
+
+    $default  reduce using rule 94 (data_value)
+
+
+State 6
+
+   96 data_value: BOOL_VAL .
+
+    $default  reduce using rule 96 (data_value)
+
+
+State 7
+
+   13 data_type: INT_TYPE .
+
+    $default  reduce using rule 13 (data_type)
+
+
+State 8
+
+   14 data_type: REAL_TYPE .
+
+    $default  reduce using rule 14 (data_type)
+
+
+State 9
+
+   15 data_type: BOOL_TYPE .
+
+    $default  reduce using rule 15 (data_type)
+
+
+State 10
+
+   16 data_type: CHAR_TYPE .
+
+    $default  reduce using rule 16 (data_type)
+
+
+State 11
+
+   93 data_value: SUBSTRACT . INT_VAL
+   95           | SUBSTRACT . REAL_VAL
+
+    INT_VAL   shift, and go to state 44
+    REAL_VAL  shift, and go to state 45
+
+
+State 12
+
+   58 expr: INCREMENT . ID
+
+    ID  shift, and go to state 46
+
+
+State 13
+
+   60 expr: DECREMENT . ID
+
+    ID  shift, and go to state 47
+
+
+State 14
+
+   70 expr: NOT . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 49
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 15
+
+   99 data_vector: CURLY_BRACKET_OPEN . comma_exp CURLY_BRACKET_CLOSE
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 50
+
+    comma_exp    go to state 51
+    expr         go to state 52
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 53
+    data_value   go to state 54
+    data_vector  go to state 37
+
+
+State 16
+
+   89 factor: PARETHESES_OPEN . expr PARETHESES_CLOSE
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 55
+
+    expr         go to state 56
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 17
+
+    2 input: END_OF_INSTR . input
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 57
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 18
+
+    3 input: OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG input
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 58
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 19
+
+   97 data_value: CHAR_QUOTE . CHAR_VAL CHAR_QUOTE
+
+    CHAR_VAL  shift, and go to state 59
+
+
+State 20
+
+   98 data_value: STRING_QUOTE . STRING_VAL STRING_QUOTE
+
+    STRING_VAL  shift, and go to state 60
+
+
+State 21
+
+   19 instr: ID . array_access ASSIGN expr
+   38 fun_call: ID . PARETHESES_OPEN comma_exp PARETHESES_CLOSE END_OF_INSTR
+   55 expr: ID . ASSIGN term
+   59     | ID . INCREMENT
+   61     | ID . DECREMENT
+   85 term: ID . array_access
+   91 factor: ID .
+
+    ASSIGN               shift, and go to state 61
+    INCREMENT            shift, and go to state 62
+    DECREMENT            shift, and go to state 63
+    SQUARE_BRACKET_OPEN  shift, and go to state 64
+    PARETHESES_OPEN      shift, and go to state 65
+
+    $default  reduce using rule 91 (factor)
+
+    array_access  go to state 66
+
+
+State 22
+
+    0 $accept: input . $end
+
+    $end  shift, and go to state 67
+
+
+State 23
+
+   17 instr: data_init . ID
+   18      | data_init . ID ASSIGN expr
+
+    ID  shift, and go to state 68
+
+
+State 24
+
+   10 data_init: array_init .
+
+    $default  reduce using rule 10 (data_init)
+
+
+State 25
+
+    7 data_init: data_type .
+   11 array_init: data_type . SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+   12           | data_type . SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE
+
+    SQUARE_BRACKET_OPEN  shift, and go to state 69
+
+    $default  reduce using rule 7 (data_init)
+
+
+State 26
+
+    1 input: instr . END_OF_INSTR input
+
+    END_OF_INSTR  shift, and go to state 70
+
+
+State 27
+
+   24 instr: fun_init .
+
+    $default  reduce using rule 24 (instr)
+
+
+State 28
+
+   25 instr: fun_call .
+
+    $default  reduce using rule 25 (instr)
+
+
+State 29
+
+   22 instr: while_instr .
+
+    $default  reduce using rule 22 (instr)
+
+
+State 30
+
+   21 instr: for_instr .
+
+    $default  reduce using rule 21 (instr)
+
+
+State 31
+
+   20 instr: if_instr .
+
+    $default  reduce using rule 20 (instr)
+
+
+State 32
+
+   23 instr: expr .
+   39 while_instr: expr . FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   40            | expr . FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   41            | expr . FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   44 for_instr: expr . FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr . FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr . FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   49 if_instr: expr . IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   50         | expr . IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   51         | expr . IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM               shift, and go to state 71
+    SUBSTRACT         shift, and go to state 72
+    AND               shift, and go to state 73
+    OR                shift, and go to state 74
+    EQUALS            shift, and go to state 75
+    NOT_EQUALS        shift, and go to state 76
+    GREATER           shift, and go to state 77
+    GREATER_EQUALS    shift, and go to state 78
+    LESS              shift, and go to state 79
+    LESS_EQUALS       shift, and go to state 80
+    AND_BIT           shift, and go to state 81
+    OR_BIT            shift, and go to state 82
+    XOR_BIT           shift, and go to state 83
+    LEFT_SHIFT        shift, and go to state 84
+    RIGHT_SHIFT       shift, and go to state 85
+    UNION             shift, and go to state 86
+    DIFFERENCE        shift, and go to state 87
+    INTERSECTION      shift, and go to state 88
+    IF_CLAUSE         shift, and go to state 89
+    FOR_WHILE_CLAUSE  shift, and go to state 90
+
+    $default  reduce using rule 23 (instr)
+
+
+State 33
+
+   79 expr: term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 79 (expr)
+
+
+State 34
+
+   84 term: power .
+   86 power: power . RADICAL factor
+   87      | power . POWER factor
+
+    POWER    shift, and go to state 94
+    RADICAL  shift, and go to state 95
+
+    $default  reduce using rule 84 (term)
+
+
+State 35
+
+   88 power: factor .
+
+    $default  reduce using rule 88 (power)
+
+
+State 36
+
+   90 factor: data_value .
+
+    $default  reduce using rule 90 (factor)
+
+
+State 37
+
+   80 expr: data_vector .
+
+    $default  reduce using rule 80 (expr)
+
+
+State 38
+
+   35 fun_init: FUN VOID . ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   37         | FUN VOID . ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+
+    ID  shift, and go to state 96
+
+
+State 39
+
+   34 fun_init: FUN data_type . ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   36         | FUN data_type . ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+
+    ID  shift, and go to state 97
+
+
+State 40
+
+    8 data_init: GLOBAL array_init .
+
+    $default  reduce using rule 8 (data_init)
+
+
+State 41
+
+    5 data_init: GLOBAL data_type .
+   11 array_init: data_type . SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+   12           | data_type . SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE
+
+    SQUARE_BRACKET_OPEN  shift, and go to state 69
+
+    $default  reduce using rule 5 (data_init)
+
+
+State 42
+
+    9 data_init: STATIC array_init .
+
+    $default  reduce using rule 9 (data_init)
+
+
+State 43
+
+    6 data_init: STATIC data_type .
+   11 array_init: data_type . SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+   12           | data_type . SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE
+
+    SQUARE_BRACKET_OPEN  shift, and go to state 69
+
+    $default  reduce using rule 6 (data_init)
+
+
+State 44
+
+   93 data_value: SUBSTRACT INT_VAL .
+
+    $default  reduce using rule 93 (data_value)
+
+
+State 45
+
+   95 data_value: SUBSTRACT REAL_VAL .
+
+    $default  reduce using rule 95 (data_value)
+
+
+State 46
+
+   58 expr: INCREMENT ID .
+
+    $default  reduce using rule 58 (expr)
+
+
+State 47
+
+   60 expr: DECREMENT ID .
+
+    $default  reduce using rule 60 (expr)
+
+
+State 48
+
+   85 term: ID . array_access
+   91 factor: ID .
+
+    SQUARE_BRACKET_OPEN  shift, and go to state 64
+
+    $default  reduce using rule 91 (factor)
+
+    array_access  go to state 98
+
+
+State 49
+
+   70 expr: NOT term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 70 (expr)
+
+
+State 50
+
+   32 comma_exp: ID .
+   55 expr: ID . ASSIGN term
+   59     | ID . INCREMENT
+   61     | ID . DECREMENT
+   85 term: ID . array_access
+   91 factor: ID .
+
+    ASSIGN               shift, and go to state 61
+    INCREMENT            shift, and go to state 62
+    DECREMENT            shift, and go to state 63
+    SQUARE_BRACKET_OPEN  shift, and go to state 64
+
+    CURLY_BRACKET_CLOSE  reduce using rule 32 (comma_exp)
+    CURLY_BRACKET_CLOSE  [reduce using rule 91 (factor)]
+    ELEM_SEPARATOR       reduce using rule 32 (comma_exp)
+    ELEM_SEPARATOR       [reduce using rule 91 (factor)]
+    PARETHESES_CLOSE     reduce using rule 32 (comma_exp)
+    PARETHESES_CLOSE     [reduce using rule 91 (factor)]
+    $default             reduce using rule 91 (factor)
+
+    array_access  go to state 98
+
+
+State 51
+
+   29 comma_exp: comma_exp . ELEM_SEPARATOR comma_exp
+   99 data_vector: CURLY_BRACKET_OPEN comma_exp . CURLY_BRACKET_CLOSE
+
+    CURLY_BRACKET_CLOSE  shift, and go to state 99
+    ELEM_SEPARATOR       shift, and go to state 100
+
+
+State 52
+
+   33 comma_exp: expr .
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM             shift, and go to state 71
+    SUBSTRACT       shift, and go to state 72
+    AND             shift, and go to state 73
+    OR              shift, and go to state 74
+    EQUALS          shift, and go to state 75
+    NOT_EQUALS      shift, and go to state 76
+    GREATER         shift, and go to state 77
+    GREATER_EQUALS  shift, and go to state 78
+    LESS            shift, and go to state 79
+    LESS_EQUALS     shift, and go to state 80
+    AND_BIT         shift, and go to state 81
+    OR_BIT          shift, and go to state 82
+    XOR_BIT         shift, and go to state 83
+    LEFT_SHIFT      shift, and go to state 84
+    RIGHT_SHIFT     shift, and go to state 85
+    UNION           shift, and go to state 86
+    DIFFERENCE      shift, and go to state 87
+    INTERSECTION    shift, and go to state 88
+
+    $default  reduce using rule 33 (comma_exp)
+
+
+State 53
+
+   30 comma_exp: factor .
+   88 power: factor .
+
+    CURLY_BRACKET_CLOSE  reduce using rule 30 (comma_exp)
+    CURLY_BRACKET_CLOSE  [reduce using rule 88 (power)]
+    ELEM_SEPARATOR       reduce using rule 30 (comma_exp)
+    ELEM_SEPARATOR       [reduce using rule 88 (power)]
+    PARETHESES_CLOSE     reduce using rule 30 (comma_exp)
+    PARETHESES_CLOSE     [reduce using rule 88 (power)]
+    $default             reduce using rule 88 (power)
+
+
+State 54
+
+   31 comma_exp: data_value .
+   90 factor: data_value .
+
+    CURLY_BRACKET_CLOSE  reduce using rule 31 (comma_exp)
+    CURLY_BRACKET_CLOSE  [reduce using rule 90 (factor)]
+    ELEM_SEPARATOR       reduce using rule 31 (comma_exp)
+    ELEM_SEPARATOR       [reduce using rule 90 (factor)]
+    PARETHESES_CLOSE     reduce using rule 31 (comma_exp)
+    PARETHESES_CLOSE     [reduce using rule 90 (factor)]
+    $default             reduce using rule 90 (factor)
+
+
+State 55
+
+   55 expr: ID . ASSIGN term
+   59     | ID . INCREMENT
+   61     | ID . DECREMENT
+   85 term: ID . array_access
+   91 factor: ID .
+
+    ASSIGN               shift, and go to state 61
+    INCREMENT            shift, and go to state 62
+    DECREMENT            shift, and go to state 63
+    SQUARE_BRACKET_OPEN  shift, and go to state 64
+
+    $default  reduce using rule 91 (factor)
+
+    array_access  go to state 98
+
+
+State 56
+
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+   89 factor: PARETHESES_OPEN expr . PARETHESES_CLOSE
+
+    SUM               shift, and go to state 71
+    SUBSTRACT         shift, and go to state 72
+    AND               shift, and go to state 73
+    OR                shift, and go to state 74
+    EQUALS            shift, and go to state 75
+    NOT_EQUALS        shift, and go to state 76
+    GREATER           shift, and go to state 77
+    GREATER_EQUALS    shift, and go to state 78
+    LESS              shift, and go to state 79
+    LESS_EQUALS       shift, and go to state 80
+    AND_BIT           shift, and go to state 81
+    OR_BIT            shift, and go to state 82
+    XOR_BIT           shift, and go to state 83
+    LEFT_SHIFT        shift, and go to state 84
+    RIGHT_SHIFT       shift, and go to state 85
+    UNION             shift, and go to state 86
+    DIFFERENCE        shift, and go to state 87
+    INTERSECTION      shift, and go to state 88
+    PARETHESES_CLOSE  shift, and go to state 101
+
+
+State 57
+
+    2 input: END_OF_INSTR input .
+
+    $default  reduce using rule 2 (input)
+
+
+State 58
+
+    3 input: OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG input
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 102
+
+
+State 59
+
+   97 data_value: CHAR_QUOTE CHAR_VAL . CHAR_QUOTE
+
+    CHAR_QUOTE  shift, and go to state 103
+
+
+State 60
+
+   98 data_value: STRING_QUOTE STRING_VAL . STRING_QUOTE
+
+    STRING_QUOTE  shift, and go to state 104
+
+
+State 61
+
+   55 expr: ID ASSIGN . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 105
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 62
+
+   59 expr: ID INCREMENT .
+
+    $default  reduce using rule 59 (expr)
+
+
+State 63
+
+   61 expr: ID DECREMENT .
+
+    $default  reduce using rule 61 (expr)
+
+
+State 64
+
+   54 array_access: SQUARE_BRACKET_OPEN . INT_VAL SQUARE_BRACKET_CLOSE
+
+    INT_VAL  shift, and go to state 106
+
+
+State 65
+
+   38 fun_call: ID PARETHESES_OPEN . comma_exp PARETHESES_CLOSE END_OF_INSTR
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 50
+
+    comma_exp    go to state 107
+    expr         go to state 52
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 53
+    data_value   go to state 54
+    data_vector  go to state 37
+
+
+State 66
+
+   19 instr: ID array_access . ASSIGN expr
+   85 term: ID array_access .
+
+    ASSIGN  shift, and go to state 108
+
+    $default  reduce using rule 85 (term)
+
+
+State 67
+
+    0 $accept: input $end .
+
+    $default  accept
+
+
+State 68
+
+   17 instr: data_init ID .
+   18      | data_init ID . ASSIGN expr
+
+    ASSIGN  shift, and go to state 109
+
+    $default  reduce using rule 17 (instr)
+
+
+State 69
+
+   11 array_init: data_type SQUARE_BRACKET_OPEN . INT_VAL SQUARE_BRACKET_CLOSE
+   12           | data_type SQUARE_BRACKET_OPEN . SQUARE_BRACKET_CLOSE
+
+    INT_VAL               shift, and go to state 110
+    SQUARE_BRACKET_CLOSE  shift, and go to state 111
+
+
+State 70
+
+    1 input: instr END_OF_INSTR . input
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 112
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 71
+
+   56 expr: expr SUM . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 113
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 72
+
+   57 expr: expr SUBSTRACT . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 114
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 73
+
+   68 expr: expr AND . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 115
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 74
+
+   69 expr: expr OR . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 116
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 75
+
+   66 expr: expr EQUALS . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 117
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 76
+
+   67 expr: expr NOT_EQUALS . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 118
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 77
+
+   64 expr: expr GREATER . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 119
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 78
+
+   65 expr: expr GREATER_EQUALS . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 120
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 79
+
+   62 expr: expr LESS . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 121
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 80
+
+   63 expr: expr LESS_EQUALS . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 122
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 81
+
+   71 expr: expr AND_BIT . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 123
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 82
+
+   72 expr: expr OR_BIT . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 124
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 83
+
+   73 expr: expr XOR_BIT . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 125
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 84
+
+   74 expr: expr LEFT_SHIFT . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 126
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 85
+
+   75 expr: expr RIGHT_SHIFT . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 127
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 86
+
+   76 expr: expr UNION . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 128
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 87
+
+   77 expr: expr DIFFERENCE . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 129
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 88
+
+   78 expr: expr INTERSECTION . term
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 48
+
+    term        go to state 130
+    power       go to state 34
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 89
+
+   49 if_instr: expr IF_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   50         | expr IF_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   51         | expr IF_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 131
+
+
+State 90
+
+   39 while_instr: expr FOR_WHILE_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   40            | expr FOR_WHILE_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   41            | expr FOR_WHILE_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   44 for_instr: expr FOR_WHILE_CLAUSE . expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr FOR_WHILE_CLAUSE . expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr FOR_WHILE_CLAUSE . expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    HEADER_END          shift, and go to state 132
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 55
+
+    expr         go to state 133
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 91
+
+   81 term: term PRODUCT . power
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 134
+
+    power       go to state 135
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 92
+
+   82 term: term DIVIDE . power
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 134
+
+    power       go to state 136
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 93
+
+   83 term: term MODULUS . power
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 134
+
+    power       go to state 137
+    factor      go to state 35
+    data_value  go to state 36
+
+
+State 94
+
+   87 power: power POWER . factor
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 134
+
+    factor      go to state 138
+    data_value  go to state 36
+
+
+State 95
+
+   86 power: power RADICAL . factor
+
+    INT_VAL          shift, and go to state 4
+    REAL_VAL         shift, and go to state 5
+    BOOL_VAL         shift, and go to state 6
+    SUBSTRACT        shift, and go to state 11
+    PARETHESES_OPEN  shift, and go to state 16
+    CHAR_QUOTE       shift, and go to state 19
+    STRING_QUOTE     shift, and go to state 20
+    ID               shift, and go to state 134
+
+    factor      go to state 139
+    data_value  go to state 36
+
+
+State 96
+
+   35 fun_init: FUN VOID ID . PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   37         | FUN VOID ID . PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+
+    PARETHESES_OPEN  shift, and go to state 140
+
+
+State 97
+
+   34 fun_init: FUN data_type ID . PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   36         | FUN data_type ID . PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+
+    PARETHESES_OPEN  shift, and go to state 141
+
+
+State 98
+
+   85 term: ID array_access .
+
+    $default  reduce using rule 85 (term)
+
+
+State 99
+
+   99 data_vector: CURLY_BRACKET_OPEN comma_exp CURLY_BRACKET_CLOSE .
+
+    $default  reduce using rule 99 (data_vector)
+
+
+State 100
+
+   29 comma_exp: comma_exp ELEM_SEPARATOR . comma_exp
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 50
+
+    comma_exp    go to state 142
+    expr         go to state 52
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 53
+    data_value   go to state 54
+    data_vector  go to state 37
+
+
+State 101
+
+   89 factor: PARETHESES_OPEN expr PARETHESES_CLOSE .
+
+    $default  reduce using rule 89 (factor)
+
+
+State 102
+
+    3 input: OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG . input
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 143
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 103
+
+   97 data_value: CHAR_QUOTE CHAR_VAL CHAR_QUOTE .
+
+    $default  reduce using rule 97 (data_value)
+
+
+State 104
+
+   98 data_value: STRING_QUOTE STRING_VAL STRING_QUOTE .
+
+    $default  reduce using rule 98 (data_value)
+
+
+State 105
+
+   55 expr: ID ASSIGN term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 55 (expr)
+
+
+State 106
+
+   54 array_access: SQUARE_BRACKET_OPEN INT_VAL . SQUARE_BRACKET_CLOSE
+
+    SQUARE_BRACKET_CLOSE  shift, and go to state 144
+
+
+State 107
+
+   29 comma_exp: comma_exp . ELEM_SEPARATOR comma_exp
+   38 fun_call: ID PARETHESES_OPEN comma_exp . PARETHESES_CLOSE END_OF_INSTR
+
+    ELEM_SEPARATOR    shift, and go to state 100
+    PARETHESES_CLOSE  shift, and go to state 145
+
+
+State 108
+
+   19 instr: ID array_access ASSIGN . expr
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 55
+
+    expr         go to state 146
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 109
+
+   18 instr: data_init ID ASSIGN . expr
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 55
+
+    expr         go to state 147
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 110
+
+   11 array_init: data_type SQUARE_BRACKET_OPEN INT_VAL . SQUARE_BRACKET_CLOSE
+
+    SQUARE_BRACKET_CLOSE  shift, and go to state 148
+
+
+State 111
+
+   12 array_init: data_type SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE .
+
+    $default  reduce using rule 12 (array_init)
+
+
+State 112
+
+    1 input: instr END_OF_INSTR input .
+
+    $default  reduce using rule 1 (input)
+
+
+State 113
+
+   56 expr: expr SUM term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 56 (expr)
+
+
+State 114
+
+   57 expr: expr SUBSTRACT term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 57 (expr)
+
+
+State 115
+
+   68 expr: expr AND term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 68 (expr)
+
+
+State 116
+
+   69 expr: expr OR term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 69 (expr)
+
+
+State 117
+
+   66 expr: expr EQUALS term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 66 (expr)
+
+
+State 118
+
+   67 expr: expr NOT_EQUALS term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 67 (expr)
+
+
+State 119
+
+   64 expr: expr GREATER term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 64 (expr)
+
+
+State 120
+
+   65 expr: expr GREATER_EQUALS term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 65 (expr)
+
+
+State 121
+
+   62 expr: expr LESS term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 62 (expr)
+
+
+State 122
+
+   63 expr: expr LESS_EQUALS term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 63 (expr)
+
+
+State 123
+
+   71 expr: expr AND_BIT term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 71 (expr)
+
+
+State 124
+
+   72 expr: expr OR_BIT term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 72 (expr)
+
+
+State 125
+
+   73 expr: expr XOR_BIT term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 73 (expr)
+
+
+State 126
+
+   74 expr: expr LEFT_SHIFT term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 74 (expr)
+
+
+State 127
+
+   75 expr: expr RIGHT_SHIFT term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 75 (expr)
+
+
+State 128
+
+   76 expr: expr UNION term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 76 (expr)
+
+
+State 129
+
+   77 expr: expr DIFFERENCE term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 77 (expr)
+
+
+State 130
+
+   78 expr: expr INTERSECTION term .
+   81 term: term . PRODUCT power
+   82     | term . DIVIDE power
+   83     | term . MODULUS power
+
+    PRODUCT  shift, and go to state 91
+    DIVIDE   shift, and go to state 92
+    MODULUS  shift, and go to state 93
+
+    $default  reduce using rule 78 (expr)
+
+
+State 131
+
+   49 if_instr: expr IF_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   50         | expr IF_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   51         | expr IF_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 149
+
+
+State 132
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   40            | expr FOR_WHILE_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   41            | expr FOR_WHILE_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 150
+
+
+State 133
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr FOR_WHILE_CLAUSE expr . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr FOR_WHILE_CLAUSE expr . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM             shift, and go to state 71
+    SUBSTRACT       shift, and go to state 72
+    AND             shift, and go to state 73
+    OR              shift, and go to state 74
+    EQUALS          shift, and go to state 75
+    NOT_EQUALS      shift, and go to state 76
+    GREATER         shift, and go to state 77
+    GREATER_EQUALS  shift, and go to state 78
+    LESS            shift, and go to state 79
+    LESS_EQUALS     shift, and go to state 80
+    AND_BIT         shift, and go to state 81
+    OR_BIT          shift, and go to state 82
+    XOR_BIT         shift, and go to state 83
+    LEFT_SHIFT      shift, and go to state 84
+    RIGHT_SHIFT     shift, and go to state 85
+    UNION           shift, and go to state 86
+    DIFFERENCE      shift, and go to state 87
+    INTERSECTION    shift, and go to state 88
+    HEADER_END      shift, and go to state 151
+
+
+State 134
+
+   91 factor: ID .
+
+    $default  reduce using rule 91 (factor)
+
+
+State 135
+
+   81 term: term PRODUCT power .
+   86 power: power . RADICAL factor
+   87      | power . POWER factor
+
+    POWER    shift, and go to state 94
+    RADICAL  shift, and go to state 95
+
+    $default  reduce using rule 81 (term)
+
+
+State 136
+
+   82 term: term DIVIDE power .
+   86 power: power . RADICAL factor
+   87      | power . POWER factor
+
+    POWER    shift, and go to state 94
+    RADICAL  shift, and go to state 95
+
+    $default  reduce using rule 82 (term)
+
+
+State 137
+
+   83 term: term MODULUS power .
+   86 power: power . RADICAL factor
+   87      | power . POWER factor
+
+    POWER    shift, and go to state 94
+    RADICAL  shift, and go to state 95
+
+    $default  reduce using rule 83 (term)
+
+
+State 138
+
+   87 power: power POWER factor .
+
+    $default  reduce using rule 87 (power)
+
+
+State 139
+
+   86 power: power RADICAL factor .
+
+    $default  reduce using rule 86 (power)
+
+
+State 140
+
+   35 fun_init: FUN VOID ID PARETHESES_OPEN . comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   37         | FUN VOID ID PARETHESES_OPEN . comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+
+    INT_TYPE   shift, and go to state 7
+    REAL_TYPE  shift, and go to state 8
+    BOOL_TYPE  shift, and go to state 9
+    CHAR_TYPE  shift, and go to state 10
+
+    $default  reduce using rule 28 (comma_exp_init)
+
+    data_type       go to state 152
+    comma_exp_init  go to state 153
+
+
+State 141
+
+   34 fun_init: FUN data_type ID PARETHESES_OPEN . comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   36         | FUN data_type ID PARETHESES_OPEN . comma_exp_init PARETHESES_CLOSE END_OF_INSTR
+
+    INT_TYPE   shift, and go to state 7
+    REAL_TYPE  shift, and go to state 8
+    BOOL_TYPE  shift, and go to state 9
+    CHAR_TYPE  shift, and go to state 10
+
+    $default  reduce using rule 28 (comma_exp_init)
+
+    data_type       go to state 152
+    comma_exp_init  go to state 154
+
+
+State 142
+
+   29 comma_exp: comma_exp . ELEM_SEPARATOR comma_exp
+   29          | comma_exp ELEM_SEPARATOR comma_exp .
+
+    ELEM_SEPARATOR  shift, and go to state 100
+
+    ELEM_SEPARATOR  [reduce using rule 29 (comma_exp)]
+    $default        reduce using rule 29 (comma_exp)
+
+
+State 143
+
+    3 input: OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input .
+
+    $default  reduce using rule 3 (input)
+
+
+State 144
+
+   54 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE .
+
+    $default  reduce using rule 54 (array_access)
+
+
+State 145
+
+   38 fun_call: ID PARETHESES_OPEN comma_exp PARETHESES_CLOSE . END_OF_INSTR
+
+    END_OF_INSTR  shift, and go to state 155
+
+
+State 146
+
+   19 instr: ID array_access ASSIGN expr .
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM             shift, and go to state 71
+    SUBSTRACT       shift, and go to state 72
+    AND             shift, and go to state 73
+    OR              shift, and go to state 74
+    EQUALS          shift, and go to state 75
+    NOT_EQUALS      shift, and go to state 76
+    GREATER         shift, and go to state 77
+    GREATER_EQUALS  shift, and go to state 78
+    LESS            shift, and go to state 79
+    LESS_EQUALS     shift, and go to state 80
+    AND_BIT         shift, and go to state 81
+    OR_BIT          shift, and go to state 82
+    XOR_BIT         shift, and go to state 83
+    LEFT_SHIFT      shift, and go to state 84
+    RIGHT_SHIFT     shift, and go to state 85
+    UNION           shift, and go to state 86
+    DIFFERENCE      shift, and go to state 87
+    INTERSECTION    shift, and go to state 88
+
+    $default  reduce using rule 19 (instr)
+
+
+State 147
+
+   18 instr: data_init ID ASSIGN expr .
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM             shift, and go to state 71
+    SUBSTRACT       shift, and go to state 72
+    AND             shift, and go to state 73
+    OR              shift, and go to state 74
+    EQUALS          shift, and go to state 75
+    NOT_EQUALS      shift, and go to state 76
+    GREATER         shift, and go to state 77
+    GREATER_EQUALS  shift, and go to state 78
+    LESS            shift, and go to state 79
+    LESS_EQUALS     shift, and go to state 80
+    AND_BIT         shift, and go to state 81
+    OR_BIT          shift, and go to state 82
+    XOR_BIT         shift, and go to state 83
+    LEFT_SHIFT      shift, and go to state 84
+    RIGHT_SHIFT     shift, and go to state 85
+    UNION           shift, and go to state 86
+    DIFFERENCE      shift, and go to state 87
+    INTERSECTION    shift, and go to state 88
+
+    $default  reduce using rule 18 (instr)
+
+
+State 148
+
+   11 array_init: data_type SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE .
+
+    $default  reduce using rule 11 (array_init)
+
+
+State 149
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   50         | expr IF_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   51         | expr IF_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 156
+
+
+State 150
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   40            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   41            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 157
+
+
+State 151
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr FOR_WHILE_CLAUSE expr HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr FOR_WHILE_CLAUSE expr HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 158
+
+
+State 152
+
+   27 comma_exp_init: data_type . ID
+
+    ID  shift, and go to state 159
+
+
+State 153
+
+   26 comma_exp_init: comma_exp_init . ELEM_SEPARATOR comma_exp_init
+   35 fun_init: FUN VOID ID PARETHESES_OPEN comma_exp_init . PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   37         | FUN VOID ID PARETHESES_OPEN comma_exp_init . PARETHESES_CLOSE END_OF_INSTR
+
+    ELEM_SEPARATOR    shift, and go to state 160
+    PARETHESES_CLOSE  shift, and go to state 161
+
+
+State 154
+
+   26 comma_exp_init: comma_exp_init . ELEM_SEPARATOR comma_exp_init
+   34 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init . PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   36         | FUN data_type ID PARETHESES_OPEN comma_exp_init . PARETHESES_CLOSE END_OF_INSTR
+
+    ELEM_SEPARATOR    shift, and go to state 160
+    PARETHESES_CLOSE  shift, and go to state 162
+
+
+State 155
+
+   38 fun_call: ID PARETHESES_OPEN comma_exp PARETHESES_CLOSE END_OF_INSTR .
+
+    $default  reduce using rule 38 (fun_call)
+
+
+State 156
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   50         | expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   51         | expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 163
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 157
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   40            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   41            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 164
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 158
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 165
+
+
+State 159
+
+   27 comma_exp_init: data_type ID .
+
+    $default  reduce using rule 27 (comma_exp_init)
+
+
+State 160
+
+   26 comma_exp_init: comma_exp_init ELEM_SEPARATOR . comma_exp_init
+
+    INT_TYPE   shift, and go to state 7
+    REAL_TYPE  shift, and go to state 8
+    BOOL_TYPE  shift, and go to state 9
+    CHAR_TYPE  shift, and go to state 10
+
+    $default  reduce using rule 28 (comma_exp_init)
+
+    data_type       go to state 152
+    comma_exp_init  go to state 166
+
+
+State 161
+
+   35 fun_init: FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   37         | FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE . END_OF_INSTR
+
+    HEADER_END    shift, and go to state 167
+    END_OF_INSTR  shift, and go to state 168
+
+
+State 162
+
+   34 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   36         | FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE . END_OF_INSTR
+
+    HEADER_END    shift, and go to state 169
+    END_OF_INSTR  shift, and go to state 170
+
+
+State 163
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   50         | expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   51         | expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 171
+
+
+State 164
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   40            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   41            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 172
+
+
+State 165
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 173
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 166
+
+   26 comma_exp_init: comma_exp_init . ELEM_SEPARATOR comma_exp_init
+   26               | comma_exp_init ELEM_SEPARATOR comma_exp_init .
+
+    ELEM_SEPARATOR  shift, and go to state 160
+
+    ELEM_SEPARATOR  [reduce using rule 26 (comma_exp_init)]
+    $default        reduce using rule 26 (comma_exp_init)
+
+
+State 167
+
+   35 fun_init: FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 174
+
+
+State 168
+
+   37 fun_init: FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR .
+
+    $default  reduce using rule 37 (fun_init)
+
+
+State 169
+
+   34 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 175
+
+
+State 170
+
+   36 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR .
+
+    $default  reduce using rule 36 (fun_init)
+
+
+State 171
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG . if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   50         | expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG . ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   51         | expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    ELSE_IF_FOR_WHILE_CLAUSE  shift, and go to state 176
+
+    ELSE_IF_FOR_WHILE_CLAUSE  [reduce using rule 53 (if_middle_block)]
+    $default                  reduce using rule 51 (if_instr)
+
+    if_middle_block  go to state 177
+
+
+State 172
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG . while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   40            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG . ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   41            | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    ELSE_IF_FOR_WHILE_CLAUSE  shift, and go to state 178
+
+    ELSE_IF_FOR_WHILE_CLAUSE  [reduce using rule 43 (while_middle_block)]
+    $default                  reduce using rule 41 (while_instr)
+
+    while_middle_block  go to state 179
+
+
+State 173
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 180
+
+
+State 174
+
+   35 fun_init: FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 181
+
+
+State 175
+
+   34 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 182
+
+
+State 176
+
+   50 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE . IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    IF_CLAUSE  shift, and go to state 183
+
+
+State 177
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block . ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   52 if_middle_block: if_middle_block . ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    ELSE_IF_FOR_WHILE_CLAUSE  shift, and go to state 184
+
+
+State 178
+
+   40 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE . FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    FOR_WHILE_CLAUSE  shift, and go to state 185
+
+
+State 179
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block . ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   42 while_middle_block: while_middle_block . ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    ELSE_IF_FOR_WHILE_CLAUSE  shift, and go to state 186
+
+
+State 180
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG . for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   45          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG . ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   46          | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    ELSE_IF_FOR_WHILE_CLAUSE  shift, and go to state 187
+
+    ELSE_IF_FOR_WHILE_CLAUSE  [reduce using rule 48 (for_middle_block)]
+    $default                  reduce using rule 46 (for_instr)
+
+    for_middle_block  go to state 188
+
+
+State 181
+
+   35 fun_init: FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 189
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 182
+
+   34 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 190
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 183
+
+   50 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 191
+
+
+State 184
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE . IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE . expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    IF_CLAUSE           shift, and go to state 192
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 55
+
+    expr         go to state 193
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 185
+
+   40 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 194
+
+
+State 186
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE . FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE . expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    FOR_WHILE_CLAUSE    shift, and go to state 195
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 55
+
+    expr         go to state 196
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 187
+
+   45 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE . FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    FOR_WHILE_CLAUSE  shift, and go to state 197
+
+
+State 188
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block . ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   47 for_middle_block: for_middle_block . ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    ELSE_IF_FOR_WHILE_CLAUSE  shift, and go to state 198
+
+
+State 189
+
+   35 fun_init: FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 199
+
+
+State 190
+
+   34 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 200
+
+
+State 191
+
+   50 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 201
+
+
+State 192
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 202
+
+
+State 193
+
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr . IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM             shift, and go to state 71
+    SUBSTRACT       shift, and go to state 72
+    AND             shift, and go to state 73
+    OR              shift, and go to state 74
+    EQUALS          shift, and go to state 75
+    NOT_EQUALS      shift, and go to state 76
+    GREATER         shift, and go to state 77
+    GREATER_EQUALS  shift, and go to state 78
+    LESS            shift, and go to state 79
+    LESS_EQUALS     shift, and go to state 80
+    AND_BIT         shift, and go to state 81
+    OR_BIT          shift, and go to state 82
+    XOR_BIT         shift, and go to state 83
+    LEFT_SHIFT      shift, and go to state 84
+    RIGHT_SHIFT     shift, and go to state 85
+    UNION           shift, and go to state 86
+    DIFFERENCE      shift, and go to state 87
+    INTERSECTION    shift, and go to state 88
+    IF_CLAUSE       shift, and go to state 203
+
+
+State 194
+
+   40 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 204
+
+
+State 195
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 205
+
+
+State 196
+
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr . FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM               shift, and go to state 71
+    SUBSTRACT         shift, and go to state 72
+    AND               shift, and go to state 73
+    OR                shift, and go to state 74
+    EQUALS            shift, and go to state 75
+    NOT_EQUALS        shift, and go to state 76
+    GREATER           shift, and go to state 77
+    GREATER_EQUALS    shift, and go to state 78
+    LESS              shift, and go to state 79
+    LESS_EQUALS       shift, and go to state 80
+    AND_BIT           shift, and go to state 81
+    OR_BIT            shift, and go to state 82
+    XOR_BIT           shift, and go to state 83
+    LEFT_SHIFT        shift, and go to state 84
+    RIGHT_SHIFT       shift, and go to state 85
+    UNION             shift, and go to state 86
+    DIFFERENCE        shift, and go to state 87
+    INTERSECTION      shift, and go to state 88
+    FOR_WHILE_CLAUSE  shift, and go to state 206
+
+
+State 197
+
+   45 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 207
+
+
+State 198
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE . FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE . expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    FOR_WHILE_CLAUSE    shift, and go to state 208
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 55
+
+    expr         go to state 209
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 199
+
+   35 fun_init: FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 35 (fun_init)
+
+
+State 200
+
+   34 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 34 (fun_init)
+
+
+State 201
+
+   50 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 210
+
+
+State 202
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 211
+
+
+State 203
+
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 212
+
+
+State 204
+
+   40 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 213
+
+
+State 205
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 214
+
+
+State 206
+
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 215
+
+
+State 207
+
+   45 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 216
+
+
+State 208
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    HEADER_END  shift, and go to state 217
+
+
+State 209
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr . FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM               shift, and go to state 71
+    SUBSTRACT         shift, and go to state 72
+    AND               shift, and go to state 73
+    OR                shift, and go to state 74
+    EQUALS            shift, and go to state 75
+    NOT_EQUALS        shift, and go to state 76
+    GREATER           shift, and go to state 77
+    GREATER_EQUALS    shift, and go to state 78
+    LESS              shift, and go to state 79
+    LESS_EQUALS       shift, and go to state 80
+    AND_BIT           shift, and go to state 81
+    OR_BIT            shift, and go to state 82
+    XOR_BIT           shift, and go to state 83
+    LEFT_SHIFT        shift, and go to state 84
+    RIGHT_SHIFT       shift, and go to state 85
+    UNION             shift, and go to state 86
+    DIFFERENCE        shift, and go to state 87
+    INTERSECTION      shift, and go to state 88
+    FOR_WHILE_CLAUSE  shift, and go to state 218
+
+
+State 210
+
+   50 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 219
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 211
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 220
+
+
+State 212
+
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 221
+
+
+State 213
+
+   40 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 222
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 214
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 223
+
+
+State 215
+
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 224
+
+
+State 216
+
+   45 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 225
+
+
+State 217
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 226
+
+
+State 218
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE . expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 55
+
+    expr         go to state 227
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 219
+
+   50 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 228
+
+
+State 220
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 229
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 221
+
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 230
+
+
+State 222
+
+   40 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 231
+
+
+State 223
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 232
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 224
+
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 233
+
+
+State 225
+
+   45 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 234
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 226
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 235
+
+
+State 227
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr . HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   56 expr: expr . SUM term
+   57     | expr . SUBSTRACT term
+   62     | expr . LESS term
+   63     | expr . LESS_EQUALS term
+   64     | expr . GREATER term
+   65     | expr . GREATER_EQUALS term
+   66     | expr . EQUALS term
+   67     | expr . NOT_EQUALS term
+   68     | expr . AND term
+   69     | expr . OR term
+   71     | expr . AND_BIT term
+   72     | expr . OR_BIT term
+   73     | expr . XOR_BIT term
+   74     | expr . LEFT_SHIFT term
+   75     | expr . RIGHT_SHIFT term
+   76     | expr . UNION term
+   77     | expr . DIFFERENCE term
+   78     | expr . INTERSECTION term
+
+    SUM             shift, and go to state 71
+    SUBSTRACT       shift, and go to state 72
+    AND             shift, and go to state 73
+    OR              shift, and go to state 74
+    EQUALS          shift, and go to state 75
+    NOT_EQUALS      shift, and go to state 76
+    GREATER         shift, and go to state 77
+    GREATER_EQUALS  shift, and go to state 78
+    LESS            shift, and go to state 79
+    LESS_EQUALS     shift, and go to state 80
+    AND_BIT         shift, and go to state 81
+    OR_BIT          shift, and go to state 82
+    XOR_BIT         shift, and go to state 83
+    LEFT_SHIFT      shift, and go to state 84
+    RIGHT_SHIFT     shift, and go to state 85
+    UNION           shift, and go to state 86
+    DIFFERENCE      shift, and go to state 87
+    INTERSECTION    shift, and go to state 88
+    HEADER_END      shift, and go to state 236
+
+
+State 228
+
+   50 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 50 (if_instr)
+
+
+State 229
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 237
+
+
+State 230
+
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 238
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 231
+
+   40 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 40 (while_instr)
+
+
+State 232
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 239
+
+
+State 233
+
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 240
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 234
+
+   45 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 241
+
+
+State 235
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 242
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 236
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END . END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    END_OF_INSTR  shift, and go to state 243
+
+
+State 237
+
+   49 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG if_middle_block ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 49 (if_instr)
+
+
+State 238
+
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 244
+
+
+State 239
+
+   39 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG while_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 39 (while_instr)
+
+
+State 240
+
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 245
+
+
+State 241
+
+   45 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 45 (for_instr)
+
+
+State 242
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 246
+
+
+State 243
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR . OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+
+    OPEN_CONTEXT_TAG  shift, and go to state 247
+
+
+State 244
+
+   52 if_middle_block: if_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 52 (if_middle_block)
+
+
+State 245
+
+   42 while_middle_block: while_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 42 (while_middle_block)
+
+
+State 246
+
+   44 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG for_middle_block ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 44 (for_instr)
+
+
+State 247
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG . input CLOSE_CONTEXT_TAG
+
+    FUN                 shift, and go to state 1
+    GLOBAL              shift, and go to state 2
+    STATIC              shift, and go to state 3
+    INT_VAL             shift, and go to state 4
+    REAL_VAL            shift, and go to state 5
+    BOOL_VAL            shift, and go to state 6
+    INT_TYPE            shift, and go to state 7
+    REAL_TYPE           shift, and go to state 8
+    BOOL_TYPE           shift, and go to state 9
+    CHAR_TYPE           shift, and go to state 10
+    SUBSTRACT           shift, and go to state 11
+    INCREMENT           shift, and go to state 12
+    DECREMENT           shift, and go to state 13
+    NOT                 shift, and go to state 14
+    CURLY_BRACKET_OPEN  shift, and go to state 15
+    PARETHESES_OPEN     shift, and go to state 16
+    END_OF_INSTR        shift, and go to state 17
+    OPEN_CONTEXT_TAG    shift, and go to state 18
+    CHAR_QUOTE          shift, and go to state 19
+    STRING_QUOTE        shift, and go to state 20
+    ID                  shift, and go to state 21
+
+    $default  reduce using rule 4 (input)
+
+    input        go to state 248
+    data_init    go to state 23
+    array_init   go to state 24
+    data_type    go to state 25
+    instr        go to state 26
+    fun_init     go to state 27
+    fun_call     go to state 28
+    while_instr  go to state 29
+    for_instr    go to state 30
+    if_instr     go to state 31
+    expr         go to state 32
+    term         go to state 33
+    power        go to state 34
+    factor       go to state 35
+    data_value   go to state 36
+    data_vector  go to state 37
+
+
+State 248
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input . CLOSE_CONTEXT_TAG
+
+    CLOSE_CONTEXT_TAG  shift, and go to state 249
+
+
+State 249
+
+   47 for_middle_block: for_middle_block ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG .
+
+    $default  reduce using rule 47 (for_middle_block)

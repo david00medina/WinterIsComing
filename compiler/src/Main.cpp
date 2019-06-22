@@ -62,7 +62,7 @@ int main(int argc, char const **argv) {
         const std::string mid_code_path(arg);
         cg.set_path(mid_code_path);
 
-        cg.init();
+        /*cg.init();
         wic::data_value d1;
         d1.str_val = (char*)"rojo";
         wic::ASTLeafNode node1(wic::STRING, &d1);
@@ -85,19 +85,22 @@ int main(int argc, char const **argv) {
 
         cg.print("caballo loco %s loquisimo, %d, %c, %r, %b", 4, node1, node2, node3, node4, node5);
         cg.exit();
-        cg.end();
+        cg.end();*/
     }
-
-    int result = 1;
-    while(1) { /* TODO: Quitar este bucle cuando entreguemos el trabajo */
-        int result = yyparse();
+    cg.init();
+    int result = yyparse();
+    cg.exit();
+    cg.end();
+    //int result = 1;
+    //while(1) { /* TODO: Quitar este bucle cuando entreguemos el trabajo */
+        /*int result = yyparse();
 
         if (result == 0) {
             std::cout << "[OK] The input is valid." << std::endl;
         } else {
             std::cout << "[FAIL] The input is invalid." << std::endl;
         }
-    }
+    }*/
     return result;
 }
 

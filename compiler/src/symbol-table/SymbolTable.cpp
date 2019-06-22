@@ -26,7 +26,7 @@ namespace wic
         {
             std::cout << termcolor::red << termcolor::bold << "[!] Error: " << termcolor::reset << "Redeclaration of \'"
             << id << "\'" << std::endl;
-            return false;
+            exit(-1);
         }
 
         entry_d.var.offset = memory;

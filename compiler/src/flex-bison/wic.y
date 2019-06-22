@@ -260,6 +260,7 @@ expr: ID ASSIGN term                              {
 						    	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
 						    	<< "\' was not declared in this scope"
 						    	<< std::endl;
+						    	exit(-1);
 						    }
 
 						    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
@@ -372,6 +373,7 @@ factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión p
                                                     	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
                                                     	<< "\' was not declared in this scope"
                                                     	<< std::endl;
+                                                    	exit(-1);
                                                     }
                                                     $$ = id;
                                                   }

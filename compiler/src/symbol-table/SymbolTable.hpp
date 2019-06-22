@@ -38,7 +38,7 @@ namespace wic
         TableEntry(const char* id, entry_data entry_d, unsigned int line, unsigned int scope)
             : id(id), entry_d(entry_d), line(line), scope(scope) {}
 
-        ~TableEntry() { delete next; }
+        ~TableEntry(){};
 
 
         void print()
