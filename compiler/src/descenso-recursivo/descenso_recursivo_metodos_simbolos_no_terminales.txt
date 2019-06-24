@@ -8,6 +8,7 @@ public final void input () {
 		input();
 	} else if (token.tipo == Token.OPEN_CONTEXT_TAG) {
 		match(Token.OPEN_CONTEXT_TAG);
+		input();
 	} else if (token.tipo == Token.END_OF_PROGRAMM) {
 		/* TERMINAR */
 	} else {
@@ -57,6 +58,83 @@ public final void data_type () {
 		match(Token.BOOL_TYPE);
 	} else if (token.tipo == Token.CHAR_TYPE) {
 		match(Token.CHAR_TYPE);
+	} else {
+		/* ERROR */
+	}
+}
+
+public final void instr () {
+	if (token.tipo == Token.GLOBAL || token.tipo == Token.STATIC || token.tipo == Token.INT_TYPE || token.tipo == Token.REAL_TYPE || token.tipo == Token.BOOL_TYPE || token.tipo == Token.CHAR_TYPE) {
+		data_init();
+		match(Token.ID);
+		if (token.tipo == Token.ASSIGN) {
+			match(Token.ASSIGN);
+			expr();
+		} else if (token.tipo != Token.END_OF_INSTR) {
+			/* ERROR */
+		}
+	} else if (token.tipo == Token.FUN) {
+		fun_init();
+	} else if (token.tipo == Token.ID) {
+		match(Token.ID);
+		if (token.tipo == Token.SQUARE_BRACKET_OPEN) {
+			array_access();
+			match(Token.ASSIGN);
+			expr();
+		} else if (token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.ASSIGN || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT) {
+			expr_p_2();
+			expr_p_1();
+			if (token.tipo == Token.FOR_WHILE_CLAUSE) {
+				match(Token.FOR_WHILE_CLAUSE);
+				if (token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.ASSIGN || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT) {
+					expr();
+					match(Token.HEADER_END);
+					match(Token.END_OF_INSTR);
+					input();
+					for_instr_p();
+				}
+				match(Token.HEADER_END);
+				match(Token.END_OF_INSTR);
+				input();
+				while_instr_p();
+			} else if (token.tipo == Token.IF_CLAUSE) {
+				match(Token.IF_CLAUSE);
+				match(Token.FOR_WHILE_CLAUSE);
+				match(Token.FOR_WHILE_CLAUSE);
+				match(Token.HEADER_END);
+				match(Token.END_OF_INSTR);
+				input();
+				if_instr_p();
+			} else if (token.tipo != Token.END_OF_INSTR && token.tipo != Token.PARETHESES_OPEN && token.tipo != Token.SUBSTRACT && token.tipo != Token.INT_VAL && token.tipo != Token.REAL_VAL && token.tipo != Token.BOOL_VAL && token.tipo != Token.CHAR_QUOTE && token.tipo != Token.STRING_QUOTE && token.tipo != Token.FOR_WHILE_CLAUSE && token.tipo != Token.IF_CLAUSE && token.tipo != Token.HEADER_END && token.tipo != Token.PARETHESES_CLOSE) {
+				/* ERROR */
+			}
+		}
+	} else if (token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.ASSIGN || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT) {
+		expr();
+		if (token.tipo == Token.FOR_WHILE_CLAUSE) {
+			match(Token.FOR_WHILE_CLAUSE);
+			if (token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.ASSIGN || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT) {
+				expr();
+				match(Token.HEADER_END);
+				match(Token.END_OF_INSTR);
+				input();
+				for_instr_p();
+			}
+			match(Token.HEADER_END);
+			match(Token.END_OF_INSTR);
+			input();
+			while_instr_p();
+		} else if (token.tipo == Token.IF_CLAUSE) {
+			match(Token.IF_CLAUSE);
+			match(Token.FOR_WHILE_CLAUSE);
+			match(Token.FOR_WHILE_CLAUSE);
+			match(Token.HEADER_END);
+			match(Token.END_OF_INSTR);
+			input();
+			if_instr_p();
+		} else if (token.tipo != Token.END_OF_INSTR && token.tipo != Token.PARETHESES_OPEN && token.tipo != Token.SUBSTRACT && token.tipo != Token.INT_VAL && token.tipo != Token.REAL_VAL && token.tipo != Token.BOOL_VAL && token.tipo != Token.CHAR_QUOTE && token.tipo != Token.STRING_QUOTE && token.tipo != Token.FOR_WHILE_CLAUSE && token.tipo != Token.IF_CLAUSE && token.tipo != Token.HEADER_END && token.tipo != Token.PARETHESES_CLOSE) {
+			/* ERROR */
+		}
 	} else {
 		/* ERROR */
 	}
@@ -141,14 +219,144 @@ public final void fun_call () {
 	}
 }
 
+public final void while_instr () {
+	if (token.tipo == Token.ID || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT || token.tipo == Token.NOT || token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.CURLY_BRACKET_OPEN) {
+		expr();
+		match(Token.FOR_WHILE_CLAUSE);
+		match(Token.HEADER_END);
+		match(Token.END_OF_INSTR);
+		input();
+		while_instr_p();
+	} else {
+		/* ERROR */
+	}
+}
+
+public final void while_instr_p () {
+	if (token.tipo == Token.ELSE_IF_FOR_WHILE_CLAUSE) {
+		while_middle_block();
+		match(Token.FOR_WHILE_CLAUSE);
+		match(Token.HEADER_END);
+		match(Token.END_OF_INSTR);
+		input();
+	} else if (token.tipo != Token.END_OF_INSTR) {
+		/* ERROR */
+	}
+}
+
+public final void while_middle_block () {
+	if (token.tipo == Token.ELSE_IF_FOR_WHILE_CLAUSE) {
+		match(Token.ELSE_IF_FOR_WHILE_CLAUSE);
+		if (token.tipo == Token.ID || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT || token.tipo == Token.NOT || token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.CURLY_BRACKET_OPEN) {
+			expr();
+			match(Token.FOR_WHILE_CLAUSE);
+			match(Token.HEADER_END);
+			match(Token.END_OF_INSTR);
+			input();
+			while_middle_block();
+		} else if (token.tipo != Token.FOR_WHILE_CLAUSE) {
+			/* ERROR */
+		}
+	} else {
+		/* ERROR */
+	}
+}
+
+public final void for_instr () {
+	if (token.tipo == Token.ID || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT || token.tipo == Token.NOT || token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.CURLY_BRACKET_OPEN) {
+		expr();
+		match(Token.FOR_WHILE_CLAUSE);
+		expr();
+		match(Token.HEADER_END);
+		match(Token.END_OF_INSTR);
+		input();
+		while_instr_p();
+	} else {
+		/* ERROR */
+	}
+}
+public final void for_instr_p () {
+	if (token.tipo == Token.ELSE_IF_FOR_WHILE_CLAUSE) {
+		while_middle_block();
+		match(Token.ELSE_IF_FOR_WHILE_CLAUSE);
+		match(Token.HEADER_END);
+		match(Token.END_OF_INSTR);
+		input();
+	} else if (token.tipo != Token.END_OF_INSTR) {
+		/* ERROR */
+	}
+}
+
+public final void for_middle_block () {
+	if (token.tipo == Token.ELSE_IF_FOR_WHILE_CLAUSE) {
+		match(Token.ELSE_IF_FOR_WHILE_CLAUSE);
+		if (token.tipo == Token.ID || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT || token.tipo == Token.NOT || token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.CURLY_BRACKET_OPEN) {
+			expr();
+			match(Token.FOR_WHILE_CLAUSE);
+			expr();
+			match(Token.HEADER_END);
+			match(Token.END_OF_INSTR);
+			input();
+			for_middle_block();
+		} else if (token.tipo != Token.FOR_WHILE_CLAUSE) {
+			/* ERROR */
+		}
+	} else {
+		/* ERROR */
+	}
+}
+
+public final void if_instr () {
+	if (token.tipo == Token.ID || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT || token.tipo == Token.NOT || token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.CURLY_BRACKET_OPEN) {
+		expr();
+		match(Token.IF_CLAUSE);
+		match(Token.FOR_WHILE_CLAUSE);
+		match(Token.FOR_WHILE_CLAUSE);
+		match(Token.HEADER_END);
+		match(Token.END_OF_INSTR);
+		input();
+		if_instr_p();
+	} else {
+		/* ERROR */
+	}
+}
+
+public final void if_instr_p () {
+	if (token.tipo == Token.ELSE_IF_FOR_WHILE_CLAUSE) {
+		while_middle_block();
+		match(Token.ELSE_IF_FOR_WHILE_CLAUSE);
+		match(Token.IF_CLAUSE);
+		match(Token.HEADER_END);
+		match(Token.END_OF_INSTR);
+		input();
+	} else if (token.tipo != Token.END_OF_INSTR) {
+		/* ERROR */
+	}
+}
+
+public final void if_middle_block () {
+	if (token.tipo == Token.ELSE_IF_FOR_WHILE_CLAUSE) {
+		match(Token.ELSE_IF_FOR_WHILE_CLAUSE);
+		if (token.tipo == Token.ID || token.tipo == Token.INCREMENT || token.tipo == Token.DECREMENT || token.tipo == Token.NOT || token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.CURLY_BRACKET_OPEN) {
+			expr();
+			match(Token.IF_CLAUSE);
+			match(Token.HEADER_END);
+			match(Token.END_OF_INSTR);
+			input();
+			if_middle_block();
+		} else if (token.tipo != Token.IF_CLAUSE) {
+			/* ERROR */
+		}
+	} else {
+		/* ERROR */
+	}
+}
+
 public final void array_access () {
 	if (token.tipo == Token.SQUARE_BRACKET_OPEN) {
 		match(Token.SQUARE_BRACKET_OPEN);
 		match(Token.INT_VAL);
 		match(Token.SQUARE_BRACKET_CLOSE);
-	} else {
-		/* ERROR */
-	}
 }
 
 public final void expr () {
@@ -158,13 +366,21 @@ public final void expr () {
 		expr_p_1();
 	} else if (token.tipo == Token.INCREMENT) {
 		match(Token.INCREMENT);
+		match(Token.ID);
 		expr_p_1();
 	} else if (token.tipo == Token.DECREMENT) {
 		match(Token.DECREMENT);
+		match(Token.ID);
 		expr_p_1();
 	} else if (token.tipo == Token.NOT) {
-		match(Token.NOT
+		match(Token.NOT);
 		expr_p_3();
+		expr_p_1();
+	} else if (token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE || token.tipo == Token.ID) {
+		term();
+		expr_p_1();
+	} else if (token.tipo == Token.CURLY_BRACKET_OPEN) {
+		data_vector();
 		expr_p_1();
 	} else {
 		/* ERROR */
@@ -172,15 +388,91 @@ public final void expr () {
 }
 
 public final void expr_p_1 () {
-	
+	if (token.tipo == Token.SUM) {
+		match(Token.SUM);
+		expr();
+	} else if (token.tipo == Token.SUBSTRACT) {
+		match(Token.SUBSTRACT);
+		expr();
+	} else if (token.tipo == Token.LESS) {
+		match(Token.LESS);
+		expr();
+	} else if (token.tipo == Token.LESS_EQUALS) {
+		match(Token.LESS_EQUALS);
+		expr();
+	} else if (token.tipo == Token.GREATER) {
+		match(Token.GREATER);
+		expr();
+	} else if (token.tipo == Token.GREATER_EQUALS) {
+		match(Token.GREATER_EQUALS);
+		expr();
+	} else if (token.tipo == Token.EQUALS) {
+		match(Token.EQUALS);
+		expr();
+	} else if (token.tipo == Token.NOT_EQUALS) {
+		match(Token.NOT_EQUALS);
+		expr();
+	} else if (token.tipo == Token.AND) {
+		match(Token.AND);
+		expr();
+	} else if (token.tipo == Token.OR) {
+		match(Token.OR);
+		expr();
+	} else if (token.tipo == Token.AND_BIT) {
+		match(Token.AND_BIT);
+		expr();
+	} else if (token.tipo == Token.OR_BIT) {
+		match(Token.OR_BIT);
+		expr();
+	} else if (token.tipo == Token.XOR_BIT) {
+		match(Token.XOR_BIT);
+		expr();
+	} else if (token.tipo == Token.LEFT_SHIFT) {
+		match(Token.LEFT_SHIFT);
+		expr();
+	} else if (token.tipo == Token.RIGHT_SHIFT) {
+		match(Token.RIGHT_SHIFT);
+		expr();
+	} else if (token.tipo == Token.UNION) {
+		match(Token.UNION);
+		expr();
+	} else if (token.tipo == Token.DIFFERENCE) {
+		match(Token.DIFFERENCE);
+		expr();
+	} else if (token.tipo == Token.INTERSECTION) {
+		match(Token.INTERSECTION);
+		expr();
+	} else if (token.tipo != Token.END_OF_INSTR && token.tipo != Token.PARETHESES_OPEN && token.tipo != Token.SUBSTRACT && token.tipo != Token.INT_VAL && token.tipo != Token.REAL_VAL && token.tipo != Token.BOOL_VAL && token.tipo != Token.CHAR_QUOTE && token.tipo != Token.STRING_QUOTE && token.tipo != Token.FOR_WHILE_CLAUSE && token.tipo != Token.IF_CLAUSE && token.tipo != Token.HEADER_END && token.tipo != Token.PARETHESES_CLOSE) {
+		/* ERROR */
+	}
 }
 
 public final void expr_p_2 () {
-	
+	if (token.tipo == Token.ASSIGN) {
+		match(Token.ASSIGN);
+		expr_p_3();
+	} else if (token.tipo == Token.INCREMENT) {
+		match(Token.INCREMENT);
+	} else if (token.tipo == Token.DECREMENT) {
+		match(Token.DECREMENT);
+	} else if (token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE) {
+		term_p_1();
+		term_p_2();
+	} else {
+		/* ERROR */
+	}
 }
 
 public final void expr_p_3 () {
-	
+	if (token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.BOOL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE) {
+		term();
+	} else if (token.tipo == Token.ID) {
+		match(Token.ID);
+		term_p_1();
+		term_p_2();
+	} else {
+		/* ERROR */
+	}
 }
 
 public final void term () {
@@ -213,7 +505,7 @@ public final void term_p_2 () {
 	} else if (token.tipo == Token.MODULUS) {
 		match(Token.MODULUS);
 		term_p_3();
-	} else () {
+	} else if (token.tipo != Token.END_OF_INSTR && token.tipo != Token.PARETHESES_OPEN && token.tipo != Token.SUBSTRACT && token.tipo != Token.INT_VAL && token.tipo != Token.REAL_VAL && token.tipo != Token.BOOL_VAL && token.tipo != Token.CHAR_QUOTE && token.tipo != Token.STRING_QUOTE && token.tipo != Token.FOR_WHILE_CLAUSE && token.tipo != Token.IF_CLAUSE && token.tipo != Token.HEADER_END && token.tipo != Token.PARETHESES_CLOSE && token.tipo != Token.SUM && token.tipo != Token.SUBSTRACT && token.tipo != Token.LESS && token.tipo != Token.LESS_EQUALS && token.tipo != Token.GREATER && token.tipo != Token.GREATER_EQUALS && token.tipo != Token.EQUALS && token.tipo != Token.NOT_EQUALS && token.tipo != Token.AND && token.tipo != Token.OR && token.tipo != Token.AND_BIT && token.tipo != Token.OR_BIT && token.tipo != Token.XOR_BIT && token.tipo != Token.LEFT_SHIFT && token.tipo != Token.RIGHT_SHIFT && token.tipo != Token.UNION && token.tipo != Token.DIFFERENCE && token.tipo != Token.INTERSECTION) {
 		/* ERROR */
 	}
 }
@@ -237,7 +529,7 @@ public final void power () {
 	} else if (token.tipo == Token.POWER) {
 		match(Token.POWER);
 		term();
-	} else {
+	} else if (token.tipo != Token.END_OF_INSTR && token.tipo != Token.PARETHESES_OPEN && token.tipo != Token.SUBSTRACT && token.tipo != Token.INT_VAL && token.tipo != Token.REAL_VAL && token.tipo != Token.BOOL_VAL && token.tipo != Token.CHAR_QUOTE && token.tipo != Token.STRING_QUOTE && token.tipo != Token.FOR_WHILE_CLAUSE && token.tipo != Token.IF_CLAUSE && token.tipo != Token.HEADER_END && token.tipo != Token.PARETHESES_CLOSE && token.tipo != Token.SUM && token.tipo != Token.SUBSTRACT && token.tipo != Token.LESS && token.tipo != Token.LESS_EQUALS && token.tipo != Token.GREATER && token.tipo != Token.GREATER_EQUALS && token.tipo != Token.EQUALS && token.tipo != Token.NOT_EQUALS && token.tipo != Token.AND && token.tipo != Token.OR && token.tipo != Token.AND_BIT && token.tipo != Token.OR_BIT && token.tipo != Token.XOR_BIT && token.tipo != Token.LEFT_SHIFT && token.tipo != Token.RIGHT_SHIFT && token.tipo != Token.UNION && token.tipo != Token.DIFFERENCE && token.tipo != Token.INTERSECTION && token.tipo != Token.PRODUCT && token.tipo != Token.DIVIDE && token.tipo != Token.MODULUS) {
 		/* ERROR */
 	}
 }
@@ -252,6 +544,16 @@ public final void factor () {
 		factor_p();
 	} else if (token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE) {
 		data_value();
+	} else {
+		/* ERROR */
+	}
+}
+
+public final void factor_p () {
+	if (token.tipo == Token.ID) {
+		match(Token.ID);
+	} else if (token.tipo == Token.PARETHESES_OPEN || token.tipo == Token.SUBSTRACT || token.tipo == Token.INT_VAL || token.tipo == Token.REAL_VAL || token.tipo == Token.CHAR_QUOTE || token.tipo == Token.STRING_QUOTE) {
+		factor();
 	} else {
 		/* ERROR */
 	}
