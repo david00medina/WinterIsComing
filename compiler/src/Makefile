@@ -31,7 +31,7 @@ compile:
 					#mv *.a *.o build
 
 clean:
-					rm -rf build wic *.s
+					rm -rf build wic *.s wic.output
 
 # "No rule to make target" T si no encuentra ni puede crear T.
 # Por supuesto, no regenera milex si no es necesario.
