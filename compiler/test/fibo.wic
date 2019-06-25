@@ -1,0 +1,19 @@
+.. Variable global que contiene el resultado
+global int a = 0
+
+.. Funcion que actualiza los valores de a y b en funcion de sus valores anteriores
+fun void fibo():
+    static int b = 1
+    int aux = b
+    b = a + b
+    a = aux
+
+.. Leer de teclado un entero
+n = scan(int)
+
+.. Bucle que finaliza cuando a alcanza el valor introducido por teclado.
+( a < n ) ??:
+    print(a)
+    print(', ')
+    fibo()
+    print(crlf)
