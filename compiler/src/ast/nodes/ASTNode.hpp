@@ -3,6 +3,7 @@
 
 #include <string>
 #include "../AbstractSyntaxTreePack.hpp"
+#include "../../code-generator/CodeGenerator.hpp"
 
 #define DATA_TYPE_NUM 11
 #define NODE_TYPE_NUM 29
@@ -69,6 +70,8 @@ namespace wic {
         virtual ASTNode* get_ptr3();
         virtual void set_ptr3(ASTNode *);
 
+        virtual cpu_registers to_code(CodeGenerator*) = 0;
+
         virtual void print();
 
         friend class AbstractSyntaxTree;
@@ -79,6 +82,8 @@ namespace wic {
         ASTMainNode() = default;
         ASTMainNode(data_type, ASTNode *, ASTNode *, ASTNode *);
         ~ASTMainNode() = default;
+
+        cpu_registers to_code(CodeGenerator*);
     };
 
     class ASTBodyNode : public ASTNode {
@@ -86,6 +91,8 @@ namespace wic {
         ASTBodyNode() = default;
         ASTBodyNode(data_type, ASTNode *, ASTNode *, ASTNode *);
         ~ASTBodyNode() = default;
+
+        cpu_registers to_code(CodeGenerator*);
     };
 
     class ASTReturnNode : public ASTNode {
@@ -93,6 +100,8 @@ namespace wic {
         ASTReturnNode() = default;
         ASTReturnNode(data_type, ASTNode *, ASTNode *, ASTNode *);
         ~ASTReturnNode() = default;
+
+        cpu_registers to_code(CodeGenerator*);
     };
 
     class ASTParamNode : public ASTNode {
@@ -100,6 +109,8 @@ namespace wic {
         ASTParamNode() = default;
         ASTParamNode(data_type, ASTNode *, ASTNode *, ASTNode *);
         ~ASTParamNode() = default;
+
+        cpu_registers to_code(CodeGenerator*);
     };
 }
 

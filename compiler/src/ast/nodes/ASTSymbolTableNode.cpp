@@ -132,8 +132,12 @@ namespace wic
         if (arg != nullptr) this->args[args_i++] = arg;
     }
 
+    cpu_registers ASTCallNode::to_code(CodeGenerator *cg) {}
+
     ASTIDNode::ASTIDNode(std::string *id, wic::data_type data_t) : ASTSymbolTableNode(id, wic::ID, data_t) { name = "ID"; }
 
     ASTIDNode::ASTIDNode(std::string *id, wic::data_type data_t, wic::TableEntry *global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
         : ASTSymbolTableNode(id, wic::ID, data_t, global_te, static_te, local_te) { name = "ID"; }
+
+    cpu_registers ASTIDNode::to_code(CodeGenerator *cg) {}
 }

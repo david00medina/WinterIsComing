@@ -6,6 +6,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <iostream>
+
     #include "../utils/termcolor.hpp"
     #include "../symbol-table/SymbolTable.hpp"
     #include "../ast/AbstractSyntaxTree.hpp"
@@ -156,7 +157,6 @@ instr: data_init ID                               {
     						    $$ = ast->tree_build(assign);
     						    ast->print();
     						  }
-    | ID array_access ASSIGN expr                 { printf("Instrucción acceso array\n"); }
     | if_instr                                    { printf("Instrucción (IF-IFELSE-ELSE)\n"); }
     | for_instr                                   { printf("Instrucción (FOR-FORELSE-ELSE)\n"); }
     | while_instr                                 { printf("Instrucción (WHILE-WHILEELSE-ELSE)\n"); }
@@ -168,15 +168,11 @@ instr: data_init ID                               {
     | fun_init                                    { printf("Instrucción FUN (declaration)\n"); }
     | fun_call                                    { printf("Instrucción FUN (call)\n"); }
 
-comma_exp_init: comma_exp_init ELEM_SEPARATOR comma_exp_init     { printf("Expresión (,)\n"); }
-    | data_type ID                                { printf("Expresión (,%s %s,)\n"); }
+comma_exp_init: comma_exp_init data_type ID ELEM_SEPARATOR  { printf("Expresión (,%s %s,)\n"); }
     | /* empty */
 
-comma_exp: comma_exp ELEM_SEPARATOR comma_exp     { printf("Función llamada (,)\n"); }
-    | factor                                      { printf("Función llamada (factor)\n"); }
-    | data_value                                  { printf("Función llamada (valor)\n"); }
-    | ID                                          { printf("Función llamada (variable)\n"); }
-    | expr                                        { printf("Función llamada (término)\n"); $$ = $1; }
+comma_exp: comma_exp expr ELEM_SEPARATOR     { printf("Función llamada (,)\n"); }
+    | /* empty */
 
 fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
@@ -250,7 +246,21 @@ if_middle_block: if_middle_block
 
 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
 
-expr: ID ASSIGN term                              {
+expr: ID                                          {
+                                                          wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+                                                          std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
+
+                                                          if (!id->is_registered()) {
+                                                          	std::cout << termcolor::red << termcolor::bold
+                                                          	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+                                                          	<< "\' was not declared in this scope"
+                                                          	<< std::endl;
+                                                          	exit(-1);
+                                                          }
+                                                          $$ = id;
+                                                        }
+    | ID array_access                             { printf("Término (VectorVal)");}
+      ID ASSIGN term                              {
 						    std::cout << "Expresión (=)" << std::endl;
 
 						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
@@ -270,6 +280,7 @@ expr: ID ASSIGN term                              {
 						    $$ = assign;
 						    lst->show(id->get_id());
 						  }
+    | ID array_access ASSIGN expr                 { printf("Instrucción acceso array\n"); }
     | expr SUM term                               {
                                                     std::cout << "Expresión (Suma)" << std::endl;
 
@@ -347,7 +358,6 @@ term: term PRODUCT power                          {
                                                     $$ = ast->tree_build(mod);
                                                   }
     | power                                       { printf("Término\n"); $$ = $1; }
-    | ID array_access                             { printf("Término (VectorVal)");}
 
 power: power RADICAL factor                       {
                                                     std::cout << "Expresión (Radical)" << std::endl;
@@ -364,19 +374,6 @@ power: power RADICAL factor                       {
 
 factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión parentesis)\n"); $$ = $2; }
     | data_value                                  { printf("Factor (DATA_VALUE)\n"); $$ = $1; }
-    | ID                                          {
-                                                    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
-                                                    std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
-
-                                                    if (!id->is_registered()) {
-                                                    	std::cout << termcolor::red << termcolor::bold
-                                                    	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
-                                                    	<< "\' was not declared in this scope"
-                                                    	<< std::endl;
-                                                    	exit(-1);
-                                                    }
-                                                    $$ = id;
-                                                  }
 
 data_value: INT_VAL                               {
                                                     wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);

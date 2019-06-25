@@ -30,6 +30,7 @@ namespace wic {
         virtual TableEntry* get_local_entry();
         virtual void set_local_entry(TableEntry*);
         virtual bool is_registered();
+        virtual cpu_registers to_code(CodeGenerator*) = 0;
         virtual void print();
     };
 
@@ -47,6 +48,8 @@ namespace wic {
 
         ASTNode** get_args();
         void add_arg(ASTNode*);
+
+        cpu_registers to_code(CodeGenerator*);
     };
 
     class ASTIDNode : public ASTSymbolTableNode
@@ -56,6 +59,8 @@ namespace wic {
         ASTIDNode(std::string *, data_type);
         ASTIDNode(std::string *, data_type, TableEntry*, TableEntry*, TableEntry*);
         ~ASTIDNode() = default;
+
+        cpu_registers to_code(CodeGenerator*);
     };
 }
 

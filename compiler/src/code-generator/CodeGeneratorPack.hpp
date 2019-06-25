@@ -12,7 +12,12 @@ namespace wic
         ESI,
         EDI,
         ESP,
-        EBP
+        EBP,
+        XMM0,
+        XMM1,
+        XMM2,
+        XMM3,
+        NONE
     } cpu_registers;
 
     typedef struct fstream_p
@@ -24,13 +29,15 @@ namespace wic
     typedef enum
     {
         DATA,
-        CODE
+        CODE,
+        LABEL_FLOAT
     } section_enum;
 
     typedef struct label_c
     {
         long code_l;
         long data_l;
+        long float_l;
     } label_c;
 }
 

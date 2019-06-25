@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "ASTLeafNode.hpp"
 
 namespace wic
@@ -26,23 +27,62 @@ namespace wic
         else if (data_t == wic::ARRAY_BOOL) this->data_v.bool_array_val = (bool *) val;
     }
 
+    cpu_registers ASTLeafNode::to_code(CodeGenerator *cg)
+    {
+        switch (data_t)
+        {
+            case INT:
+                {
+                    cpu_registers r = cg->get_reg();
+                    cg->write_code_section("movl", "$" + std::to_string(data_v.int_val), cg->translate_reg(r), "Move int to " + cg->translate_reg(r));
+                    return r;
+                }
+            case REAL:
+                {
+                    std::string l = cg->get_label(LABEL_FLOAT);
+                    std::string s1 = ".section\t.rodata";
+                    std::string s2 = ".align 4";
+                    cg->write_data_section(2, s1, s2);
+                    cg->write_data_section(l, 1, ".float " + std::to_string(data_v.real_val));
+
+                    cpu_registers r = cg->get_float_reg();
+                    cg->write_code_section("movss", l, cg->translate_reg(r), "Move real to " + cg->translate_reg(r));
+                    return r;
+                }
+            case CHAR:
+                {
+                    cpu_registers r = cg->get_reg();
+                    cg->write_code_section("movl", "$" + std::to_string((int) data_v.char_val), cg->translate_reg(r), "Move char to " + cg->translate_reg(r));
+                    return r;
+                }
+            case BOOL:
+                {
+                    cpu_registers r = cg->get_reg();
+                    cg->write_code_section("movl", "$" + std::to_string((int) data_v.bool_val), cg->translate_reg(r), "Move bool to " + cg->translate_reg(r));
+                    return r;
+                }
+        }
+
+        return NONE;
+    }
+
     void ASTLeafNode::print()
     {
-        if (data_t == wic::CHAR)
+        if (data_t == CHAR)
             std::cout << "(" << name << ", " << type_data_str[data_t] << ", " << data_v.char_val << ")";
-        else if (data_t == wic::STRING)
+        else if (data_t == STRING)
             std::cout << "(" << name << ", " << type_data_str[data_t] << ", " << data_v.str_val << ")";
-        else if (data_t == wic::INT)
+        else if (data_t == INT)
             std::cout << "(" << name << ", " << type_data_str[data_t] << ", " << data_v.int_val << ")";
-        else if (data_t == wic::REAL)
+        else if (data_t == REAL)
             std::cout << "(" << name << ", " << type_data_str[data_t] << ", " << data_v.real_val << ")";
-        else if (data_t == wic::BOOL)
+        else if (data_t == BOOL)
             std::cout << "(" << name << ", " << type_data_str[data_t] << ", " << data_v.bool_val << ")";
-        else if (data_t == wic::ARRAY_INT)
+        else if (data_t == ARRAY_INT)
             std::cout << "(" << name << ", " << type_data_str[data_t] << ", " << data_v.int_array_val << ")";
-        else if (data_t == wic::ARRAY_REAL)
+        else if (data_t == ARRAY_REAL)
             std::cout << "(" << name << ", " << type_data_str[data_t] << ", " << data_v.real_array_val << ")";
-        else if (data_t == wic::ARRAY_BOOL)
+        else if (data_t == ARRAY_BOOL)
             std::cout << "(" << name << ", " << type_data_str[data_t] << ", " << data_v.bool_array_val << ")";
     }
 }

@@ -1,5 +1,10 @@
 #include <queue>
+
 #include "AbstractSyntaxTree.hpp"
+#include "nodes/ASTNode.hpp"
+#include "nodes/ASTOperatorNode.hpp"
+#include "nodes/ASTSymbolTableNode.hpp"
+#include "nodes/ASTLeafNode.hpp"
 
 extern int yylineno;
 extern int level;
@@ -17,6 +22,7 @@ namespace wic
     ASTNode* AbstractSyntaxTree::tree_build(void* elem1, void* elem2){
         entry_data* entry_d = reinterpret_cast<entry_data *>(elem1);
         ASTIDNode* node = reinterpret_cast<ASTIDNode *>(elem2);
+        node->set_data_type(entry_d->var.type);
 
         if (entry_d->var.global)
         {

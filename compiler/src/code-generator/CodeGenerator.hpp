@@ -5,28 +5,30 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+
 #include "CodeGeneratorPack.hpp"
-#include "../ast/AbstractSyntaxTree.hpp"
 
 #define TOTAL_REG 4
-#define ALL_REG 8
+#define ALL_REG 12
 
 namespace wic {
     class CodeGenerator {
     private:
-        bool reg_use[TOTAL_REG];
+        bool reg_use[ALL_REG];
+        unsigned int general_spill_count;
+        unsigned int float_spill_count;
         std::string path;
         std::fstream fout, fcode, fdata;
         fstream_p file_p;
         label_c label;
 
-        const std::string initial_spacing = "        ";
-        const std::string instr_spacing = "\t\t";
-        const std::string code_label = "C";
-        const std::string data_label = "D";
-        const char* reg[ALL_REG] = { "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%esp", "%ebp" };
-
-        std::string get_label(section_enum);
+        const std::string initial_spacing = "\t\t";
+        const std::string instr_spacing = "\t";
+        const std::string comment_spacing = "\t\t\t";
+        const std::string code_label = ".C";
+        const std::string data_label = ".D";
+        const std::string float_label = ".F";
+        const std::string reg[ALL_REG] = { "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%esp", "%ebp", "%xmm0", "%xmm1", "%xmm2", "%xmm3" };
 
     public:
         CodeGenerator();
@@ -34,25 +36,27 @@ namespace wic {
         ~CodeGenerator() = default;
 
         void set_path(const std::string);
+        void write_data_section(unsigned int, ...);
+        void write_data_section(const std::string, unsigned int, ...);
+        void write_code_section(const std::string, const std::string);
+        void write_code_section(const std::string, const std::string, const std::string);
+        void write_code_section(const std::string, const std::string, const std::string, const std::string);
 
-        int get_reg();
+        std::string get_label(section_enum);
+
+        const std::string translate_reg(cpu_registers);
+        cpu_registers get_reg();
+        cpu_registers get_float_reg();
         void lock_reg(cpu_registers);
         void free_reg(cpu_registers);
+        bool is_used(cpu_registers);
 
         void init();
-        /*void push_scope();
-        void pop_scope();*/
-        void save_value(void*, unsigned int, bool);
-        cpu_registers get_value(unsigned int);
-        void instr(const std::string, cpu_registers);
-        void instr(const std::string, unsigned int);
-        void instr(const std::string, cpu_registers, cpu_registers);
-        void instr(const std::string, unsigned int, unsigned int);
-        void instr(const std::string, unsigned int, cpu_registers);
-        void instr(const std::string, cpu_registers, unsigned int);
         void print(std::string, unsigned int, ...);
         void exit();
         void end();
+
+        void print_reg_use();
     };
 }
 

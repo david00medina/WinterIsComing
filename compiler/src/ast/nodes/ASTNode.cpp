@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "ASTNode.hpp"
 
 namespace wic {
@@ -77,12 +78,24 @@ namespace wic {
     ASTMainNode::ASTMainNode(wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr2, wic::ASTNode *ptr3) :
         ASTNode(wic::MAIN, data_t, ptr1, ptr2, ptr3) { name = "MAIN"; }
 
+    cpu_registers ASTMainNode::to_code(CodeGenerator *cg)
+    {
+        cg->init();
+        return NONE;
+    }
+
     ASTBodyNode::ASTBodyNode(wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr2, wic::ASTNode *ptr3) :
             ASTNode(wic::BODY, data_t, ptr1, ptr2, ptr3) { name = "BODY"; }
+
+    cpu_registers ASTBodyNode::to_code(CodeGenerator *cg) {}
 
     ASTReturnNode::ASTReturnNode(wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr2, wic::ASTNode *ptr3) :
             ASTNode(wic::RET, data_t, ptr1, ptr2, ptr3) { name = "RETURN"; }
 
+    cpu_registers ASTReturnNode::to_code(CodeGenerator *cg) {}
+
     ASTParamNode::ASTParamNode(wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr2, wic::ASTNode *ptr3) :
             ASTNode(wic::PARAM, data_t, ptr1, ptr2, ptr3) { name = "PARAM"; }
+
+    cpu_registers ASTParamNode::to_code(CodeGenerator *cg) {}
 }

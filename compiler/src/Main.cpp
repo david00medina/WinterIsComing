@@ -1,5 +1,9 @@
 #include <iostream>
 #include "ast/AbstractSyntaxTree.hpp"
+#include "ast/nodes/ASTNode.hpp"
+#include "ast/nodes/ASTOperatorNode.hpp"
+#include "ast/nodes/ASTSymbolTableNode.hpp"
+#include "ast/nodes/ASTLeafNode.hpp"
 #include "symbol-table/SymbolTable.hpp"
 #include "code-generator/CodeGenerator.hpp"
 
@@ -17,7 +21,7 @@ extern wic::LSymbolTable* lst;
 extern wic::AbstractSyntaxTree* ast;
 
 int main(int argc, char const **argv) {
-    ast = new wic::AbstractSyntaxTree(new wic::ASTNode());
+    ast = new wic::AbstractSyntaxTree();
     wic::entry_data entry_d;
     entry_d.var.type = wic::ARRAY_INT;
     entry_d.var.offset = 0;
@@ -47,7 +51,7 @@ int main(int argc, char const **argv) {
 
     lst.show(0);
 
-    wic::CodeGenerator cg;
+    wic::CodeGenerator* cg;
 
     if (argc > 1) {
         if (!(yyin = fopen(argv[1], "r"))) {
@@ -60,7 +64,8 @@ int main(int argc, char const **argv) {
         else arg = argv[0];
 
         const std::string mid_code_path(arg);
-        cg.set_path(mid_code_path);
+
+        cg = new wic::CodeGenerator(mid_code_path);
 
         /*cg.init();
         wic::data_value d1;
@@ -86,11 +91,39 @@ int main(int argc, char const **argv) {
         cg.print("caballo loco %s loquisimo, %d, %c, %r, %b", 4, node1, node2, node3, node4, node5);
         cg.exit();
         cg.end();*/
+        wic::ASTMainNode* main = new wic::ASTMainNode();
+        wic::data_value data_v;
+        data_v.int_val = 12;
+        wic::ASTLeafNode* int_node = new wic::ASTLeafNode(wic::INT, &data_v);
+        data_v.real_val = 500.18263f;
+        wic::ASTLeafNode* float_node = new wic::ASTLeafNode(wic::REAL, &data_v);
+        data_v.char_val = 'a';
+        wic::ASTLeafNode* char_node = new wic::ASTLeafNode(wic::CHAR, &data_v);
+        data_v.bool_val = false;
+        wic::ASTLeafNode* bool_node = new wic::ASTLeafNode(wic::BOOL, &data_v);
+        wic::ASTSumNode* sum = new wic::ASTSumNode(wic::UNKNOWN, float_node, float_node);
+        wic::ASTSubNode* sub = new wic::ASTSubNode(wic::UNKNOWN, int_node, float_node);
+        wic::ASTProdNode* prod = new wic::ASTProdNode(wic::UNKNOWN, int_node, int_node);
+        wic::ASTDivNode* div = new wic::ASTDivNode(wic::UNKNOWN, int_node, int_node);
+        wic::ASTModNode* mod = new wic::ASTModNode(wic::UNKNOWN, float_node, int_node);
+
+
+        main->to_code(cg);
+        //int_node->to_code(cg);
+        //float_node->to_code(cg);
+        char_node->to_code(cg);
+        bool_node->to_code(cg);
+        //sum->to_code(cg);
+        //sub->to_code(cg);
+        //prod->to_code(cg);
+        //div->to_code(cg);
+        mod->to_code(cg);
     }
-    cg.init();
+
+
     int result = yyparse();
-    cg.exit();
-    cg.end();
+    cg->exit();
+    cg->end();
     //int result = 1;
     //while(1) { /* TODO: Quitar este bucle cuando entreguemos el trabajo */
         /*int result = yyparse();

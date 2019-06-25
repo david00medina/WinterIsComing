@@ -17,6 +17,7 @@ namespace wic {
 
         data_value get_data_value();
         void set_data_value(void *);
+        cpu_registers to_code(CodeGenerator*);
         void print();
     };
 }

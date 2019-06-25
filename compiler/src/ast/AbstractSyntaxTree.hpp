@@ -14,7 +14,7 @@ namespace wic
         ASTNode* root;
 
     public:
-        AbstractSyntaxTree();
+        AbstractSyntaxTree() = default;
         AbstractSyntaxTree(ASTNode* root) : root(root) {};
         ~AbstractSyntaxTree() { delete root; };
 

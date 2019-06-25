@@ -13,8 +13,9 @@
     /* Declaraciones */
 
     #include <string>
-    #include "../symbol-table/SymbolTablePack.hpp"
+
     #include "../ast/nodes/ASTLeafNode.hpp"
+    #include "../symbol-table/SymbolTablePack.hpp"
     #include "../ast/nodes/ASTSymbolTableNode.hpp"
     #include "wic.tab.h"
 
