@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "ASTLeafNode.hpp"
 
 namespace wic

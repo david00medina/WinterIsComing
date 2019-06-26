@@ -11,7 +11,7 @@ all:
 					$(MAKE) compile
 
 bison:
-					bison -d -v flex-bison/wic.y
+					bison -d -v -t flex-bison/wic.y
 					mv wic.tab.* build
 
 flex:
@@ -26,7 +26,8 @@ compile:
 
 					g++ -std=gnu++11 -Wall -Wextra Main.cpp build/wic.a symbol-table/SymbolTable.cpp \
 					code-generator/CodeGenerator.cpp ast/AbstractSyntaxTree.cpp ast/nodes/ASTNode.cpp  \
-					ast/nodes/ASTSymbolTableNode.cpp ast/nodes/ASTOperatorNode.cpp ast/nodes/ASTLeafNode.cpp -o wic
+					ast/nodes/ASTSymbolTableNode.cpp ast/nodes/ASTOperatorNode.cpp ast/nodes/ASTLeafNode.cpp \
+					error-manager/ErrorManager.cpp -g -o wic
 
 					#mv *.a *.o build
 

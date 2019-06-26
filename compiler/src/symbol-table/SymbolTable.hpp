@@ -1,8 +1,10 @@
 #ifndef WIC_TABLE_HPP
 #define WIC_TABLE_HPP
 
-#include <iostream>
+#include <string.h>
+
 #include "SymbolTablePack.hpp"
+#include "../utils/termcolor.hpp"
 
 #define MAX_ENTRIES 128
 #define TYPE_NUM 11
@@ -40,6 +42,10 @@ namespace wic
 
         ~TableEntry(){};
 
+        const char* get_id();
+        entry_data get_data();
+        unsigned int get_line();
+        unsigned int get_scope();
 
         void print()
         {
@@ -55,12 +61,12 @@ namespace wic
     {
     protected:
         TableEntry* head[MAX_ENTRIES];
-        unsigned int memory;
+        int memory = 0;
 
         virtual int hash(const char*);
 
     public:
-        SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; memory = 0; }
+        SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
         virtual ~SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
 
         virtual bool insert(const char*, entry_data, unsigned int, unsigned int);

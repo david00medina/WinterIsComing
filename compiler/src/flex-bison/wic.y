@@ -10,6 +10,7 @@
     #include "../utils/termcolor.hpp"
     #include "../symbol-table/SymbolTable.hpp"
     #include "../ast/AbstractSyntaxTree.hpp"
+    #include "../code-generator/CodeGenerator.hpp"
 
     int yylex(void);
     void yyerror(char const *);
@@ -17,12 +18,13 @@
     extern int level;
     extern int yylineno;
 
-    wic::GSymbolTable* gst = new wic::GSymbolTable();
-    wic::SSymbolTable* sst = new wic::SSymbolTable();
-    wic::LSymbolTable* lst = new wic::LSymbolTable();
-    wic::AbstractSyntaxTree* ast;
+    wic::GSymbolTable* gst;
+    wic::SSymbolTable* sst;
+    wic::LSymbolTable* lst;
 
-    wic::data_type promote_to_float(wic::ASTNode*, wic::ASTNode*);
+    wic::AbstractSyntaxTree* ast;
+    wic::CodeGenerator* cg;
+
 %}
 
 /* Definición de tipo de valores */
@@ -85,7 +87,7 @@
 
 /* Definición de gramáticas */
 
-input: instr END_OF_INSTR input                 /*{ printf("1) Inicializo\n"); }*/
+input: instr END_OF_INSTR input
     | END_OF_INSTR input
     | OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input
     | /* empty */
@@ -142,13 +144,17 @@ data_type: INT_TYPE				  {
     						    entry_d->var.size = 1;
     						    $$ = entry_d;
     						  }
+    | VOID					  {
+    						    wic::entry_data* entry_d = new wic::entry_data();
+						    entry_d->var.type = wic::VOID;
+						    entry_d->var.size = 4;
+						    $$ = entry_d;
+    						  }
 
 instr: data_init ID                               {
-						    std::cout << "Instrucción (DECLARE VAR)\n" << std::endl;
 						    $$ = ast->tree_build($1, $2);
 						  }
     | data_init ID ASSIGN expr                    {
-    						    std::cout << "Instrucción (=)\n" << std::endl;
     						    wic::ASTNode* node = ast->tree_build($1, $2);
 
     						    wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($4);
@@ -156,144 +162,123 @@ instr: data_init ID                               {
 
     						    $$ = ast->tree_build(assign);
     						    ast->print();
+    						    std::cout << std::endl;
     						  }
-    | if_instr                                    { printf("Instrucción (IF-IFELSE-ELSE)\n"); }
-    | for_instr                                   { printf("Instrucción (FOR-FORELSE-ELSE)\n"); }
-    | while_instr                                 { printf("Instrucción (WHILE-WHILEELSE-ELSE)\n"); }
+    | ID array_access                             { printf("Término (VectorVal)");}
+    | ID ASSIGN expr                              {
+    						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+
+    						    if (!id->is_registered()) {
+    						    	std::cout << termcolor::red << termcolor::bold
+    						    	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+    						    	<< "\' was not declared in this scope"
+    						    	<< std::endl;
+    						    	exit(-1);
+    						    }
+
+    						    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+    						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, term);
+
+    						    ast->tree_build(assign);
+    						    $$ = assign;
+    						    lst->show(id->get_id());
+    						  }
+    | ID array_access ASSIGN expr
+    | if_instr
+    | for_instr
+    | while_instr
     | expr                                        {
-                                                    printf("Instrucción EXPR\n");
-                                                    //ast->print();
+    						    ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                                                    ast->print();
+                                                    std::cout << std::endl;
                                                     //$$ = ast->get_root();
                                                   }
-    | fun_init                                    { printf("Instrucción FUN (declaration)\n"); }
-    | fun_call                                    { printf("Instrucción FUN (call)\n"); }
+    | fun_init
+    | fun_call
 
-comma_exp_init: comma_exp_init data_type ID ELEM_SEPARATOR  { printf("Expresión (,%s %s,)\n"); }
-    | /* empty */
+params: params ELEM_SEPARATOR data_type ID
+    | data_type ID
 
-comma_exp: comma_exp expr ELEM_SEPARATOR     { printf("Función llamada (,)\n"); }
-    | /* empty */
+args: args ELEM_SEPARATOR expr
+    | expr
 
-fun_init: FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR
+fun_init: FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
      {
         // TODO: Pendiente
         // wic::ASTLeafNode* node = reinterpret_cast<wic::ASTIDNode *>($3);
         // printf("Función (nombre=%s)\n", node->get_id());
      }
-    | FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      {
-        // TODO: Pendiente
-        // wic::ASTNode* node = reinterpret_cast<wic::ASTNode *>($3);
-        // printf("Función (nombre=%s)\n", node->get_id());
-      }
-    | FUN data_type ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR { printf("Función declaración void\n"); }
-    | FUN VOID ID PARETHESES_OPEN comma_exp_init PARETHESES_CLOSE END_OF_INSTR { printf("Función declaración\n"); }
+    | FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE END_OF_INSTR
 
-fun_call: ID PARETHESES_OPEN comma_exp PARETHESES_CLOSE END_OF_INSTR        { printf("Función llamada PRINT\n"); }
+fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR
 
 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      while_middle_block
-      ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-    | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-    | expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+      while_middle_blocks
+      while_end_block
 
-while_middle_block: while_middle_block
+while_middle_blocks: while_middle_blocks
       ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+    | /* empty */
+
+while_end_block: ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
     | /* empty */
 
 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      for_middle_block
-      ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-    | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-    | expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+      for_middle_blocks
+      for_end_block
 
-for_middle_block: for_middle_block
+for_middle_blocks: for_middle_blocks
       ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
     | /* empty */
 
+for_end_block: ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+     OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+    | /* empty */
+
 if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      if_middle_block
-      ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-    | expr IF_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-    | expr IF_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+      if_middle_blocks
+      if_end_block
 
-if_middle_block: if_middle_block
+if_middle_blocks: if_middle_blocks
       ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+    | /* empty */
+
+if_end_block: ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
+    OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
     | /* empty */
 
 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
 
 expr: ID                                          {
-                                                          wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
-                                                          std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
-
-                                                          if (!id->is_registered()) {
-                                                          	std::cout << termcolor::red << termcolor::bold
-                                                          	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
-                                                          	<< "\' was not declared in this scope"
-                                                          	<< std::endl;
-                                                          	exit(-1);
-                                                          }
-                                                          $$ = id;
-                                                        }
-    | ID array_access                             { printf("Término (VectorVal)");}
-      ID ASSIGN term                              {
-						    std::cout << "Expresión (=)" << std::endl;
-
 						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+						    std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
 
 						    if (!id->is_registered()) {
-						    	std::cout << termcolor::red << termcolor::bold
-						    	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
-						    	<< "\' was not declared in this scope"
-						    	<< std::endl;
-						    	exit(-1);
+						  	std::cout << termcolor::red << termcolor::bold
+						  	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+						  	<< "\' was not declared in this scope"
+						  	<< std::endl;
+						  	exit(-1);
 						    }
-
-						    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
-						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, term);
-
-						    ast->tree_build(assign);
-						    $$ = assign;
-						    lst->show(id->get_id());
+						    $$ = id;
 						  }
-    | ID array_access ASSIGN expr                 { printf("Instrucción acceso array\n"); }
     | expr SUM term                               {
-                                                    std::cout << "Expresión (Suma)" << std::endl;
-
                                                     wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
                                                     wic::ASTSumNode* sum = new wic::ASTSumNode(wic::UNKNOWN, expr, term);
-
+						    sum->to_code(cg);
                                                     $$ = ast->tree_build(sum);
                                                   }
     | expr SUBSTRACT term                         {
-                                                    std::cout << "Expresión (Resta)" << std::endl;
-
                                                     wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
@@ -301,35 +286,31 @@ expr: ID                                          {
 
                                                     $$ = ast->tree_build(sub);
                                                   }
-    | INCREMENT ID                                {
-                                                    std::cout << "Expresión (++ID)" << std::endl;
-                                                  }
-    | ID INCREMENT                                { printf("Expresión (ID++)\n"); }
-    | DECREMENT ID                                { printf("Expresión (--ID)\n"); }
-    | ID DECREMENT                                { printf("Expresión (ID--)\n"); }
-    | expr LESS term                              { printf("Expresión (<)\n"); }
-    | expr LESS_EQUALS term                       { printf("Expresión (<=)\n"); }
-    | expr GREATER term                           { printf("Expresión (>)\n"); }
-    | expr GREATER_EQUALS term                    { printf("Expresión (>=)\n"); }
-    | expr EQUALS term                            { printf("Expresión (==)\n"); }
-    | expr NOT_EQUALS term                        { printf("Expresión (!=)\n"); }
-    | expr AND term                               { printf("Expresión (&&)\n"); }
-    | expr OR term                                { printf("Expresión (||)\n"); }
-    | NOT term                                    { printf("Expresión (!)\n"); }
-    | expr AND_BIT term                           { printf("Expresión (&)\n"); }
-    | expr OR_BIT term                            { printf("Expresión (|)\n"); }
-    | expr XOR_BIT term                           { printf("Expresión (^)\n"); }
-    | expr LEFT_SHIFT term                        { printf("Expresión (<<)\n"); }
-    | expr RIGHT_SHIFT term                       { printf("Expresión (>>)\n"); }
-    | expr UNION term                             { printf("Expresión (U)\n"); }
-    | expr DIFFERENCE term                        { printf("Expresión (D)\n"); }
-    | expr INTERSECTION term                      { printf("Expresión (I)\n"); }
-    | term                                        { printf("Expresión\n"); $$ = $1; }
-    | data_vector                                 { printf("Expresión (vector)\n"); }
+    | INCREMENT ID
+    | ID INCREMENT
+    | DECREMENT ID
+    | ID DECREMENT
+    | expr LESS term
+    | expr LESS_EQUALS term
+    | expr GREATER term
+    | expr GREATER_EQUALS term
+    | expr EQUALS term
+    | expr NOT_EQUALS term
+    | expr AND term
+    | expr OR term
+    | NOT term
+    | expr AND_BIT term
+    | expr OR_BIT term
+    | expr XOR_BIT term
+    | expr LEFT_SHIFT term
+    | expr RIGHT_SHIFT term
+    | expr UNION term
+    | expr DIFFERENCE term
+    | expr INTERSECTION term
+    | term
+    | data_vector
 
 term: term PRODUCT power                          {
-                                                    std::cout << "Expresión (Producto)" << std::endl;
-
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
@@ -338,8 +319,6 @@ term: term PRODUCT power                          {
                                                     $$ = ast->tree_build(prod);
                                                   }
     | term DIVIDE power                           {
-                                                    std::cout << "Expresión (División)" << std::endl;
-
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
@@ -348,8 +327,6 @@ term: term PRODUCT power                          {
                                                     $$ = ast->tree_build(div);
                                                   }
     | term MODULUS power                          {
-                                                    std::cout << "Expresión (Módulo)" << std::endl;
-
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
@@ -357,11 +334,9 @@ term: term PRODUCT power                          {
 
                                                     $$ = ast->tree_build(mod);
                                                   }
-    | power                                       { printf("Término\n"); $$ = $1; }
+    | power
 
 power: power RADICAL factor                       {
-                                                    std::cout << "Expresión (Radical)" << std::endl;
-
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* factor = reinterpret_cast<wic::ASTNode *>($3);
 
@@ -369,11 +344,11 @@ power: power RADICAL factor                       {
 
                                                     $$ = ast->tree_build(radical);
                                                   }
-    | power POWER factor                          { printf("Potencia/Raiz (Potencia)"); $$ = $1; }
-    | factor                                      { $$ = $1; }
+    | power POWER factor
+    | factor
 
-factor: PARETHESES_OPEN expr PARETHESES_CLOSE     { printf("Factor (Expresión parentesis)\n"); $$ = $2; }
-    | data_value                                  { printf("Factor (DATA_VALUE)\n"); $$ = $1; }
+factor: PARETHESES_OPEN expr PARETHESES_CLOSE
+    | data_value
 
 data_value: INT_VAL                               {
                                                     wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);
@@ -416,25 +391,6 @@ data_value: INT_VAL                               {
                                                     $$ = reinterpret_cast<void *>(node);
                                                   }
 
-data_vector: CURLY_BRACKET_OPEN comma_exp CURLY_BRACKET_CLOSE        { printf("Factor (VECTOR)\n"); }
+data_vector: CURLY_BRACKET_OPEN args CURLY_BRACKET_CLOSE
 
 %%
-
-/*wic::data_type promote_to_float(wic::ASTNode* elem1, wic::ASTNode* elem2)
-{
-    if (elem1->get_data_type() == wic::REAL && elem2->get_data_type() == wic::REAL) return wic::REAL;
-    else if (elem1->get_data_type() == wic::INT && elem2->get_data_type() == wic::INT) return wic::INT;
-    else if (elem1->get_data_type() == wic::INT && elem2->get_data_type() == wic::REAL)
-    {
-       float val = static_cast<float>(elem1->get_data_value().int_val);
-       elem1->set_data_type(wic::REAL);
-       elem1->set_data_value((void*)&val);
-    }
-    else if (elem1->get_data_type() == wic::REAL && elem2->get_data_type() == wic::INT)
-    {
-       float val = static_cast<float>(elem2->get_data_value().int_val);
-       elem2->set_data_type(wic::REAL);
-       elem2->set_data_value((void*)&val);
-    }
-    return wic::REAL;
-}*/

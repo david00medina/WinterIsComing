@@ -15,10 +15,13 @@ namespace wic {
 
         virtual void check_error(std::string);
         virtual void set_operator_type();
+
+        virtual data_type get_node_data_type(ASTNode*);
         virtual cpu_registers int_to_float(cpu_registers, CodeGenerator*);
         virtual cpu_registers float_to_int(cpu_registers, CodeGenerator*);
         virtual cpu_registers operand_type_conversion(cpu_registers, cpu_registers, CodeGenerator*);
         virtual cpu_registers operate(CodeGenerator*);
+        virtual cpu_registers arithmetic_operation(CodeGenerator*);
 
         virtual cpu_registers div_mod(cpu_registers, cpu_registers, div_selector, CodeGenerator*);
         virtual cpu_registers division(div_selector, CodeGenerator*);

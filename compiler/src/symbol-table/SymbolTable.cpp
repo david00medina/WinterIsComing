@@ -1,9 +1,28 @@
 #include "SymbolTable.hpp"
-#include "../utils/termcolor.hpp"
-#include <string.h>
+#include "../error-manager/ErrorManager.hpp"
 
 namespace wic
 {
+    const char* TableEntry::get_id()
+    {
+        return id;
+    }
+
+    entry_data TableEntry::get_data()
+    {
+        return entry_d;
+    }
+
+    unsigned int TableEntry::get_line()
+    {
+        return line;
+    }
+
+    unsigned int TableEntry::get_scope()
+    {
+        return scope;
+    }
+
     int SymbolTable::hash(const char* id)
     {
         int hash = 0;
@@ -24,13 +43,11 @@ namespace wic
         TableEntry* existing_entry = lookup(id);
         if (existing_entry != nullptr && existing_entry->scope == scope)
         {
-            std::cout << termcolor::red << termcolor::bold << "[!] Error: " << termcolor::reset << "Redeclaration of \'"
-            << id << "\'" << std::endl;
-            exit(-1);
+            ErrorManager::send(REDECLARATION_VAR, id);
         }
 
+        memory -= entry_d.var.size;
         entry_d.var.offset = memory;
-        memory += entry_d.var.size;
 
         TableEntry* tEntry = new TableEntry(id, entry_d, line, scope);
 
@@ -49,28 +66,34 @@ namespace wic
     bool SymbolTable::erase(const char* id)
     {
         int i = hash(id);
-        TableEntry* curr = head[i];
         TableEntry* prev = nullptr;
 
+        TableEntry* curr = head[i];
         if (curr == nullptr) return false;
 
-        while (curr->next != nullptr)
+        TableEntry* next = curr->next;
+
+
+        while (next != nullptr)
         {
-            TableEntry* next = curr->next;
 
             if (strcmp(curr->id, id) == 0 && prev == nullptr)
             {
                 head[i] = next;
-                return true;
-            }
-            else if (strcmp(curr->id, id) == 0)
-            {
-                prev->next = next;
+                delete curr;
                 return true;
             }
 
             prev = curr;
-            curr = curr->next;
+            curr = next;
+            next = curr->next;
+        }
+
+        if (strcmp(curr->id, id) == 0)
+        {
+            prev->next = next;
+            delete curr;
+            return true;
         }
 
         return false;

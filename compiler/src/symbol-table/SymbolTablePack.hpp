@@ -19,7 +19,7 @@ namespace wic
 
     typedef struct variable {
         data_type type;
-        unsigned int offset;
+        int offset;
         unsigned int size;
         unsigned int array_length;
         bool global;

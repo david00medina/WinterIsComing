@@ -31,7 +31,7 @@ namespace wic
 
     CodeGenerator::CodeGenerator(const std::string path) : path(path)
     {
-        fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::app);
+        fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::trunc);
         fdata.open("data.s", std::ios::in | std::ios::out | std::ios::app);
         fcode.open("code.s", std::ios::in | std::ios::out | std::ios::app);
 
@@ -68,7 +68,7 @@ namespace wic
     {
         std::cout << this->path << std::endl;
         this->path = path;
-        fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::app);
+        fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::trunc);
     }
 
     void CodeGenerator::write_data_section(unsigned int argc, ...)

@@ -1,4 +1,4 @@
-#include <iostream>
+#include "utils/termcolor.hpp"
 #include "ast/AbstractSyntaxTree.hpp"
 #include "ast/nodes/ASTNode.hpp"
 #include "ast/nodes/ASTOperatorNode.hpp"
@@ -13,6 +13,7 @@ extern int yyparse(void);
 extern void yyerror(const char*);
 extern FILE *yyin;
 extern int yylineno;
+extern int yydebug;
 
 extern wic::GSymbolTable* gst;
 extern wic::SSymbolTable* sst;
@@ -20,10 +21,18 @@ extern wic::LSymbolTable* lst;
 
 extern wic::AbstractSyntaxTree* ast;
 
+extern wic::CodeGenerator* cg;
+
 int main(int argc, char const **argv) {
+    // Turn debug mode ON (yydebug = 1)
+    yydebug = 0;
+
     ast = new wic::AbstractSyntaxTree();
+    gst = new wic::GSymbolTable();
+    sst = new wic::SSymbolTable();
+    lst = new wic::LSymbolTable();
     wic::entry_data entry_d;
-    entry_d.var.type = wic::ARRAY_INT;
+    /*entry_d.var.type = wic::ARRAY_INT;
     entry_d.var.offset = 0;
     entry_d.var.size = 4;
 
@@ -49,9 +58,7 @@ int main(int argc, char const **argv) {
     wic::TableEntry* hey = lst.lookup("test");
     hey->print();
 
-    lst.show(0);
-
-    wic::CodeGenerator* cg;
+    lst.show(0);*/
 
     if (argc > 1) {
         if (!(yyin = fopen(argv[1], "r"))) {
@@ -95,8 +102,12 @@ int main(int argc, char const **argv) {
         wic::data_value data_v;
         data_v.int_val = 12;
         wic::ASTLeafNode* int_node = new wic::ASTLeafNode(wic::INT, &data_v);
+        data_v.int_val = -52;
+        wic::ASTLeafNode* int_node2 = new wic::ASTLeafNode(wic::INT, &data_v);
         data_v.real_val = 500.18263f;
         wic::ASTLeafNode* float_node = new wic::ASTLeafNode(wic::REAL, &data_v);
+        data_v.real_val = -453.4646f;
+        wic::ASTLeafNode* float_node2 = new wic::ASTLeafNode(wic::REAL, &data_v);
         data_v.char_val = 'a';
         wic::ASTLeafNode* char_node = new wic::ASTLeafNode(wic::CHAR, &data_v);
         data_v.bool_val = false;
@@ -107,23 +118,43 @@ int main(int argc, char const **argv) {
         wic::ASTDivNode* div = new wic::ASTDivNode(wic::UNKNOWN, int_node, int_node);
         wic::ASTModNode* mod = new wic::ASTModNode(wic::UNKNOWN, float_node, int_node);
 
+        entry_d.var.type = wic::INT;
+        entry_d.var.offset = -4;
+        entry_d.var.size = 4;
+        lst->insert("hola", entry_d, yylineno, 0);
+        lst->insert("ohla", entry_d, yylineno, 0);
+        lst->insert("hoal", entry_d, yylineno, 0);
+        lst->insert("alho", entry_d, yylineno, 0);
+        lst->show("ohla");
+        lst->erase("ohla");
+        lst->show("ohla");
+        wic::TableEntry* entry = lst->lookup("hola");
+        wic::ASTIDNode* id = new wic::ASTIDNode("hola", wic::INT, nullptr, nullptr, entry);
+        wic::ASTAssignNode* assign = new wic::ASTAssignNode(wic::INT, id, int_node);
+
 
         main->to_code(cg);
         //int_node->to_code(cg);
         //float_node->to_code(cg);
-        char_node->to_code(cg);
-        bool_node->to_code(cg);
+        //char_node->to_code(cg);
+        //bool_node->to_code(cg);
         //sum->to_code(cg);
         //sub->to_code(cg);
         //prod->to_code(cg);
         //div->to_code(cg);
-        mod->to_code(cg);
+        //mod->to_code(cg);
+        assign->to_code(cg);
     }
 
+    if (cg == nullptr) cg == new wic::CodeGenerator();
 
     int result = yyparse();
+
     cg->exit();
     cg->end();
+
+    delete cg;
+
     //int result = 1;
     //while(1) { /* TODO: Quitar este bucle cuando entreguemos el trabajo */
         /*int result = yyparse();

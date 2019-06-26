@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "ASTNode.hpp"
 
 namespace wic {
