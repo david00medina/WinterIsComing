@@ -3,7 +3,7 @@
 namespace wic {
     ASTNode::ASTNode()
     {
-        node_t = wic::LEAF;
+        node_t = wic::MAIN;
         data_t = wic::UNKNOWN;
         ptr2_i = 0;
     }

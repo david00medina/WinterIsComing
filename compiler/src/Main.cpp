@@ -1,7 +1,9 @@
 #include "utils/termcolor.hpp"
 #include "ast/AbstractSyntaxTree.hpp"
 #include "ast/nodes/ASTNode.hpp"
-#include "ast/nodes/ASTOperatorNode.hpp"
+#include "ast/nodes/operator-nodes/ASTOperatorNode.hpp"
+#include "ast/nodes/operator-nodes/ASTArithmeticNode.hpp"
+#include "ast/nodes/operator-nodes/ASTRelationalNode.hpp"
 #include "ast/nodes/ASTSymbolTableNode.hpp"
 #include "ast/nodes/ASTLeafNode.hpp"
 #include "symbol-table/SymbolTable.hpp"
@@ -112,11 +114,12 @@ int main(int argc, char const **argv) {
         wic::ASTLeafNode* char_node = new wic::ASTLeafNode(wic::CHAR, &data_v);
         data_v.bool_val = false;
         wic::ASTLeafNode* bool_node = new wic::ASTLeafNode(wic::BOOL, &data_v);
-        wic::ASTSumNode* sum = new wic::ASTSumNode(wic::UNKNOWN, float_node, float_node);
-        wic::ASTSubNode* sub = new wic::ASTSubNode(wic::UNKNOWN, int_node, float_node);
-        wic::ASTProdNode* prod = new wic::ASTProdNode(wic::UNKNOWN, int_node, int_node);
-        wic::ASTDivNode* div = new wic::ASTDivNode(wic::UNKNOWN, int_node, int_node);
-        wic::ASTModNode* mod = new wic::ASTModNode(wic::UNKNOWN, float_node, int_node);
+        wic::ASTSumNode* sum = new wic::ASTSumNode(char_node, float_node);
+        wic::ASTSubNode* sub = new wic::ASTSubNode(int_node, float_node);
+        wic::ASTProdNode* prod = new wic::ASTProdNode(int_node, int_node);
+        wic::ASTDivNode* div = new wic::ASTDivNode(int_node, int_node);
+        wic::ASTModNode* mod = new wic::ASTModNode(float_node, int_node);
+        wic::ASTGreaterEqualNode* ge = new wic::ASTGreaterEqualNode(int_node2, int_node);
 
         entry_d.var.type = wic::INT;
         entry_d.var.offset = -4;
@@ -138,12 +141,13 @@ int main(int argc, char const **argv) {
         //float_node->to_code(cg);
         //char_node->to_code(cg);
         //bool_node->to_code(cg);
-        //sum->to_code(cg);
+//        sum->to_code(cg);
         //sub->to_code(cg);
         //prod->to_code(cg);
         //div->to_code(cg);
         //mod->to_code(cg);
-        assign->to_code(cg);
+//        assign->to_code(cg);
+        ge->to_code(cg);
     }
 
     if (cg == nullptr) cg == new wic::CodeGenerator();

@@ -29,6 +29,7 @@ namespace wic {
         const std::string data_label = ".D";
         const std::string float_label = ".F";
         const std::string reg[ALL_REG] = { "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%esp", "%ebp", "%xmm0", "%xmm1", "%xmm2", "%xmm3" };
+        const std::string low_reg[ALL_REG] = { "%al", "%bl", "%cl", "%el", "%sil", "%dil", "spl", "bpl" };
 
     public:
         CodeGenerator();
@@ -45,6 +46,7 @@ namespace wic {
         std::string get_label(section_enum);
 
         const std::string translate_reg(cpu_registers);
+        const std::string translate_low_reg(cpu_registers);
         cpu_registers get_reg();
         cpu_registers get_float_reg();
         void lock_reg(cpu_registers);

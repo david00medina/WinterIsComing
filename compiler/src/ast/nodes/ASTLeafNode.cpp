@@ -59,6 +59,8 @@ namespace wic
                     cg->write_code_section("movl", "$" + std::to_string((int) data_v.bool_val), cg->translate_reg(r), "Move bool to " + cg->translate_reg(r));
                     return r;
                 }
+            default:
+                break;
         }
 
         return NONE;

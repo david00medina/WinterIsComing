@@ -117,6 +117,11 @@ namespace wic
         return reg[r];
     }
 
+    const std::string CodeGenerator::translate_low_reg(cpu_registers r)
+    {
+        return low_reg[r];
+    }
+
     cpu_registers CodeGenerator::get_reg()
     {
         for (int i = EAX; i < ESI; i++)

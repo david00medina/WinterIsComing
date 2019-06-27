@@ -10,6 +10,7 @@
     #include "../utils/termcolor.hpp"
     #include "../symbol-table/SymbolTable.hpp"
     #include "../ast/AbstractSyntaxTree.hpp"
+    #include "../ast/nodes/operator-nodes/ASTArithmeticNode.hpp"
     #include "../code-generator/CodeGenerator.hpp"
 
     int yylex(void);
@@ -155,10 +156,10 @@ instr: data_init ID                               {
 						    $$ = ast->tree_build($1, $2);
 						  }
     | data_init ID ASSIGN expr                    {
-    						    wic::ASTNode* node = ast->tree_build($1, $2);
+    						    wic::ASTNode* id = ast->tree_build($1, $2);
 
     						    wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($4);
-    						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(node->get_data_type(), node, expr);
+    						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, expr);
 
     						    $$ = ast->tree_build(assign);
     						    ast->print();
@@ -274,7 +275,7 @@ expr: ID                                          {
                                                     wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTSumNode* sum = new wic::ASTSumNode(wic::UNKNOWN, expr, term);
+                                                    wic::ASTSumNode* sum = new wic::ASTSumNode(expr, term);
 						    sum->to_code(cg);
                                                     $$ = ast->tree_build(sum);
                                                   }
@@ -282,7 +283,7 @@ expr: ID                                          {
                                                     wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTSubNode* sub = new wic::ASTSubNode(wic::UNKNOWN, expr, term);
+                                                    wic::ASTSubNode* sub = new wic::ASTSubNode(expr, term);
 
                                                     $$ = ast->tree_build(sub);
                                                   }
@@ -314,7 +315,7 @@ term: term PRODUCT power                          {
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTProdNode* prod = new wic::ASTProdNode(wic::UNKNOWN, term, power);
+                                                    wic::ASTProdNode* prod = new wic::ASTProdNode(term, power);
 
                                                     $$ = ast->tree_build(prod);
                                                   }
@@ -322,7 +323,7 @@ term: term PRODUCT power                          {
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTDivNode* div = new wic::ASTDivNode(wic::UNKNOWN, term, power);
+                                                    wic::ASTDivNode* div = new wic::ASTDivNode(term, power);
 
                                                     $$ = ast->tree_build(div);
                                                   }
@@ -330,7 +331,7 @@ term: term PRODUCT power                          {
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTModNode* mod = new wic::ASTModNode(wic::INT, term, power);
+                                                    wic::ASTModNode* mod = new wic::ASTModNode(term, power);
 
                                                     $$ = ast->tree_build(mod);
                                                   }
@@ -340,7 +341,7 @@ power: power RADICAL factor                       {
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* factor = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTRadicalNode* radical = new wic::ASTRadicalNode(wic::UNKNOWN, power, factor);
+                                                    wic::ASTRadicalNode* radical = new wic::ASTRadicalNode(power, factor);
 
                                                     $$ = ast->tree_build(radical);
                                                   }

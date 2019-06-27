@@ -9,7 +9,8 @@
 #define NODE_TYPE_NUM 29
 #define MAX_PTR2 512
 
-namespace wic {
+namespace wic
+{
     class ASTNode {
     protected:
         std::string name;

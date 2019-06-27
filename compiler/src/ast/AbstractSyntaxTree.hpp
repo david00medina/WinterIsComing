@@ -3,7 +3,7 @@
 
 #include "nodes/ASTNode.hpp"
 #include "nodes/ASTLeafNode.hpp"
-#include "nodes/ASTOperatorNode.hpp"
+#include "nodes/operator-nodes/ASTOperatorNode.hpp"
 #include "nodes/ASTSymbolTableNode.hpp"
 
 namespace wic

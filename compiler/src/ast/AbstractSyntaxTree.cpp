@@ -2,7 +2,7 @@
 
 #include "AbstractSyntaxTree.hpp"
 #include "nodes/ASTNode.hpp"
-#include "nodes/ASTOperatorNode.hpp"
+#include "nodes/operator-nodes/ASTOperatorNode.hpp"
 #include "nodes/ASTSymbolTableNode.hpp"
 #include "nodes/ASTLeafNode.hpp"
 

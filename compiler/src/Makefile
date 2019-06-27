@@ -26,8 +26,9 @@ compile:
 
 					g++ -std=gnu++11 -Wall -Wextra Main.cpp build/wic.a symbol-table/SymbolTable.cpp \
 					code-generator/CodeGenerator.cpp ast/AbstractSyntaxTree.cpp ast/nodes/ASTNode.cpp  \
-					ast/nodes/ASTSymbolTableNode.cpp ast/nodes/ASTOperatorNode.cpp ast/nodes/ASTLeafNode.cpp \
-					error-manager/ErrorManager.cpp -g -o wic
+					ast/nodes/ASTSymbolTableNode.cpp ast/nodes/operator-nodes/ASTOperatorNode.cpp \
+					ast/nodes/operator-nodes/ASTArithmeticNode.cpp ast/nodes/operator-nodes/ASTRelationalNode.cpp \
+					ast/nodes/ASTLeafNode.cpp error-manager/ErrorManager.cpp -g -o wic
 
 					#mv *.a *.o build
 
