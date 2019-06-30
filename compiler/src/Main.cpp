@@ -123,7 +123,8 @@ int main(int argc, char const **argv) {
         wic::ASTModNode* mod = new wic::ASTModNode(float_node, int_node);
         wic::ASTNotEqualNode* ge = new wic::ASTNotEqualNode(float_node, float_node2);
         wic::ASTNotNode* nnot = new wic::ASTNotNode(float_node);
-        wic::ASTAndNode* andn = new wic::ASTAndNode(bool_node2, bool_node);
+        wic::ASTAndNode* andn = new wic::ASTAndNode(bool_node2, bool_node2);
+        wic::ASTOrNode* orn = new wic::ASTOrNode(bool_node, bool_node);
 
         entry_d.var.type = wic::INT;
         entry_d.var.offset = -4;
@@ -153,7 +154,8 @@ int main(int argc, char const **argv) {
 //        assign->to_code(cg);
 //        ge->to_code(cg);
 //        nnot->to_code(cg);
-        andn->to_code(cg);
+//        andn->to_code(cg);
+//        orn->to_code(cg);
     }
 
     if (cg == nullptr) cg == new wic::CodeGenerator();

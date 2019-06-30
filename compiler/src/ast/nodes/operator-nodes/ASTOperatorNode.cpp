@@ -47,8 +47,6 @@ namespace wic
 
         data_type type2 = get_node_data_type(ptr3);
 
-        std::cout << type1 << " : " << type2 << " : " << get_node_type() << " : " << BOOL << std::endl;
-
         switch (get_node_type())
         {
             case ASSIGN:
@@ -56,8 +54,7 @@ namespace wic
                 else if (type1 != type2) ErrorManager::send(INCOMPATIBLE_ASSIGN, reinterpret_cast<ASTIDNode *>(ptr1)->get_entry()->get_id());
                 break;
             case AND:
-                std::cout << "HOLA PEPE" << std::endl;
-                if (type1 != BOOL && type2 != BOOL) ErrorManager::send(WRONG_RELATIONAL_OPERANDS, op);
+                if (type1 != BOOL || type2 != BOOL) ErrorManager::send(WRONG_RELATIONAL_OPERANDS, op);
                 break;
             case OR:
                 if (type1 != BOOL || type2 != BOOL) ErrorManager::send(WRONG_RELATIONAL_OPERANDS, op);

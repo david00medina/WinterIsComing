@@ -11,6 +11,7 @@ namespace wic {
     protected:
         cpu_registers compare(std::string, std::string, cpu_registers, cpu_registers, CodeGenerator*, bool);
         cpu_registers do_and(cpu_registers, cpu_registers, CodeGenerator*);
+        cpu_registers do_or(cpu_registers, cpu_registers, CodeGenerator*);
 
         virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, CodeGenerator*);
         virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*);

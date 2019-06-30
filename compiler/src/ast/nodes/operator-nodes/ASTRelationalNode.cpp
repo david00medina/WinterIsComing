@@ -40,7 +40,7 @@ namespace wic
         }
     }
 
-    cpu_registers ASTAndNode::do_and(wic::cpu_registers r2, wic::cpu_registers r1, CodeGenerator* cg)
+    cpu_registers ASTRelationalNode::do_and(wic::cpu_registers r1, wic::cpu_registers r2, CodeGenerator* cg)
     {
         std::string l1 = cg->get_label(CODE);
         std::string l2 = cg->get_label(CODE);
@@ -51,17 +51,42 @@ namespace wic
         cg->write_code_section("movl", "$1", cg->translate_reg(r_true), "Load true registry (" + cg->translate_reg(r_true) + ")");
 
         cg->write_code_section("cmpl", cg->translate_reg(r1), cg->translate_reg(r_true), "Is first operand true?");
-        cg->write_code_section("je", l1, "Test passed!");
+        cg->write_code_section("je", l1, "1st test passed?");
         cg->write_code_section("movl", "$0", cg->translate_reg(r1), "Failed test! (AND)");
         cg->write_code_section("jmp", l3, "Jump to the end of AND structure");
         cg->write_code_section(l1 + ":");
         cg->write_code_section("cmpl", cg->translate_reg(r2), cg->translate_reg(r_true), "Is second operand true?");
-        cg->write_code_section("je", l2, "Test passed!");
-        cg->write_code_section("movl", "$0", cg->translate_reg(r1), "Mark the it as failure");
-        cg->write_code_section("jmp", l3, "Jump to the end of AND structure");
+        cg->write_code_section("je", l2, "2nd test passed?");
+        cg->write_code_section("movl", "$0", cg->translate_reg(r1), "Failed test! (AND)");
+        cg->write_code_section("jmp", l3, "Jump to the end of the AND structure");
         cg->write_code_section(l2 + ":");
         cg->write_code_section("movl", "$1", cg->translate_reg(r1), "Successful test! (AND)");
         cg->write_code_section(l3 + ":");
+
+        cg->free_reg(r_true);
+        cg->free_reg(r2);
+
+        return r1;
+    }
+
+    cpu_registers ASTRelationalNode::do_or(wic::cpu_registers r1, wic::cpu_registers r2, wic::CodeGenerator *cg)
+    {
+        std::string l1 = cg->get_label(CODE);
+        std::string l2 = cg->get_label(CODE);
+
+        cpu_registers r_true = cg->get_reg();
+
+        cg->write_code_section("movl", "$1", cg->translate_reg(r_true), "Load true registry (" + cg->translate_reg(r_true) + ")");
+
+        cg->write_code_section("cmpl", cg->translate_reg(r1), cg->translate_reg(r_true), "Is first operand true?");
+        cg->write_code_section("je", l1, "1st chance passed?");
+        cg->write_code_section("cmpl", cg->translate_reg(r2), cg->translate_reg(r_true), "Is second operand true?");
+        cg->write_code_section("je", l1, "2nd chance passed?");
+        cg->write_code_section("movl", "$0", cg->translate_reg(r1), "Failed test! (OR)");
+        cg->write_code_section("jmp", l2, "Jump to the end of the OR structure");
+        cg->write_code_section(l1 + ":");
+        cg->write_code_section("movl", "$1", cg->translate_reg(r1), "Successful test! (OR)");
+        cg->write_code_section(l2 + ":");
 
         cg->free_reg(r_true);
         cg->free_reg(r2);
@@ -92,8 +117,7 @@ namespace wic
             case AND:
                 return do_and(r1, r2, cg);
             case OR:
-                // TODO: Pendiente de terminar
-                return NONE;
+                return do_or(r1, r2, cg);
             default:
                 return NONE;
         }
@@ -211,6 +235,15 @@ namespace wic
     cpu_registers ASTAndNode::to_code(wic::CodeGenerator *cg)
     {
         check_error("\'&&\'");
+        return operate(cg);
+    }
+
+    ASTOrNode::ASTOrNode(wic::ASTNode *op1, wic::ASTNode *op2)
+            : ASTRelationalNode(OR, wic::BOOL, op1, op2) {}
+
+    cpu_registers ASTOrNode::to_code(wic::CodeGenerator *cg)
+    {
+        check_error("\'||\'");
         return operate(cg);
     }
 }
