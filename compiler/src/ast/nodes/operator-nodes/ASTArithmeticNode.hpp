@@ -17,10 +17,10 @@ namespace wic
         virtual cpu_registers div_mod(cpu_registers, cpu_registers, div_selector, CodeGenerator*);
         virtual cpu_registers division(div_selector, CodeGenerator*);
 
-        virtual cpu_registers intr_reg2(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers intr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers intr_reg3(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers intr_reg3_float(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg3(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg3_float(cpu_registers, cpu_registers, CodeGenerator*);
 
     public:
         ASTArithmeticNode() = default;

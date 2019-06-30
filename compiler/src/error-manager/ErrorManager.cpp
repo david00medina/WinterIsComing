@@ -38,7 +38,10 @@ namespace wic
                 out = "Incompatible operand type for the " + msg + " operation";
                 break;
             case INCOMPATIBLE_ASSIGN:
-                out = "Cannot assign a different value type to the variable '" + msg + "'";
+                out = "Cannot assign a different value type to the variable \'" + msg + "\'";
+                break;
+            case WRONG_RELATIONAL_OPERANDS:
+                out = "Boolean data type is required to perform a " + msg + " operation";
                 break;
             default:
                 return;

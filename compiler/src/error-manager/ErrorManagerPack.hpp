@@ -9,7 +9,8 @@ typedef enum
     REDECLARATION_VAR,
     INCOMPATIBLE_OPERANDS,
     INCOMPATIBLE_ASSIGN,
-    WRONG_ASSIGN
+    WRONG_ASSIGN,
+    WRONG_RELATIONAL_OPERANDS
 } error_flag;
 
 const std::string error_header = "[!] Error : ";

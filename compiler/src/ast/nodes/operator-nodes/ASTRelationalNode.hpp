@@ -9,16 +9,18 @@ namespace wic {
     class ASTRelationalNode : public ASTOperatorNode
     {
     protected:
-        cpu_registers compare(std::string, cpu_registers, cpu_registers, CodeGenerator*);
+        cpu_registers compare(std::string, std::string, cpu_registers, cpu_registers, CodeGenerator*, bool);
+        cpu_registers do_and(cpu_registers, cpu_registers, CodeGenerator*);
 
-        virtual cpu_registers intr_reg2(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers intr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers intr_reg3(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers intr_reg3_float(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg3(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg3_float(cpu_registers, cpu_registers, CodeGenerator*);
 
     public:
         ASTRelationalNode() = default;
         ASTRelationalNode(node_type, data_type, ASTNode*, ASTNode*);
+        ASTRelationalNode(node_type, data_type, ASTNode*);
         ~ASTRelationalNode() = default;
     };
 
@@ -35,9 +37,9 @@ namespace wic {
     class ASTGreaterNode : public ASTRelationalNode
     {
     public:
-        ASTGreaterEqualNode() = default;
-        ASTGreaterEqualNode(ASTNode*, ASTNode*);
-        ~ASTGreaterEqualNode() = default;
+        ASTGreaterNode() = default;
+        ASTGreaterNode(ASTNode*, ASTNode*);
+        ~ASTGreaterNode() = default;
 
         cpu_registers to_code(CodeGenerator*);
     };
@@ -45,9 +47,9 @@ namespace wic {
     class ASTLessEqualNode : public ASTRelationalNode
     {
     public:
-        ASTGreaterEqualNode() = default;
-        ASTGreaterEqualNode(ASTNode*, ASTNode*);
-        ~ASTGreaterEqualNode() = default;
+        ASTLessEqualNode() = default;
+        ASTLessEqualNode(ASTNode*, ASTNode*);
+        ~ASTLessEqualNode() = default;
 
         cpu_registers to_code(CodeGenerator*);
     };
@@ -55,9 +57,9 @@ namespace wic {
     class ASTLessNode : public ASTRelationalNode
     {
     public:
-        ASTGreaterEqualNode() = default;
-        ASTGreaterEqualNode(ASTNode*, ASTNode*);
-        ~ASTGreaterEqualNode() = default;
+        ASTLessNode() = default;
+        ASTLessNode(ASTNode*, ASTNode*);
+        ~ASTLessNode() = default;
 
         cpu_registers to_code(CodeGenerator*);
     };
@@ -65,9 +67,9 @@ namespace wic {
     class ASTEqualNode : public ASTRelationalNode
     {
     public:
-        ASTGreaterEqualNode() = default;
-        ASTGreaterEqualNode(ASTNode*, ASTNode*);
-        ~ASTGreaterEqualNode() = default;
+        ASTEqualNode() = default;
+        ASTEqualNode(ASTNode*, ASTNode*);
+        ~ASTEqualNode() = default;
 
         cpu_registers to_code(CodeGenerator*);
     };
@@ -75,9 +77,39 @@ namespace wic {
     class ASTNotEqualNode : public ASTRelationalNode
     {
     public:
-        ASTGreaterEqualNode() = default;
-        ASTGreaterEqualNode(ASTNode*, ASTNode*);
-        ~ASTGreaterEqualNode() = default;
+        ASTNotEqualNode() = default;
+        ASTNotEqualNode(ASTNode*, ASTNode*);
+        ~ASTNotEqualNode() = default;
+
+        cpu_registers to_code(CodeGenerator*);
+    };
+
+    class ASTNotNode : public ASTRelationalNode
+    {
+    public:
+        ASTNotNode() = default;
+        ASTNotNode(ASTNode*);
+        ~ASTNotNode() = default;
+
+        cpu_registers to_code(CodeGenerator*);
+    };
+
+    class ASTAndNode : public ASTRelationalNode
+    {
+    public:
+        ASTAndNode() = default;
+        ASTAndNode(ASTNode*, ASTNode*);
+        ~ASTAndNode() = default;
+
+        cpu_registers to_code(CodeGenerator*);
+    };
+
+    class ASTOrNode : public ASTRelationalNode
+    {
+    public:
+        ASTOrNode() = default;
+        ASTOrNode(ASTNode*, ASTNode*);
+        ~ASTOrNode() = default;
 
         cpu_registers to_code(CodeGenerator*);
     };

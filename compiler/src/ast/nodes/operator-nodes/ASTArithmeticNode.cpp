@@ -78,7 +78,7 @@ namespace wic
         else if (selector == REMAINDER) return EDX;
     }
 
-    cpu_registers ASTArithmeticNode::intr_reg2(cpu_registers r1, cpu_registers r2, CodeGenerator *cg){
+    cpu_registers ASTArithmeticNode::instr_reg2(cpu_registers r1, cpu_registers r2, CodeGenerator *cg){
         switch (node_t) {
             case SUM:
                 cg->write_code_section("addl", cg->translate_reg(r1), cg->translate_reg(r2),
@@ -113,7 +113,7 @@ namespace wic
         }
     }
 
-    cpu_registers ASTArithmeticNode::intr_reg2_float(cpu_registers r1, cpu_registers r2, CodeGenerator *cg){
+    cpu_registers ASTArithmeticNode::instr_reg2_float(cpu_registers r1, cpu_registers r2, CodeGenerator *cg){
         switch (node_t) {
             case SUM:
                 cg->write_code_section("addss", cg->translate_reg(r1), cg->translate_reg(r2),
@@ -142,7 +142,7 @@ namespace wic
         }
     }
 
-    cpu_registers ASTArithmeticNode::intr_reg3(cpu_registers r1, cpu_registers r2, CodeGenerator *cg)
+    cpu_registers ASTArithmeticNode::instr_reg3(cpu_registers r1, cpu_registers r2, CodeGenerator *cg)
     {
         switch (node_t)
         {
@@ -155,7 +155,7 @@ namespace wic
         }
     }
 
-    cpu_registers ASTArithmeticNode::intr_reg3_float(cpu_registers r1, cpu_registers r2, CodeGenerator *cg){
+    cpu_registers ASTArithmeticNode::instr_reg3_float(cpu_registers r1, cpu_registers r2, CodeGenerator *cg){
         switch (node_t)
         {
             case MOD:

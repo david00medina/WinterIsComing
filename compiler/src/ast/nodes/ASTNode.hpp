@@ -38,13 +38,6 @@ namespace wic
 
         const char *type_node_str[NODE_TYPE_NUM] =
                 {
-                        "gt",
-                        "ge",
-                        "eq",
-                        "neq",
-                        "le",
-                        "lt",
-                        "not",
                         "and",
                         "or",
                         "if",

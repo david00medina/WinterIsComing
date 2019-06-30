@@ -9,6 +9,10 @@ namespace wic
 {
     class ASTOperatorNode : public ASTNode
     {
+    private:
+        cpu_registers execute(cpu_registers, cpu_registers, CodeGenerator*);
+        cpu_registers execute_float(cpu_registers, cpu_registers, CodeGenerator*);
+
     protected:
         virtual void check_error(std::string);
         virtual void set_operator_type();
@@ -18,10 +22,10 @@ namespace wic
         virtual cpu_registers operand_type_conversion(cpu_registers, cpu_registers, CodeGenerator*);
         virtual data_type get_node_data_type(ASTNode*);
 
-        virtual cpu_registers intr_reg2(cpu_registers, cpu_registers, CodeGenerator*) = 0;
-        virtual cpu_registers intr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*) = 0;
-        virtual cpu_registers intr_reg3(cpu_registers, cpu_registers, CodeGenerator*) = 0;
-        virtual cpu_registers intr_reg3_float(cpu_registers, cpu_registers, CodeGenerator*) = 0;
+        virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, CodeGenerator*) = 0;
+        virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*) = 0;
+        virtual cpu_registers instr_reg3(cpu_registers, cpu_registers, CodeGenerator*) = 0;
+        virtual cpu_registers instr_reg3_float(cpu_registers, cpu_registers, CodeGenerator*) = 0;
 
         virtual cpu_registers operate(CodeGenerator*);
 

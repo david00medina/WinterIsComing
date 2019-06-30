@@ -97,6 +97,11 @@ namespace wic
         va_end(argv);
     }
 
+    void CodeGenerator::write_code_section(const std::string label)
+    {
+        fcode << label << std::endl;
+    }
+
     void CodeGenerator::write_code_section(const std::string instr, const std::string comment)
     {
         fcode << initial_spacing << instr << instr_spacing << instr_spacing << comment_spacing << "# " << comment << std::endl;
