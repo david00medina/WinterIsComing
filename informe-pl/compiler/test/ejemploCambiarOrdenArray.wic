@@ -1,0 +1,34 @@
+..Inicializamos el vector que se va a invertir
+int [10] miVector = {0,1,2,3,4,5,6,7,8,9}
+
+.. Inicializamos el vector que contendrá el resultado, reservando el tamaño en memoria
+int [10] resultado
+
+.. Variable que contendrá el tamaño del vector a invertir
+int tamaño = length(miVector)
+
+.. Variable que emplearemos de contador para el bucle
+int contador = 0
+
+.. Recorremos las posiciones de los vectores
+contador <= tamaño ?? contador++:
+	.. Si la posición actual es 'par'...
+	contador\%2 == 0 ?:
+		resultado [contador] = miVector[tamaño-contador-1]
+	.. Si no es 'par'
+	.?:
+		miVector [contador] = 0
+
+., 
+	Procedemos a imprimir el resultado con un bucle.
+	Se precisa resetear el valor del contador.
+,.
+contador = 0
+print(''RESULTADO -> [ '')
+
+contador < tamaño-1 ?? contador++:
+	print(resultado[contador])
+	print('', '')
+	
+print(resultado[tamaño-1])
+print('']'')

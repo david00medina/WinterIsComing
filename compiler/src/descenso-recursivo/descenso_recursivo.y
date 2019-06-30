@@ -15,16 +15,29 @@ public final void while_instr () {
 public final void input () {
 	if (token.tipo == Token.ID) {
 		instr();
+		input();
 	} else if (token.tipo != Token.CLOSE_CONTEXT_TAG) {
 		err();
 	}
 }
 
 public final void instr () {
-	match(Token.ID);
-	match(Token.ASSIGN);
-	term();
-	match(Token.END_OF_INSTR);
+	if (token.tipo == Token.ID) {
+		match(Token.ID);
+		match(Token.ASSIGN);
+		term();
+		match(Token.END_OF_INSTR);
+	} else {
+		data_value();
+		match(Token.ID);
+		if (token.tipo == Token.END_OF_INSTR) {
+			match(Token.END_OF_INSTR);
+		} else {
+			match(Token.ASSIGN);
+			term();
+			match(Token.END_OF_INSTR);
+		}
+	}
 }
 
 public final void expr () {
@@ -85,5 +98,5 @@ public final void match (Token tokEsperado) {
 }
 
 public void main () {
-
+	while_instr();
 }
