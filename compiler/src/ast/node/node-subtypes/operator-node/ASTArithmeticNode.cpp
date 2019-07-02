@@ -1,12 +1,11 @@
 #include "ASTArithmeticNode.hpp"
-#include "../ASTSymbolTableNode.hpp"
-#include "../ASTLeafNode.hpp"
-
+#include "../symbol-table-node/ASTSymbolTableNode.hpp"
+#include "../../../../code-generator/CodeGenerator.hpp"
 
 namespace wic
 {
-    ASTArithmeticNode::ASTArithmeticNode(wic::node_type node_t, wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr3)
-        : ASTOperatorNode(node_t, data_t, ptr1, ptr3) {}
+    ASTArithmeticNode::ASTArithmeticNode(std::string name, wic::node_type node_t, wic::data_type data_t, wic::ASTNode *op1, wic::ASTNode *op2)
+        : ASTOperatorNode(name, node_t, data_t, op1, op2) {}
 
     cpu_registers ASTArithmeticNode::div_mod(cpu_registers r1, cpu_registers r2, div_selector selector, CodeGenerator *cg)
     {
@@ -97,7 +96,7 @@ namespace wic
                 return r2;
             case ASSIGN:
             {
-                TableEntry* entry = reinterpret_cast<ASTIDNode *>(ptr1)->get_entry();
+                TableEntry* entry = reinterpret_cast<ASTIDNode *>(op1)->get_entry();
                 int offset = entry->get_data().var.offset;
                 std::string op = std::to_string(offset) + "(" + cg->translate_reg(EBX) + ")";
                 std::string id = entry->get_id();
@@ -166,7 +165,7 @@ namespace wic
     }
 
     ASTSumNode::ASTSumNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode(wic::SUM, wic::UNKNOWN, op1, op2) { name = "SUM"; }
+            : ASTArithmeticNode("SUM", wic::SUM, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTSumNode::to_code(CodeGenerator *cg)
     {
@@ -175,7 +174,7 @@ namespace wic
     }
 
     ASTSubNode::ASTSubNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode(wic::SUB, wic::UNKNOWN, op1, op2) { name = "SUBTRACT"; }
+            : ASTArithmeticNode("SUBTRACT", wic::SUB, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTSubNode::to_code(CodeGenerator *cg)
     {
@@ -184,7 +183,7 @@ namespace wic
     }
 
     ASTProdNode::ASTProdNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode(wic::PROD, wic::UNKNOWN, op1, op2) { name = "PRODUCT"; }
+            : ASTArithmeticNode("PRODUCT", wic::PROD, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTProdNode::to_code(CodeGenerator *cg)
     {
@@ -193,7 +192,7 @@ namespace wic
     }
 
     ASTDivNode::ASTDivNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode(wic::DIV, wic::UNKNOWN, op1, op2) { name = "DIVISION"; }
+            : ASTArithmeticNode("DIVISION", wic::DIV, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTDivNode::to_code(CodeGenerator *cg)
     {
@@ -202,17 +201,17 @@ namespace wic
     }
 
     ASTPowerNode::ASTPowerNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode(wic::POWER, wic::UNKNOWN, op1, op2) { name = "POWER"; }
+            : ASTArithmeticNode("POWER", wic::POWER, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTPowerNode::to_code(CodeGenerator *cg) {}
 
     ASTRadicalNode::ASTRadicalNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode(wic::RADICAL, wic::UNKNOWN, op1, op2) { name = "RADICAL"; }
+            : ASTArithmeticNode("RADICAL", wic::RADICAL, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTRadicalNode::to_code(CodeGenerator *cg) {}
 
     ASTModNode::ASTModNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode(wic::MOD, wic::UNKNOWN, op1, op2) { name = "MODULUS"; }
+            : ASTArithmeticNode("MODULUS", wic::MOD, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTModNode::to_code(CodeGenerator *cg)
     {
@@ -221,7 +220,7 @@ namespace wic
     }
 
     ASTAssignNode::ASTAssignNode(data_type data_t, wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode(wic::ASSIGN, data_t, op1, op2) { name = "ASSIGN"; }
+            : ASTArithmeticNode("ASSIGN", wic::ASSIGN, data_t, op1, op2) {}
 
     cpu_registers ASTAssignNode::to_code(CodeGenerator *cg)
     {

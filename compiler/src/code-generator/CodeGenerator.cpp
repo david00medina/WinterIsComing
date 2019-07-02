@@ -5,7 +5,7 @@
 
 #include "CodeGenerator.hpp"
 #include "../utils/termcolor.hpp"
-#include "../ast/nodes/ASTLeafNode.hpp"
+#include "../ast/node/node-subtypes/leaf-node/ASTLeafNode.hpp"
 
 namespace wic
 {
@@ -71,6 +71,28 @@ namespace wic
         fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::trunc);
     }
 
+    void CodeGenerator::push_scope()
+    {
+        for (int i = 0; i < TOTAL_REG; i++)
+        {
+            write_code_section("pushl", reg[EAX+i], "Push scope (" + reg[EAX+i] + ")");
+            write_code_section("pushl", reg[XMM0+i], "Push scope (" + reg[XMM0+i] + ")");
+            free_reg(static_cast<cpu_registers>(EAX+i));
+            free_reg(static_cast<cpu_registers>(XMM0+i));
+        }
+    }
+
+    void CodeGenerator::pop_scope()
+    {
+        for (int i = 0; i < TOTAL_REG; i++)
+        {
+            write_code_section("popl", reg[EAX+i], "Push scope (" + reg[EAX+i] + ")");
+            write_code_section("popl", reg[XMM0+i], "Push scope (" + reg[XMM0+i] + ")");
+            lock_reg(static_cast<cpu_registers>(EAX+i));
+            lock_reg(static_cast<cpu_registers>(XMM0+i));
+        }
+    }
+
     void CodeGenerator::write_data_section(unsigned int argc, ...)
     {
         va_list argv;
@@ -97,9 +119,9 @@ namespace wic
         va_end(argv);
     }
 
-    void CodeGenerator::write_code_section(const std::string label)
+    void CodeGenerator::write_code_label(const std::string label)
     {
-        fcode << label << std::endl;
+        fcode << label << ":" << std::endl;
     }
 
     void CodeGenerator::write_code_section(const std::string instr, const std::string comment)

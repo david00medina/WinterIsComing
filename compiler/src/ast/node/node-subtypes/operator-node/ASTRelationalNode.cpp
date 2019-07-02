@@ -1,13 +1,14 @@
 #include "ASTRelationalNode.hpp"
+#include "../../../../code-generator/CodeGenerator.hpp"
 
 namespace wic
 {
-    ASTRelationalNode::ASTRelationalNode(wic::node_type node_t, wic::data_type data_t, wic::ASTNode *op1, wic::ASTNode *op2)
-        : ASTOperatorNode(node_t, data_t, op1, op2) {}
+    ASTRelationalNode::ASTRelationalNode(std::string name, wic::node_type node_t, wic::data_type data_t, wic::ASTNode *op1, wic::ASTNode *op2)
+        : ASTOperatorNode(name, node_t, data_t, op1, op2) {}
 
 
-    ASTRelationalNode::ASTRelationalNode(wic::node_type node_t, wic::data_type data_t, wic::ASTNode *op)
-        : ASTOperatorNode(node_t, data_t, op, nullptr) {}
+    ASTRelationalNode::ASTRelationalNode(std::string name, wic::node_type node_t, wic::data_type data_t, wic::ASTNode *op)
+        : ASTOperatorNode(name, node_t, data_t, op) {}
 
     cpu_registers ASTRelationalNode::compare(std::string instr, std::string symbol, wic::cpu_registers r1, wic::cpu_registers r2,
                                              wic::CodeGenerator *cg, bool is_float)
@@ -54,14 +55,14 @@ namespace wic
         cg->write_code_section("je", l1, "1st test passed?");
         cg->write_code_section("movl", "$0", cg->translate_reg(r1), "Failed test! (AND)");
         cg->write_code_section("jmp", l3, "Jump to the end of AND structure");
-        cg->write_code_section(l1 + ":");
+        cg->write_code_label(l1);
         cg->write_code_section("cmpl", cg->translate_reg(r2), cg->translate_reg(r_true), "Is second operand true?");
         cg->write_code_section("je", l2, "2nd test passed?");
         cg->write_code_section("movl", "$0", cg->translate_reg(r1), "Failed test! (AND)");
         cg->write_code_section("jmp", l3, "Jump to the end of the AND structure");
-        cg->write_code_section(l2 + ":");
+        cg->write_code_label(l2);
         cg->write_code_section("movl", "$1", cg->translate_reg(r1), "Successful test! (AND)");
-        cg->write_code_section(l3 + ":");
+        cg->write_code_label(l3);
 
         cg->free_reg(r_true);
         cg->free_reg(r2);
@@ -84,9 +85,9 @@ namespace wic
         cg->write_code_section("je", l1, "2nd chance passed?");
         cg->write_code_section("movl", "$0", cg->translate_reg(r1), "Failed test! (OR)");
         cg->write_code_section("jmp", l2, "Jump to the end of the OR structure");
-        cg->write_code_section(l1 + ":");
+        cg->write_code_label(l1);
         cg->write_code_section("movl", "$1", cg->translate_reg(r1), "Successful test! (OR)");
-        cg->write_code_section(l2 + ":");
+        cg->write_code_label(l2);
 
         cg->free_reg(r_true);
         cg->free_reg(r2);
@@ -168,7 +169,7 @@ namespace wic
     }
 
     ASTGreaterEqualNode::ASTGreaterEqualNode(wic::ASTNode *op1, wic::ASTNode *op2)
-        : ASTRelationalNode(GE, wic::UNKNOWN, op1, op2) {}
+        : ASTRelationalNode("GE", GE, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTGreaterEqualNode::to_code(wic::CodeGenerator *cg)
     {
@@ -177,7 +178,7 @@ namespace wic
     }
 
     ASTGreaterNode::ASTGreaterNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTRelationalNode(GT, wic::UNKNOWN, op1, op2) {}
+            : ASTRelationalNode("GT", GT, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTGreaterNode::to_code(wic::CodeGenerator *cg)
     {
@@ -186,7 +187,7 @@ namespace wic
     }
 
     ASTLessEqualNode::ASTLessEqualNode(wic::ASTNode *op1, wic::ASTNode *op2)
-        : ASTRelationalNode(LE, wic::UNKNOWN, op1, op2) {}
+        : ASTRelationalNode("LE", LE, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTLessEqualNode::to_code(wic::CodeGenerator *cg)
     {
@@ -195,7 +196,7 @@ namespace wic
     }
 
     ASTLessNode::ASTLessNode(wic::ASTNode *op1, wic::ASTNode *op2)
-        : ASTRelationalNode(LT, wic::UNKNOWN, op1, op2) {}
+        : ASTRelationalNode("LT", LT, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTLessNode::to_code(wic::CodeGenerator *cg)
     {
@@ -204,7 +205,7 @@ namespace wic
     }
 
     ASTEqualNode::ASTEqualNode(wic::ASTNode *op1, wic::ASTNode *op2)
-        : ASTRelationalNode(EQ, wic::UNKNOWN, op1, op2) {}
+        : ASTRelationalNode("EQ", EQ, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTEqualNode::to_code(wic::CodeGenerator *cg)
     {
@@ -213,7 +214,7 @@ namespace wic
     }
 
     ASTNotEqualNode::ASTNotEqualNode(wic::ASTNode *op1, wic::ASTNode *op2)
-        : ASTRelationalNode(NEQ, wic::UNKNOWN, op1, op2) {}
+        : ASTRelationalNode("NEQ", NEQ, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTNotEqualNode::to_code(wic::CodeGenerator *cg)
     {
@@ -221,7 +222,7 @@ namespace wic
         return operate(cg);
     }
 
-    ASTNotNode::ASTNotNode(wic::ASTNode *op) : ASTRelationalNode(NOT, wic::UNKNOWN, op) {}
+    ASTNotNode::ASTNotNode(wic::ASTNode *op) : ASTRelationalNode("NOT", NOT, wic::UNKNOWN, op) {}
 
     cpu_registers ASTNotNode::to_code(wic::CodeGenerator *cg)
     {
@@ -230,7 +231,7 @@ namespace wic
     }
 
     ASTAndNode::ASTAndNode(wic::ASTNode *op1, wic::ASTNode *op2)
-        : ASTRelationalNode(AND, wic::BOOL, op1, op2) {}
+        : ASTRelationalNode("AND", AND, wic::BOOL, op1, op2) {}
 
     cpu_registers ASTAndNode::to_code(wic::CodeGenerator *cg)
     {
@@ -239,7 +240,7 @@ namespace wic
     }
 
     ASTOrNode::ASTOrNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTRelationalNode(OR, wic::BOOL, op1, op2) {}
+            : ASTRelationalNode("OR", OR, wic::BOOL, op1, op2) {}
 
     cpu_registers ASTOrNode::to_code(wic::CodeGenerator *cg)
     {

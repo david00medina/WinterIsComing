@@ -8,9 +8,12 @@
     #include <iostream>
 
     #include "../utils/termcolor.hpp"
-    #include "../symbol-table/SymbolTable.hpp"
     #include "../ast/AbstractSyntaxTree.hpp"
-    #include "../ast/nodes/operator-nodes/ASTArithmeticNode.hpp"
+    #include "../ast/node/ASTNode.hpp"
+    #include "../ast/node/node-subtypes/leaf-node/ASTLeafNode.hpp"
+    #include "../ast/node/node-subtypes/symbol-table-node/ASTSymbolTableNode.hpp"
+    #include "../ast/node/node-subtypes/operator-node/ASTArithmeticNode.hpp"
+    #include "../symbol-table/SymbolTable.hpp"
     #include "../code-generator/CodeGenerator.hpp"
 
     int yylex(void);
@@ -160,7 +163,6 @@ instr: data_init ID                               {
 
     						    wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($4);
     						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, expr);
-
     						    $$ = ast->tree_build(assign);
     						    ast->print();
     						    std::cout << std::endl;

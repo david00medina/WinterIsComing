@@ -1,22 +1,35 @@
 #include "ASTOperatorNode.hpp"
-#include "../ASTSymbolTableNode.hpp"
-#include "../ASTLeafNode.hpp"
-#include "../../../error-manager/ErrorManager.hpp"
+#include "../leaf-node/ASTLeafNode.hpp"
+#include "../../../../error-manager/ErrorManager.hpp"
+#include "../symbol-table-node/ASTSymbolTableNode.hpp"
+#include "../../../../code-generator/CodeGenerator.hpp"
 
 namespace wic
 {
-    ASTOperatorNode::ASTOperatorNode(wic::node_type node_t, wic::data_type data_t, wic::ASTNode *ptr1, wic::ASTNode *ptr3)
+    ASTOperatorNode::ASTOperatorNode(std::string name, wic::node_type node_t, wic::data_type data_t, wic::ASTNode *op)
+        : ASTNode(name, node_t, data_t)
     {
-        this->node_t = node_t;
-        this->data_t = data_t;
-        this->ptr1 = ptr1;
-        this->ptr3 = ptr3;
+        op1 = op;
+        op2 = nullptr;
+    }
+
+    ASTOperatorNode::ASTOperatorNode(std::string name, wic::node_type node_t, wic::data_type data_t, wic::ASTNode *op1, wic::ASTNode *op2)
+        : ASTNode(name, node_t, data_t)
+    {
+        this->op1 = op1;
+        this->op2 = op2;
+    }
+
+    ASTOperatorNode::~ASTOperatorNode()
+    {
+        delete op1;
+        delete op2;
     }
 
     void ASTOperatorNode::set_operators(wic::ASTNode *op1, wic::ASTNode *op2)
     {
-        ptr1 = op1;
-        ptr3 = op2;
+        this->op1 = op1;
+        this->op2 = op2;
     }
 
     cpu_registers ASTOperatorNode::execute(wic::cpu_registers r1, wic::cpu_registers r2, wic::CodeGenerator *cg)
@@ -37,21 +50,19 @@ namespace wic
         else if (o2 != NONE) return o2;
     }
 
-
-
     void ASTOperatorNode::check_error(std::string op)
     {
-        data_type type1 = get_node_data_type(ptr1);
+        data_type type1 = get_node_data_type(op1);
 
-        if (ptr3 == nullptr) return;
+        if (op2 == nullptr) return;
 
-        data_type type2 = get_node_data_type(ptr3);
+        data_type type2 = get_node_data_type(op2);
 
         switch (get_node_type())
         {
             case ASSIGN:
-                if (ptr1->get_node_type() != ID) ErrorManager::send(WRONG_ASSIGN);
-                else if (type1 != type2) ErrorManager::send(INCOMPATIBLE_ASSIGN, reinterpret_cast<ASTIDNode *>(ptr1)->get_entry()->get_id());
+                if (op1->get_node_type() != ID) ErrorManager::send(WRONG_ASSIGN);
+                else if (type1 != type2) ErrorManager::send(INCOMPATIBLE_ASSIGN, reinterpret_cast<ASTIDNode *>(op1)->get_entry()->get_id());
                 break;
             case AND:
                 if (type1 != BOOL || type2 != BOOL) ErrorManager::send(WRONG_RELATIONAL_OPERANDS, op);
@@ -68,8 +79,8 @@ namespace wic
 
     void ASTOperatorNode::set_operator_type()
     {
-        data_type type1 = get_node_data_type(ptr1);
-        data_type type2 = get_node_data_type(ptr3);
+        data_type type1 = get_node_data_type(op1);
+        data_type type2 = get_node_data_type(op2);
         if (type1 == type2) data_t = type1;
         else
         {
@@ -99,10 +110,10 @@ namespace wic
 
     cpu_registers ASTOperatorNode::operand_type_conversion(cpu_registers r1, cpu_registers r2, CodeGenerator *cg)
     {
-        data_type type1 = get_node_data_type(ptr1);
+        data_type type1 = get_node_data_type(op1);
         data_type type2 = type1;
 
-        if (ptr3 != nullptr) type2 = get_node_data_type(ptr3);
+        if (op2 != nullptr) type2 = get_node_data_type(op2);
 
         if (type1 == type2)
         {
@@ -121,16 +132,16 @@ namespace wic
         }
     }
 
-    data_type ASTOperatorNode::get_node_data_type(ASTNode* ptr)
+    data_type ASTOperatorNode::get_node_data_type(ASTNode* op)
     {
-        switch (ptr->get_node_type())
+        switch (op->get_node_type())
         {
             case ID:
-                return reinterpret_cast<ASTIDNode *>(ptr)->get_entry()->get_data().var.type;
+                return reinterpret_cast<ASTIDNode *>(op)->get_entry()->get_data().var.type;
             case CALL:
-                return reinterpret_cast<ASTCallNode *>(ptr)->get_entry()->get_data().var.type;
+                return reinterpret_cast<ASTCallNode *>(op)->get_entry()->get_data().var.type;
             case LEAF:
-                return reinterpret_cast<ASTLeafNode *>(ptr)->get_data_type();
+                return reinterpret_cast<ASTLeafNode *>(op)->get_data_type();
             default:
                 return UNKNOWN;
         }
@@ -138,15 +149,15 @@ namespace wic
 
     cpu_registers ASTOperatorNode::operate(wic::CodeGenerator *cg)
     {
-        cpu_registers r1 = ptr1->to_code(cg);
+        cpu_registers r1 = op1->to_code(cg);
 
         cpu_registers r2;
-        if (ptr3 != nullptr) r2 = ptr3->to_code(cg);
+        if (op2 != nullptr) r2 = op2->to_code(cg);
         cpu_registers r = operand_type_conversion(r1, r2, cg);
 
-        data_type type1 = get_node_data_type(ptr1);
+        data_type type1 = get_node_data_type(op1);
         data_type type2;
-        if (ptr3 != nullptr) type2 = get_node_data_type(ptr3);
+        if (op2 != nullptr) type2 = get_node_data_type(op2);
 
         switch (r)
         {

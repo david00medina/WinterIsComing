@@ -2,7 +2,6 @@
 #define ASTARITHMETICNODE_HPP
 
 #include "ASTOperatorNode.hpp"
-#include "../../AbstractSyntaxTreePack.hpp"
 
 namespace wic
 {
@@ -24,7 +23,7 @@ namespace wic
 
     public:
         ASTArithmeticNode() = default;
-        ASTArithmeticNode(node_type, data_type, ASTNode*, ASTNode*);
+        ASTArithmeticNode(std::string, node_type, data_type, ASTNode*, ASTNode*);
         ~ASTArithmeticNode() = default;
     };
 

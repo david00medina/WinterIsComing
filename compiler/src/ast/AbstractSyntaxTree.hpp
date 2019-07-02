@@ -1,13 +1,12 @@
 #ifndef ABSTRACTSYNTAXTREE_HPP
 #define ABSTRACTSYNTAXTREE_HPP
 
-#include "nodes/ASTNode.hpp"
-#include "nodes/ASTLeafNode.hpp"
-#include "nodes/operator-nodes/ASTOperatorNode.hpp"
-#include "nodes/ASTSymbolTableNode.hpp"
+#include "AbstractSyntaxTreePack.hpp"
 
 namespace wic
 {
+    class ASTNode;
+
     class AbstractSyntaxTree
     {
     private:

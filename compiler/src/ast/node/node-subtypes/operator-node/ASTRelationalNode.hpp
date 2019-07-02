@@ -2,8 +2,7 @@
 #define ASTRELATIONALNODE_HPP
 
 #include "ASTOperatorNode.hpp"
-#include "../../AbstractSyntaxTreePack.hpp"
-#include "../../../code-generator/CodeGenerator.hpp"
+#include "../../../AbstractSyntaxTreePack.hpp"
 
 namespace wic {
     class ASTRelationalNode : public ASTOperatorNode
@@ -20,8 +19,8 @@ namespace wic {
 
     public:
         ASTRelationalNode() = default;
-        ASTRelationalNode(node_type, data_type, ASTNode*, ASTNode*);
-        ASTRelationalNode(node_type, data_type, ASTNode*);
+        ASTRelationalNode(std::string, node_type, data_type, ASTNode*, ASTNode*);
+        ASTRelationalNode(std::string, node_type, data_type, ASTNode*);
         ~ASTRelationalNode() = default;
     };
 

@@ -1,14 +1,16 @@
 #ifndef ASTLEAFNODE_HPP
 #define ASTLEAFNODE_HPP
 
-#include "ASTNode.hpp"
-#include "../AbstractSyntaxTreePack.hpp"
+#include "../../ASTNode.hpp"
+#include "../../../../code-generator/CodeGeneratorPack.hpp"
 
 namespace wic {
     class ASTLeafNode : public ASTNode
     {
     private:
         data_value data_v;
+
+        void check_error(std::string) {};
 
     public:
         ASTLeafNode() = default;

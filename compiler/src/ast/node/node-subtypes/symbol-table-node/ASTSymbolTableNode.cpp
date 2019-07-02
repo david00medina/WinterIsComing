@@ -1,4 +1,5 @@
 #include "ASTSymbolTableNode.hpp"
+#include "../../../../code-generator/CodeGenerator.hpp"
 
 extern wic::GSymbolTable* gst;
 extern wic::SSymbolTable* sst;
@@ -6,19 +7,17 @@ extern wic::LSymbolTable* lst;
 
 namespace wic
 {
-    ASTSymbolTableNode::ASTSymbolTableNode(std::string id, wic::node_type node_t, wic::data_type data_t)
+    ASTSymbolTableNode::ASTSymbolTableNode(std::string name, std::string id, wic::node_type node_t, wic::data_type data_t)
+        : ASTNode(name, node_t, data_t)
     {
         if (&id != nullptr) this->id = id;
-        this->node_t = node_t;
-        this->data_t = data_t;
     }
 
-    ASTSymbolTableNode::ASTSymbolTableNode(std::string id, wic::node_type node_t, wic::data_type data_t,
+    ASTSymbolTableNode::ASTSymbolTableNode(std::string name, std::string id, wic::node_type node_t, wic::data_type data_t,
                                            wic::TableEntry* global_te, wic::TableEntry* static_te, wic::TableEntry* local_te)
+        : ASTNode(name, node_t, data_t)
     {
         if (&id != nullptr) this->id = id;
-        this->node_t = node_t;
-        this->data_t = data_t;
 
         this->global_te = global_te;
         this->static_te = static_te;
@@ -79,57 +78,44 @@ namespace wic
         std::cout << "(" << name << ", " << id << ", " << type_data_str[data_t] << ")";
     }
 
-    ASTCallNode::ASTCallNode(std::string id, wic::data_type data_t, wic::ASTNode *arg)
+    ASTCallNode::ASTCallNode(std::string id, wic::data_type data_t, wic::ASTNode *args, wic::ASTNode *body)
+        : ASTSymbolTableNode("CALL", id, CALL, data_t)
     {
-        args_i = 0;
         if (&id != nullptr) this->id = id;
-        this->node_t = wic::CALL;
-        this->data_t = data_t;
-        add_arg(arg);
-        name = "CALL";
+        this->args = args;
+        this->body = body;
     }
 
-    ASTCallNode::ASTCallNode(std::string id, wic::data_type data_t, wic::ASTNode *arg,
-            wic::TableEntry *global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
+    ASTCallNode::ASTCallNode(std::string id, wic::data_type data_t, wic::ASTNode *args, wic::ASTNode *body, wic::TableEntry *global_te)
+        : ASTSymbolTableNode("CALL", id, CALL, data_t, global_te, nullptr, nullptr)
     {
-        args_i = 0;
         if (&id != nullptr) this->id = id;
-        this->node_t = wic::CALL;
-        this->data_t = data_t;
-        add_arg(arg);
-        this->global_te = global_te;
-        this->static_te = static_te;
-        this->local_te = local_te;
-        name = "CALL";
+        this->args = args;
+        this->body = body;
     }
 
     ASTCallNode::~ASTCallNode()
     {
-        delete ptr1;
-        delete *ptr2;
-        delete ptr3;
-        delete *args;
-        delete global_te;
-        delete static_te;
-        delete local_te;
+        delete body;
+        delete args;
     }
 
-    ASTNode** ASTCallNode::get_args()
+    ASTNode* ASTCallNode::get_args()
     {
         return args;
     }
 
-    void ASTCallNode::add_arg(wic::ASTNode *arg)
+    ASTNode* ASTCallNode::get_body()
     {
-        if (arg != nullptr) this->args[args_i++] = arg;
+        return body;
     }
 
     cpu_registers ASTCallNode::to_code(CodeGenerator *cg) {}
 
-    ASTIDNode::ASTIDNode(std::string id, wic::data_type data_t) : ASTSymbolTableNode(id, wic::ID, data_t) { name = "ID"; }
+    ASTIDNode::ASTIDNode(std::string id, wic::data_type data_t) : ASTSymbolTableNode("ID", id, wic::ID, data_t) {}
 
     ASTIDNode::ASTIDNode(std::string id, wic::data_type data_t, wic::TableEntry *global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
-        : ASTSymbolTableNode(id, wic::ID, data_t, global_te, static_te, local_te) { name = "ID"; }
+        : ASTSymbolTableNode("ID", id, wic::ID, data_t, global_te, static_te, local_te) {}
 
     cpu_registers ASTIDNode::to_code(CodeGenerator *cg)
     {

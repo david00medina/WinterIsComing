@@ -1,16 +1,18 @@
 #include <queue>
 
 #include "AbstractSyntaxTree.hpp"
-#include "nodes/ASTNode.hpp"
-#include "nodes/operator-nodes/ASTOperatorNode.hpp"
-#include "nodes/ASTSymbolTableNode.hpp"
-#include "nodes/ASTLeafNode.hpp"
+#include "node/node-subtypes/clause-node/ASTClauseNode.hpp"
+#include "node/node-subtypes/operator-node/ASTOperatorNode.hpp"
+#include "node/node-subtypes/operator-node/ASTRelationalNode.hpp"
+#include "node/node-subtypes/structural-node/ASTStructuralNode.hpp"
+#include "node/node-subtypes/symbol-table-node/ASTSymbolTableNode.hpp"
 
 extern int yylineno;
 extern int level;
 extern wic::GSymbolTable* gst;
 extern wic::SSymbolTable* sst;
 extern wic::LSymbolTable* lst;
+
 namespace wic
 {
     ASTNode* AbstractSyntaxTree::tree_build(ASTNode *node)
@@ -60,15 +62,58 @@ namespace wic
             curr->print();
             nodes.pop();
 
-            // Expand left --> continue
-            // Save to queue
-            if (curr->ptr1 != nullptr) nodes.push(curr->ptr1);
-            // Expand middle --> continue
-            // Save to queue
-            for (int i = 0; curr->ptr2[i] != nullptr; i++) nodes.push(curr->ptr2[i]);
-            // Expand right --> continue
-            // Save to queue
-            if (curr->ptr3 != nullptr) nodes.push(curr->ptr3);
+            switch (curr->get_node_type())
+            {
+                case CALL:
+                    break;
+                case MAIN:
+                    while (curr != nullptr)
+                    {
+                        nodes.push(curr->next);
+                        curr = curr->next;
+                    }
+                    break;
+                case SUM:
+                case SUB:
+                case PROD:
+                case DIV:
+                case MOD:
+                case POWER:
+                case RADICAL:
+                case ASSIGN:
+                case GE:
+                case GT:
+                case EQ:
+                case NEQ:
+                case LE:
+                case LT:
+                case AND:
+                case OR:
+                    nodes.push(reinterpret_cast<ASTOperatorNode *>(curr)->op1);
+                    nodes.push(reinterpret_cast<ASTOperatorNode *>(curr)->op2);
+                    break;
+                case NOT:
+                    nodes.push(reinterpret_cast<ASTOperatorNode *>(curr)->op1);
+                    break;
+                case IF:
+                    {
+                        ASTRelationalNode *cond = reinterpret_cast<ASTClauseNode *>(curr)->get_cond();
+                        ASTStructuralNode *body = reinterpret_cast<ASTClauseNode *>(curr)->get_body();
+
+                        while (cond != nullptr && body != nullptr) {
+                            nodes.push(reinterpret_cast<ASTNode *>(cond));
+                            nodes.push(reinterpret_cast<ASTNode *>(body));
+                            cond = reinterpret_cast<ASTRelationalNode *>(cond->next);
+                            body = reinterpret_cast<ASTStructuralNode *>(body->next);
+                        }
+                        nodes.push(reinterpret_cast<ASTClauseNode *>(curr)->get_else_body());
+                    }
+                    break;
+                case WHILE:
+                case FOR:
+                default:
+                    break;
+            }
         }
     }
 

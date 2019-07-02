@@ -37,9 +37,13 @@ namespace wic {
         ~CodeGenerator() = default;
 
         void set_path(const std::string);
+
+        void push_scope();
+        void pop_scope();
+
         void write_data_section(unsigned int, ...);
         void write_data_section(const std::string, unsigned int, ...);
-        void write_code_section(const std::string);
+        void write_code_label(const std::string);
         void write_code_section(const std::string, const std::string);
         void write_code_section(const std::string, const std::string, const std::string);
         void write_code_section(const std::string, const std::string, const std::string, const std::string);
