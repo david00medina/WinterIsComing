@@ -1,7 +1,10 @@
 %x COMMENT_LINE
+%x CHECK_LVL
 %{
   #include <string.h>
   int numlin = 1;
+  int level = 0;
+  int countSpaces(char* pattern);
   void error(char*, char);
 
   #define END_OF_INSTR 257
@@ -35,7 +38,9 @@
   #define PARETHESES_OPEN 285
   #define PARETHESES_CLOSE 286
   #define ID 287
-  #define COMMENT_LINE_START 288
+  #define OPEN_CONTEXT_TAG 288
+  #define CLOSE_CONTEXT_TAG 289
+
 
 %}
 
@@ -74,8 +79,45 @@ id                            {letter}({letter}|{digit})*
 
 
 %%
+<CHECK_LVL>\n?{context_tag}    {
+                                printf("Procesando... \n<%s>\n", yytext);
+                                int level_change = countSpaces(yytext);
+                                printf("%d\n", level_change);
+
+                                if (level < level_change) {
+                                  level++;
+                                  if (level != level_change) yyless(0);
+                                  printf("Level <OPEN_CONTEXT_TAG> : %d\n", level);
+                                  return OPEN_CONTEXT_TAG;
+                                } else if (level > level_change) {
+                                   level--;
+                                   if (level != level_change) yyless(0);
+                                   printf("Level <CLOSE_CONTEXT_TAG> : %d\n", level);
+                                   return CLOSE_CONTEXT_TAG;
+                                }
+                                printf("Level : %d\n", level);
+                                BEGIN(INITIAL);
+                              }
+<CHECK_LVL><<EOF>>            {
+                                if (level > 0) {
+                                  level--;
+                                  return CLOSE_CONTEXT_TAG;
+                                } else return 0;
+                              }
+<CHECK_LVL>[^ \n]             {
+                                printf("Vamos para atrás\n");
+                                BEGIN(INITIAL);
+                                yyless(0);
+                              }
+<<EOF>>                       {
+                                BEGIN(CHECK_LVL);
+                              }
+
+
 
 "\n"                          {
+                                BEGIN(CHECK_LVL);
+                                yyless(0);
                                 printf("%s is a END_OF_INSTR\n", yytext);
                                 numlin++;
                                 return END_OF_INSTR;
@@ -240,4 +282,16 @@ id                            {letter}({letter}|{digit})*
 
 void error(char* mens, char character) {
   printf("Error lexico en linea %i: %s [%c]\n",numlin,mens, character);
+}
+
+int countSpaces(char* pattern) {
+  int i = 0;
+  int numSpaces = 0;
+  int total = 0;
+  while (pattern[i] != '\0') {
+    if (pattern[i] == ' ') numSpaces++;
+    if ((numSpaces % 4) == 0 && numSpaces > 0) total++;
+    i++;
+  }
+  return total;
 }
