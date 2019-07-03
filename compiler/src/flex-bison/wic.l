@@ -17,7 +17,7 @@
     #include "../ast/nodes/ASTLeafNode.hpp"
     #include "../symbol-table/SymbolTablePack.hpp"
     #include "../ast/nodes/ASTSymbolTableNode.hpp"
-    #include "y.tab.h"
+    #include "wic.tab.h"
 
     int level = 0;
     int enter_special = 1;
