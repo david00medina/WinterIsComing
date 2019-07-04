@@ -15,25 +15,10 @@ namespace wic
         ~ASTStructuralNode() = default;
     };
 
-    class ASTMainNode : public ASTStructuralNode {
-    private:
-        ASTNode* body;
-
-        void check_error(std::string) {};
-
-    public:
-        ASTMainNode();
-        ASTMainNode(ASTNode*);
-        ~ASTMainNode() = default;
-
-        cpu_registers to_code(CodeGenerator*);
-        void add_body(ASTNode*);
-    };
-
     class ASTBodyNode : public ASTStructuralNode {
     private:
         ASTNode* instr;
-
+        ASTBodyNode* next;
         void check_error(std::string) {};
 
     public:
@@ -41,8 +26,24 @@ namespace wic
         ASTBodyNode(ASTNode*);
         ~ASTBodyNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
         void add_instr(ASTNode*);
+        cpu_registers to_code(CodeGenerator*);
+
+        friend class ASTMainNode;
+    };
+
+    class ASTMainNode : public ASTStructuralNode {
+    private:
+        ASTBodyNode* body;
+        void check_error(std::string) {};
+
+    public:
+        ASTMainNode();
+        ASTMainNode(ASTNode*);
+        ~ASTMainNode() = default;
+
+        void add_body(ASTBodyNode*);
+        cpu_registers to_code(CodeGenerator*);
     };
 
     class ASTReturnNode : public ASTStructuralNode {

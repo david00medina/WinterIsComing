@@ -12,7 +12,7 @@
 namespace wic
 {
     class AbstractSyntaxTree;
-
+    class ASTBodyNode;
     class CodeGenerator;
 
     class ASTNode
@@ -58,16 +58,16 @@ namespace wic
         data_type get_data_type();
         void set_data_type(data_type);
 
-        void add_node(ASTNode*, ASTNode*);
+        void add_node(ASTNode*&, ASTNode*&);
         ASTNode* find(unsigned int, node_type, ASTNode*);
 
-        virtual cpu_registers to_code(CodeGenerator*) = 0;
-
-        virtual void check_error(std::string) = 0;
+        virtual void check_error(std::string);
+        virtual cpu_registers to_code(CodeGenerator*);
 
         virtual void print();
 
         friend class AbstractSyntaxTree;
+        friend class ASTBodyNode;
     };
 }
 

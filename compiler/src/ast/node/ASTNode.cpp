@@ -11,17 +11,23 @@ namespace wic {
         delete next;
     }
 
-    void ASTNode::add_node(ASTNode *head, ASTNode* n)
+    void ASTNode::add_node(ASTNode* &head, ASTNode* &node)
     {
-        if (head == nullptr) head = n;
+        if (head == nullptr)
+        {
+            head = node;
+            return;
+        }
+
 
         ASTNode* curr = head;
-
-        while (curr->next != nullptr)
+        while (curr != nullptr)
         {
+            std::cout << curr->get_node_type() << std::endl;
             curr = curr->next;
         }
-        curr->next = n;
+
+        curr = node;
     }
 
     ASTNode * ASTNode::find(unsigned int count, wic::node_type node_t, ASTNode* head)
@@ -61,6 +67,10 @@ namespace wic {
     {
         return name;
     }
+
+    void ASTNode::check_error(std::string) {}
+
+    cpu_registers ASTNode::to_code(wic::CodeGenerator *) {}
 
     void ASTNode::print()
     {

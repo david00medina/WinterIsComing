@@ -5,6 +5,8 @@
 #include "../../../AbstractSyntaxTreePack.hpp"
 
 namespace wic {
+    class ASTClauseNode;
+
     class ASTRelationalNode : public ASTOperatorNode
     {
     protected:
@@ -22,6 +24,8 @@ namespace wic {
         ASTRelationalNode(std::string, node_type, data_type, ASTNode*, ASTNode*);
         ASTRelationalNode(std::string, node_type, data_type, ASTNode*);
         ~ASTRelationalNode() = default;
+
+        friend class ASTClauseNode;
     };
 
     class ASTGreaterEqualNode : public ASTRelationalNode

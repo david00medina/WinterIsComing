@@ -5,7 +5,7 @@
 
 namespace wic
 {
-    class ASTStructuralNode;
+    class AbstractSyntaxTree;
     class ASTRelationalNode;
     class CodeGenerator;
 
@@ -13,40 +13,49 @@ namespace wic
     {
     protected:
         ASTRelationalNode* cond;
-        ASTStructuralNode* body;
-        ASTStructuralNode* else_body;
+        ASTNode* body;
+        ASTNode* else_body;
+        ASTClauseNode* next;
 
-        unsigned int middle_block_depth;
+        std::string else_l;
+        std::string exit_l;
 
         void check_error(std::string);
-        void add_middle_block(ASTNode*);
 
-        virtual void first_block(std::string, std::string, CodeGenerator*) = 0;
-        virtual void middle_block(std::string, std::string, std::string, CodeGenerator*) = 0;
-        virtual void last_block(std::string, std::string, CodeGenerator*) = 0;
+        virtual void write_condition(ASTRelationalNode*, CodeGenerator*) = 0;
+        virtual void write_body(CodeGenerator*) = 0;
+        virtual void write_else_body(CodeGenerator*) = 0;
 
     public:
+        ASTClauseNode(const ASTClauseNode&);
         ASTClauseNode() = default;
-        ASTClauseNode(std::string, node_type, ASTRelationalNode*,ASTStructuralNode*);
-        ASTClauseNode(std::string, node_type, ASTRelationalNode*,ASTStructuralNode*, ASTStructuralNode*);
+        ASTClauseNode(std::string, node_type, ASTRelationalNode*, ASTNode*);
+        ASTClauseNode(std::string, node_type, ASTRelationalNode*, ASTNode*, ASTNode*);
         ~ASTClauseNode();
 
+        void add_mid_block(ASTClauseNode*);
+
         ASTRelationalNode* get_cond();
-        ASTStructuralNode* get_body();
-        ASTStructuralNode* get_else_body();
+        ASTNode* get_body();
+        ASTNode* get_else_body();
+
+        void set_cond(ASTNode*);
+        void set_body(ASTNode*);
+        void set_else_body(ASTNode*);
     };
 
     class ASTIfNode : public ASTClauseNode
     {
     private:
-        void first_block(std::string, std::string, CodeGenerator*);
-        void middle_block(std::string, std::string, std::string, CodeGenerator*);
-        void last_block(std::string, std::string, CodeGenerator*);
+        void write_condition(ASTRelationalNode*, CodeGenerator*);
+        void write_body(CodeGenerator*);
+        void write_else_body(CodeGenerator*);
 
     public:
+        ASTIfNode(const ASTIfNode&);
         ASTIfNode() = default;
-        ASTIfNode(ASTRelationalNode*,ASTStructuralNode*);
-        ASTIfNode(ASTRelationalNode*,ASTStructuralNode*, ASTStructuralNode*);
+        ASTIfNode(ASTRelationalNode*,ASTNode*);
+        ASTIfNode(ASTRelationalNode*,ASTNode*, ASTNode*);
         ~ASTIfNode() = default;
 
         cpu_registers to_code(CodeGenerator*);
@@ -55,14 +64,14 @@ namespace wic
     class ASTWhileNode : public ASTClauseNode
     {
     private:
-        void first_block(std::string, std::string, CodeGenerator*);
-        void middle_block(std::string, std::string, std::string, CodeGenerator*);
-        void last_block(std::string, std::string, CodeGenerator*);
+        void write_condition(ASTRelationalNode*, CodeGenerator*);
+        void write_body(CodeGenerator*);
+        void write_else_body(CodeGenerator*);
 
     public:
         ASTWhileNode() = default;
-        ASTWhileNode(ASTRelationalNode*,ASTStructuralNode*);
-        ASTWhileNode(ASTRelationalNode*,ASTStructuralNode*, ASTStructuralNode*);
+        ASTWhileNode(ASTRelationalNode*,ASTNode*);
+        ASTWhileNode(ASTRelationalNode*,ASTNode*, ASTNode*);
         ~ASTWhileNode() = default;
 
         cpu_registers to_code(CodeGenerator*);
@@ -71,14 +80,14 @@ namespace wic
     class ASTForNode : public ASTClauseNode
     {
     private:
-        void first_block(std::string, std::string, CodeGenerator*);
-        void middle_block(std::string, std::string, std::string, CodeGenerator*);
-        void last_block(std::string, std::string, CodeGenerator*);
+        void write_condition(ASTRelationalNode*, CodeGenerator*);
+        void write_body(CodeGenerator*);
+        void write_else_body(CodeGenerator*);
 
     public:
         ASTForNode() = default;
-        ASTForNode(ASTRelationalNode*,ASTStructuralNode*);
-        ASTForNode(ASTRelationalNode*,ASTStructuralNode*, ASTStructuralNode*);
+        ASTForNode(ASTRelationalNode*,ASTNode*);
+        ASTForNode(ASTRelationalNode*,ASTNode*, ASTNode*);
         ~ASTForNode() = default;
 
         cpu_registers to_code(CodeGenerator*);

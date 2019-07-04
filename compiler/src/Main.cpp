@@ -4,6 +4,7 @@
 #include "code-generator/CodeGenerator.hpp"
 #include "ast/node/ASTNode.hpp"
 #include "ast/node/node-subtypes/leaf-node/ASTLeafNode.hpp"
+#include "ast/node/node-subtypes/clause-node/ASTClauseNode.hpp"
 #include "ast/node/node-subtypes/operator-node/ASTOperatorNode.hpp"
 #include "ast/node/node-subtypes/operator-node/ASTRelationalNode.hpp"
 #include "ast/node/node-subtypes/operator-node/ASTArithmeticNode.hpp"
@@ -102,6 +103,7 @@ int main(int argc, char const **argv) {
         cg.exit();
         cg.end();*/
         wic::ASTMainNode* main = new wic::ASTMainNode();
+        wic::ASTBodyNode* body = new wic::ASTBodyNode();
         wic::data_value data_v;
         data_v.int_val = 12;
         wic::ASTLeafNode* int_node = new wic::ASTLeafNode(wic::INT, &data_v);
@@ -126,6 +128,8 @@ int main(int argc, char const **argv) {
         wic::ASTNotNode* nnot = new wic::ASTNotNode(float_node);
         wic::ASTAndNode* andn = new wic::ASTAndNode(bool_node2, bool_node2);
         wic::ASTOrNode* orn = new wic::ASTOrNode(bool_node, bool_node);
+        wic::ASTIfNode* if_node = new wic::ASTIfNode(andn, div, sub);
+        wic::ASTIfNode* if_node2 = new wic::ASTIfNode(orn, sum);
 
         entry_d.var.type = wic::INT;
         entry_d.var.offset = -4;
@@ -141,8 +145,16 @@ int main(int argc, char const **argv) {
         wic::ASTIDNode* id = new wic::ASTIDNode("hola", wic::INT, nullptr, nullptr, entry);
         wic::ASTAssignNode* assign = new wic::ASTAssignNode(wic::INT, id, int_node);
 
-        main->add_body(sum);
+//        body->add_instr(prod);
+//        main->add_instr(sum);
+//        main->add_instr(sub);
+//        main->add_instr(body);
+        if_node->add_mid_block(if_node2);
+        body->add_instr(if_node);
+        body->add_instr(mod);
+        main->add_body(body);
         main->to_code(cg);
+//        if_node->to_code(cg);
 //        int_node->to_code(cg);
 //        float_node->to_code(cg);
 //        char_node->to_code(cg);
@@ -161,10 +173,7 @@ int main(int argc, char const **argv) {
 
     if (cg == nullptr) cg = new wic::CodeGenerator();
 
-    int result = /*yyparse()*/0;
-
-    cg->exit();
-    cg->end();
+    int result = yyparse();
 
     delete cg;
 

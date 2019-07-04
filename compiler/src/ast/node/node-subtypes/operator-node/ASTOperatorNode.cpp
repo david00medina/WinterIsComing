@@ -104,7 +104,6 @@ namespace wic
         cg->write_code_section("cvttss2sil", cg->translate_reg(r), cg->translate_reg(ir),
                                "Convert real to int (" + cg->translate_reg(r) + ")");
         cg->free_reg(r);
-        std::cout << cg->is_used(ir) << std::endl;
         return ir;
     }
 

@@ -43,8 +43,11 @@ namespace wic
             case WRONG_RELATIONAL_OPERANDS:
                 out = "Boolean data type is required to perform a " + msg + " operation";
                 break;
-            case NOT_CLAUSE_BOOL_EXPR:
-                out = "The " + msg + " clause expected a boolean expression";
+            case MISSING_CLAUSE_BOOL_EXPR:
+                out = "Missing boolean expression at " + msg + " clause";
+                break;
+            case MULTIPLE_ELSE:
+                out = "The " + msg + " clase has more than one else blocks";
                 break;
             default:
                 return;

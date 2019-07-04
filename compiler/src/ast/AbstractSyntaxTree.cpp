@@ -97,14 +97,13 @@ namespace wic
                     break;
                 case IF:
                     {
-                        ASTRelationalNode *cond = reinterpret_cast<ASTClauseNode *>(curr)->get_cond();
-                        ASTStructuralNode *body = reinterpret_cast<ASTClauseNode *>(curr)->get_body();
+                        ASTRelationalNode* cond = reinterpret_cast<ASTClauseNode *>(curr)->get_cond();
+                        ASTNode* body = reinterpret_cast<ASTClauseNode *>(curr)->get_body();
 
-                        while (cond != nullptr && body != nullptr) {
+                        while (curr != nullptr) {
                             nodes.push(reinterpret_cast<ASTNode *>(cond));
-                            nodes.push(reinterpret_cast<ASTNode *>(body));
-                            cond = reinterpret_cast<ASTRelationalNode *>(cond->next);
-                            body = reinterpret_cast<ASTStructuralNode *>(body->next);
+                            nodes.push(body);
+                            curr = curr->next;
                         }
                         nodes.push(reinterpret_cast<ASTClauseNode *>(curr)->get_else_body());
                     }

@@ -6,19 +6,27 @@
 
 namespace wic
 {
-    ASTClauseNode::ASTClauseNode(std::string name, node_type node_t, ASTRelationalNode *n1, ASTStructuralNode *n2)
+    ASTClauseNode::ASTClauseNode(const wic::ASTClauseNode &n)
+    {
+        set_cond(n.cond);
+        body = n.body;
+        else_body = n.else_body;
+        else_l = n.else_l;
+        exit_l = n.exit_l;
+        next = n.next;
+    }
+
+    ASTClauseNode::ASTClauseNode(std::string name, node_type node_t, ASTRelationalNode *n1, ASTNode *n2)
         : ASTNode(name, node_t, UNKNOWN)
     {
-        middle_block_depth = 0;
-        cond = n1;
+        set_cond(n1);
         body = n2;
     }
 
     ASTClauseNode::ASTClauseNode(std::string name, node_type node_t,
-            ASTRelationalNode *n1, wic::ASTStructuralNode *n2, ASTStructuralNode *n3) : ASTNode(name, node_t, UNKNOWN)
+            ASTRelationalNode *n1, wic::ASTNode *n2, ASTNode *n3) : ASTNode(name, node_t, UNKNOWN)
     {
-        middle_block_depth = 0;
-        cond = n1;
+        set_cond(n1);
         body = n2;
         else_body = n3;
     }
@@ -32,30 +40,101 @@ namespace wic
 
     void ASTClauseNode::check_error(std::string op)
     {
-        /*ASTRelationalNode* curr = cond;
+        ASTRelationalNode* curr = cond;
 
-        if (curr == nullptr) ErrorManager::send(NOT_CLAUSE_BOOL_EXPR, op);
+        if (curr == nullptr) ErrorManager::send(MISSING_CLAUSE_BOOL_EXPR,op);
 
         while (curr != nullptr) {
-            if (curr->get_data_type() != BOOL) ErrorManager::send(NOT_CLAUSE_BOOL_EXPR, op);
-            curr = reinterpret_cast<ASTClauseNode *>(curr->next);
-        }*/
+            if (curr->get_data_type() != BOOL) ErrorManager::send(MISSING_CLAUSE_BOOL_EXPR, op);
+            curr = reinterpret_cast<ASTRelationalNode *>(curr->next);
+        }
     }
 
-    void ASTClauseNode::add_middle_block(wic::ASTNode *node)
+    void ASTClauseNode::add_mid_block(wic::ASTClauseNode *block)
     {
-        if (node == nullptr) return;
-
-        bool if_locked = false;
-        if (node->get_node_type() == IF)
+        std::string op;
+        switch (get_node_type())
         {
-            middle_block_depth++;
-            if_locked = true;
+            case IF:
+                op = "\'IF\'";
+                break;
+            case WHILE:
+                op = "\'WHILE\'";
+                break;
+            case FOR:
+                op = "\'FOR\'";
+                break;
+            default:
+                break;
         }
 
-        if (if_locked && node->get_node_type() != IF) int dummy = 0;// TODO: Send an error message (just else if allowed)
+        if (else_body != nullptr && block->else_body != nullptr) ErrorManager::send(MULTIPLE_ELSE, op);
 
-        add_node(reinterpret_cast<ASTNode *>(body), node);
+        if (next == nullptr)
+        {
+            next = block;
+            return;
+        }
+
+        ASTIfNode* curr = reinterpret_cast<ASTIfNode *>(next);
+        while (curr != nullptr)
+        {
+            curr = reinterpret_cast<ASTIfNode *>(curr->next);
+        }
+    }
+
+    void ASTClauseNode::set_cond(wic::ASTNode *cond)
+    {
+        std::string op;
+        switch (get_node_type())
+        {
+            case IF:
+                op = "\'IF\'";
+                break;
+            case WHILE:
+                op = "\'WHILE\'";
+                break;
+            case FOR:
+                op = "\'FOR\'";
+                break;
+            default:
+                break;
+        }
+
+        if (cond == nullptr || cond->get_data_type() != BOOL) ErrorManager::send(MISSING_CLAUSE_BOOL_EXPR, op);
+
+        this->cond = reinterpret_cast<ASTRelationalNode *>(cond);
+    }
+
+    void ASTClauseNode::set_body(wic::ASTNode *instr)
+    {
+        body = instr;
+    }
+
+    void ASTClauseNode::set_else_body(wic::ASTNode *instr)
+    {
+        else_body = instr;
+    }
+
+    ASTIfNode::ASTIfNode(const wic::ASTIfNode &n) : ASTClauseNode(n) {}
+
+    ASTIfNode::ASTIfNode(ASTRelationalNode *n1, ASTNode *n2) : ASTClauseNode("IF", IF, n1, n2) {}
+
+    ASTIfNode::ASTIfNode(ASTRelationalNode *n1, ASTNode *n2, ASTNode *n3) : ASTClauseNode("IF", IF, n1, n2, n3) {}
+
+    cpu_registers ASTIfNode::to_code(wic::CodeGenerator *cg)
+    {
+        check_error("\'IF\'");
+
+        else_l = cg->get_label(CODE);
+        exit_l = cg->get_label(CODE);
+
+        write_condition(cond, cg);
+        write_body(cg);
+
+        if (else_body != nullptr) write_else_body(cg);
+
+        cg->write_code_label(exit_l);
     }
 
     ASTRelationalNode* ASTClauseNode::get_cond()
@@ -63,101 +142,53 @@ namespace wic
         return cond;
     }
 
-    ASTStructuralNode* ASTClauseNode::get_body()
+    ASTNode* ASTClauseNode::get_body()
     {
         return body;
     }
 
-    ASTStructuralNode* ASTClauseNode::get_else_body()
+    ASTNode* ASTClauseNode::get_else_body()
     {
         return else_body;
     }
 
-    ASTIfNode::ASTIfNode(ASTRelationalNode *n1, ASTStructuralNode *n2) : ASTClauseNode("IF", IF, n1, n2) {}
-
-    ASTIfNode::ASTIfNode(ASTRelationalNode *n1, ASTStructuralNode *n2, ASTStructuralNode *n3) : ASTClauseNode("IF", IF, n1, n2, n3) {}
-
-    cpu_registers ASTIfNode::to_code(wic::CodeGenerator *cg)
-    {
-        check_error("\'IF\'");
-
-        /*std::string middle_label = cg->get_label(CODE);
-        std::string else_label = cg->get_label(CODE);
-        std::string exit = cg->get_label(CODE);
-
-        cg->push_scope();
-
-        first_block(middle_label, exit, cg);
-        if (body != nullptr && ptr2[0]->get_node_type() == IF) middle_block(middle_label, else_label, exit, cg);
-        if (else_body != nullptr) last_block();
-
-        cg->write_code_label(exit);
-
-        cg->pop_scope(cg);*/
-    }
-
-    void ASTIfNode::first_block(std::string label, std::string exit, CodeGenerator *cg)
+    void ASTIfNode::write_condition(ASTRelationalNode* cond, CodeGenerator *cg)
     {
         cpu_registers r1 = cond->to_code(cg);
 
         cpu_registers r_true = cg->get_reg();
         cg->write_code_section("movl", "$1", cg->translate_reg(r_true), "Set true register to 1");
-        cg->write_code_section("cmpl", cg->translate_reg(r_true), cg->translate_reg(r1), "1st \'IF\' condition accomplished?");
+        cg->write_code_section("cmpl", cg->translate_reg(r_true), cg->translate_reg(r1), "\'IF\' condition accomplished?");
 
         cg->free_reg(r_true);
-
-        cg->write_code_section("jne", label);
-
-        body->to_code(cg);
-
-        cg->write_code_section("jmp", exit, "\'IF\' clause got to an end");
+        cg->free_reg(r1);
     }
 
-    void ASTIfNode::middle_block(std::string label1, std::string else_label, std::string exit, CodeGenerator *cg)
+    void ASTIfNode::write_body(CodeGenerator *cg)
     {
-        /*ASTNode* curr_cond = cond;
-        ASTNode* curr_body = body;
+        ASTIfNode* curr = new ASTIfNode(*this);
+        std::string if_l;
 
-        bool first_time = true;
-        std::string label2;
+        while (curr != nullptr) {
+            if_l = cg->get_label(CODE);
 
-        while (curr_cond->next == nullptr && curr_body->next == nullptr)
-        {
-            curr_cond = curr_cond->next;
-            curr_body = curr_body->next;
+            if (curr->next != nullptr) cg->write_code_section("jne", if_l, "Jump to next \'IF\' condition at " + if_l);
+            else cg->write_code_section("jne", else_l, "Jump to \'ELSE\' at " + else_l);
 
-            if (!first_time)
-            {
-                label1 = label2;
-            }
+            curr->body->to_code(cg);
 
-            cg->write_code_label(label1);
+            cg->write_code_section("jmp", exit_l, "\'IF\' clause got to an end");
 
-            cpu_registers r1 = curr_cond->to_code(cg);
+            if (curr->next != nullptr) cg->write_code_label(if_l);
 
-            cpu_registers r_true = cg->get_reg();
-            cg->write_code_section("movl", "$1", cg->translate_reg(r_true), "Set true register to 1");
-            cg->write_code_section("cmpl", cg->translate_reg(r_true), cg->translate_reg(r1), "1st \'IF\' condition accomplished?");
-
-            cg->free_reg(r_true);
-
-            label2 = cg->get_label(CODE);
-
-            cg->write_code_section("jne", label2);
-
-            curr_body->to_code(cg);
-
-            cg->write_code_section("jmp", exit, "\'IF\' clause got to an end");
-
-            first_time = false;
+            curr = reinterpret_cast<ASTIfNode *>(curr->next);
+            if (curr != nullptr) write_condition(curr->cond, cg);
         }
-
-        cg->write_code_label(else_label);*/
     }
 
-    void ASTIfNode::last_block(std::string label, std::string exit, CodeGenerator *cg)
+    void ASTIfNode::write_else_body(CodeGenerator *cg)
     {
-        cg->write_code_label(label);
+        cg->write_code_label(else_l);
 
         else_body->to_code(cg);
     }

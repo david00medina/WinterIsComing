@@ -11,7 +11,8 @@ typedef enum
     INCOMPATIBLE_ASSIGN,
     WRONG_ASSIGN,
     WRONG_RELATIONAL_OPERANDS,
-    NOT_CLAUSE_BOOL_EXPR
+    MISSING_CLAUSE_BOOL_EXPR,
+    MULTIPLE_ELSE
 } error_flag;
 
 const std::string error_header = "[!] Error : ";
