@@ -80,6 +80,7 @@ namespace wic
             if (strcmp(curr->id, id) == 0 && prev == nullptr)
             {
                 head[i] = next;
+                memory += curr->entry_d.var.offset;
                 delete curr;
                 return true;
             }

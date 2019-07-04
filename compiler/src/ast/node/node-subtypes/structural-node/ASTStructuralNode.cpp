@@ -22,19 +22,7 @@ namespace wic
 
     void ASTBodyNode::add_instr(wic::ASTNode *node)
     {
-        // TODO: No añade los nodos de instrucción
-        if (instr == nullptr) {
-            instr = node;
-            return;
-        }
-
-        ASTNode* curr = instr;
-        while (curr != nullptr)
-        {
-            curr = curr->next;
-        }
-
-        curr = node;
+        add_node(instr, node);
     }
 
     cpu_registers ASTBodyNode::to_code(CodeGenerator *cg)

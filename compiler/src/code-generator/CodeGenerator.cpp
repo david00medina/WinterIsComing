@@ -76,7 +76,8 @@ namespace wic
         for (int i = 0; i < TOTAL_REG; i++)
         {
             write_code_section("pushl", reg[EAX+i], "Push scope (" + reg[EAX+i] + ")");
-            write_code_section("pushl", reg[XMM0+i], "Push scope (" + reg[XMM0+i] + ")");
+            write_code_section("sub", "$4", reg[ESP], "Advance register");
+            write_code_section("movss", reg[XMM0+i], reg[ESP], "Push scope (" + reg[XMM0+i] + ")");
             free_reg(static_cast<cpu_registers>(EAX+i));
             free_reg(static_cast<cpu_registers>(XMM0+i));
         }
@@ -86,8 +87,10 @@ namespace wic
     {
         for (int i = 0; i < TOTAL_REG; i++)
         {
-            write_code_section("popl", reg[EAX+i], "Push scope (" + reg[EAX+i] + ")");
-            write_code_section("popl", reg[XMM0+i], "Push scope (" + reg[XMM0+i] + ")");
+
+            write_code_section("popl", reg[XMM0+i], "Pop scope (" + reg[XMM0+i] + ")");
+            write_code_section("movss", reg[ESP], reg[XMM0+i], "Pop scope (" + reg[XMM0+i] + ")");
+            write_code_section("add", "$4", reg[ESP], "Restore register " + reg[ESP]);
             lock_reg(static_cast<cpu_registers>(EAX+i));
             lock_reg(static_cast<cpu_registers>(XMM0+i));
         }

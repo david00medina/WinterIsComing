@@ -11,7 +11,7 @@ namespace wic {
         delete next;
     }
 
-    void ASTNode::add_node(ASTNode* &head, ASTNode* &node)
+    void ASTNode::add_node(ASTNode* &head, ASTNode* node)
     {
         if (head == nullptr)
         {
@@ -19,15 +19,13 @@ namespace wic {
             return;
         }
 
-
         ASTNode* curr = head;
-        while (curr != nullptr)
+        while (curr->next != nullptr)
         {
-            std::cout << curr->get_node_type() << std::endl;
             curr = curr->next;
         }
 
-        curr = node;
+        curr->next = node;
     }
 
     ASTNode * ASTNode::find(unsigned int count, wic::node_type node_t, ASTNode* head)

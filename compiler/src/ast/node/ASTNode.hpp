@@ -58,7 +58,7 @@ namespace wic
         data_type get_data_type();
         void set_data_type(data_type);
 
-        void add_node(ASTNode*&, ASTNode*&);
+        void add_node(ASTNode*&, ASTNode*);
         ASTNode* find(unsigned int, node_type, ASTNode*);
 
         virtual void check_error(std::string);
