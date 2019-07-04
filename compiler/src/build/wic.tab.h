@@ -1,9 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.3.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
-   Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,14 +30,11 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
-
 #ifndef YY_YY_WIC_TAB_H_INCLUDED
 # define YY_YY_WIC_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -53,19 +49,19 @@ extern int yydebug;
     CONTINUE = 259,
     BREAK = 260,
     RETURN = 261,
-    VOID = 262,
-    FUN = 263,
-    GLOBAL = 264,
-    STATIC = 265,
-    INT_VAL = 266,
-    REAL_VAL = 267,
-    BOOL_VAL = 268,
-    CHAR_VAL = 269,
-    STRING_VAL = 270,
-    INT_TYPE = 271,
-    REAL_TYPE = 272,
-    BOOL_TYPE = 273,
-    CHAR_TYPE = 274,
+    FUN = 262,
+    GLOBAL = 263,
+    STATIC = 264,
+    INT_VAL = 265,
+    REAL_VAL = 266,
+    BOOL_VAL = 267,
+    CHAR_VAL = 268,
+    STRING_VAL = 269,
+    INT_TYPE = 270,
+    REAL_TYPE = 271,
+    BOOL_TYPE = 272,
+    CHAR_TYPE = 273,
+    VOID = 274,
     ASSIGN = 275,
     SUM = 276,
     SUBSTRACT = 277,
@@ -115,21 +111,7 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
-union YYSTYPE
-{
-#line 20 "flex-bison/wic.y" /* yacc.c:1921  */
-
-  int integer;
-  float real;
-  char bool;
-  char character[2];
-  char string[512];
-
-#line 130 "wic.tab.h" /* yacc.c:1921  */
-};
-
-typedef union YYSTYPE YYSTYPE;
+typedef  void *  YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

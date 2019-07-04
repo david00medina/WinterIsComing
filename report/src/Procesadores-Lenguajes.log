@@ -1,11 +1,25 @@
+<<<<<<< HEAD
 This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.3.13)  28 MAY 2019 22:58
+=======
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6980) (preloaded format=pdflatex 2019.3.19)  2 JUN 2019 12:25
+>>>>>>> master
 entering extended mode
 **./Procesadores-Lenguajes.tex
 (Procesadores-Lenguajes.tex
 LaTeX2e <2018-12-01>
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/base\article.cls
 Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
 (D:\MikTex\tex/latex/base\size11.clo
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/a
+rticle.cls"
+Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/s
+ize11.clo"
+>>>>>>> master
 File: size11.clo 2018/09/03 v1.4i Standard LaTeX file (size option)
 )
 \c@part=\count80
@@ -19,15 +33,30 @@ File: size11.clo 2018/09/03 v1.4i Standard LaTeX file (size option)
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
+<<<<<<< HEAD
 ) (D:\MikTex\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
 
 (D:\MikTex\tex/latex/graphics-cfg\color.cfg
+=======
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/xcolor
+/xcolor.sty"
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/graphi
+cs-cfg/color.cfg"
+>>>>>>> master
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package xcolor Info: Driver file: pdftex.def on input line 225.
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/graphics-def\pdftex.def
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/graphi
+cs-def/pdftex.def"
+>>>>>>> master
 File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 )
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
@@ -40,10 +69,19 @@ Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/xcolor\svgnam.def
 File: svgnam.def 2016/05/11 v2.12 Predefined colors according to SVG 1.1 (UK)
 ))
 (D:\MikTex\tex/latex/booktabs\booktabs.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/xcolor
+/svgnam.def"
+File: svgnam.def 2016/05/11 v2.12 Predefined colors according to SVG 1.1 (UK)
+))
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/bookta
+bs/booktabs.sty"
+>>>>>>> master
 Package: booktabs 2005/04/14 v1.61803 publication quality tables
 \heavyrulewidth=\dimen103
 \lightrulewidth=\dimen104
@@ -63,6 +101,7 @@ Package: booktabs 2005/04/14 v1.61803 publication quality tables
 \@lastruleclass=\count91
 \@thisrulewidth=\dimen115
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/graphics\graphicx.sty
 Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
 
@@ -77,6 +116,27 @@ Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
 Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
 (D:\MikTex\tex/latex/graphics-cfg\graphics.cfg
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/graphi
+cs/graphicx.sty"
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/graphi
+cs/keyval.sty"
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/graphi
+cs/graphics.sty"
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/graphi
+cs/trig.sty"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/graphi
+cs-cfg/graphics.cfg"
+>>>>>>> master
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 99.
@@ -84,6 +144,7 @@ Package graphics Info: Driver file: pdftex.def on input line 99.
 \Gin@req@height=\dimen116
 \Gin@req@width=\dimen117
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/threeparttable\threeparttable.sty
 Package: threeparttable 2003/06/13  v 3.0
 \@tempboxb=\box27
@@ -96,6 +157,24 @@ Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
 
 
 (D:\MikTex\tex/generic/oberdiek\hobsub-generic.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/threep
+arttable/threeparttable.sty"
+Package: threeparttable 2003/06/13  v 3.0
+\@tempboxb=\box27
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/hyperr
+ef/hyperref.sty"
+Package: hyperref 2018/11/30 v6.88e Hypertext links for LaTeX
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/ober
+diek/hobsub-hyperref.sty"
+Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
+
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/ober
+diek/hobsub-generic.sty"
+>>>>>>> master
 Package: hobsub-generic 2016/05/16 v1.14 Bundle oberdiek, subset generic (HO)
 Package: hobsub 2016/05/16 v1.14 Construct package bundles (HO)
 Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
@@ -131,6 +210,7 @@ Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
 Package: refcount 2016/05/16 v3.5 Data extraction from label references (HO)
 Package: hycolor 2016/05/16 v1.8 Color options for hyperref/bookmark (HO)
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/generic/ifxetex\ifxetex.sty
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
@@ -138,20 +218,42 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
 )
 (D:\MikTex\tex/latex/oberdiek\kvoptions.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/ifxe
+tex/ifxetex.sty"
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/oberdi
+ek/auxhook.sty"
+Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/oberdi
+ek/kvoptions.sty"
+>>>>>>> master
 Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
 )
 \@linkdim=\dimen118
 \Hy@linkcounter=\count92
 \Hy@pagecounter=\count93
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/hyperref\pd1enc.def
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/hyperr
+ef/pd1enc.def"
+>>>>>>> master
 File: pd1enc.def 2018/11/30 v6.88e Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
 )
 \Hy@SavedSpaceFactor=\count94
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/00miktex\hyperref.cfg
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/00mikt
+ex/hyperref.cfg"
+>>>>>>> master
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 4393.
@@ -163,7 +265,13 @@ Package hyperref Info: Backreferencing OFF on input line 4539.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4772.
 \c@Hy@tempcnt=\count95
+<<<<<<< HEAD
  (D:\MikTex\tex/latex/url\url.sty
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/url/ur
+l.sty"
+>>>>>>> master
 \Urlmuskip=\muskip10
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
@@ -187,30 +295,52 @@ LaTeX Info: Redefining \pageref on input line 6454.
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/hyperref\hpdftex.def
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/hyperr
+ef/hpdftex.def"
+>>>>>>> master
 File: hpdftex.def 2018/11/30 v6.88e Hyperref driver for pdfTeX
 \Fld@listcount=\count100
 \c@bookmark@seq@number=\count101
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/oberdiek\rerunfilecheck.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/oberdi
+ek/rerunfilecheck.sty"
+>>>>>>> master
 Package: rerunfilecheck 2016/05/16 v1.8 Rerun checks for auxiliary files (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 82.
 )
 \Hy@SectionHShift=\skip43
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/float\float.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/float/
+float.sty"
+>>>>>>> master
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count102
 \float@exts=\toks15
 \float@box=\box28
 \@float@everytoks=\toks16
 \@floatcapt=\box29
+<<<<<<< HEAD
 ) (D:\MikTex\tex/latex/base\inputenc.sty
+=======
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/i
+nputenc.sty"
+>>>>>>> master
 Package: inputenc 2018/08/11 v1.3c Input encoding file
 \inpenc@prehook=\toks17
 \inpenc@posthook=\toks18
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/base\fontenc.sty
 Package: fontenc 2018/08/11 v2.0j Standard LaTeX package
  (D:\MikTex\tex/latex/base\t1enc.def
@@ -221,6 +351,23 @@ LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
 Package: listingsutf8 2016/05/16 v1.3 Allow UTF-8 in listings input (HO)
 
 (D:\MikTex\tex/latex/listings\listings.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/f
+ontenc.sty"
+Package: fontenc 2018/08/11 v2.0j Standard LaTeX package
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/t
+1enc.def"
+File: t1enc.def 2018/08/11 v2.0j Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
+))
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/oberdi
+ek/listingsutf8.sty"
+Package: listingsutf8 2016/05/16 v1.3 Allow UTF-8 in listings input (HO)
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/listin
+gs/listings.sty"
+>>>>>>> master
 \lst@mode=\count103
 \lst@gtempboxa=\box30
 \lst@token=\toks19
@@ -234,17 +381,28 @@ Package: listingsutf8 2016/05/16 v1.3 Allow UTF-8 in listings input (HO)
 \lst@lineno=\count108
 \lst@maxwidth=\dimen125
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/listings\lstmisc.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/listin
+gs/lstmisc.sty"
+>>>>>>> master
 File: lstmisc.sty 2019/02/27 1.8b (Carsten Heinz)
 \c@lstnumber=\count109
 \lst@skipnumbers=\count110
 \lst@framebox=\box31
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/listings\listings.cfg
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/listin
+gs/listings.cfg"
+>>>>>>> master
 File: listings.cfg 2019/02/27 1.8b listings configuration
 ))
 Package: listings 2019/02/27 1.8b (Carsten Heinz)
 
+<<<<<<< HEAD
 (D:\MikTex\tex/generic/oberdiek\stringenc.sty
 Package: stringenc 2016/05/16 v1.11 Convert strings between diff. encodings (HO
 )
@@ -252,11 +410,25 @@ Package: stringenc 2016/05/16 v1.11 Convert strings between diff. encodings (HO
 (D:\MikTex\tex/generic/babel\babel.sty
 Package: babel 2018/11/13 3.27 The Babel package
  (D:\MikTex\tex/generic/babel\switch.def
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/ober
+diek/stringenc.sty"
+Package: stringenc 2016/05/16 v1.11 Convert strings between diff. encodings (HO
+)
+))
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/babe
+l/babel.sty"
+Package: babel 2018/11/13 3.27 The Babel package
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/babe
+l/switch.def"
+>>>>>>> master
 File: switch.def 2018/11/13 3.27 Babel switching mechanism
 )
 *************************************
 * Local config file bblopts.cfg used
 *
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/arabi\bblopts.cfg
 File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
  babel
@@ -265,19 +437,55 @@ File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
 Language: english 2017/06/06 v3.3r English support from the babel system
 
 (D:\MikTex\tex/generic/babel\babel.def
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/arabi/
+bblopts.cfg"
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
+ babel
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/babel-
+english/english.ldf"
+Language: english 2017/06/06 v3.3r English support from the babel system
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/babe
+l/babel.def"
+>>>>>>> master
 File: babel.def 2018/11/13 3.27 Babel common definitions
 \babel@savecnt=\count111
 \U@D=\dimen126
 
+<<<<<<< HEAD
 (D:\MikTex\tex/generic/babel\txtbabel.def)
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/babe
+l/txtbabel.def")
+>>>>>>> master
 \bbl@dirlevel=\count112
 )
+\l@british = a dialect from \language\l@english 
+\l@UKenglish = a dialect from \language\l@english 
+\l@american = a dialect from \language\l@english 
 \l@canadian = a dialect from \language\l@american 
 \l@australian = a dialect from \language\l@british 
 \l@newzealand = a dialect from \language\l@british 
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/babel-spanish\spanish.ldf
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/babel-
+spanish/spanish.ldf"
+>>>>>>> master
 Language: spanish.ldf 2016/03/03 v5.0p Spanish support from the babel system
+
+
+Package babel Warning: No hyphenation patterns were preloaded for
+(babel)                the language `Spanish' into the format.
+(babel)                Please, configure your TeX system to add them and
+(babel)                rebuild the format. Now I will use the patterns
+(babel)                preloaded for \language=0 instead on input line 51.
+
+\l@spanish = a dialect from \language0
 \es@quottoks=\toks20
 \es@quotdepth=\count113
 Package babel Info: Making " an active character on input line 561.
@@ -288,24 +496,49 @@ Package babel Info: Making > an active character on input line 707.
 LaTeX Info: Redefining \. on input line 13.
 LaTeX Info: Redefining \% on input line 13.
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/amsmath\amsmath.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsmat
+h/amsmath.sty"
+>>>>>>> master
 Package: amsmath 2018/12/01 v2.17b AMS math features
 \@mathmargin=\skip44
 
 For additional information on amsmath, use the `?' option.
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/amsmath\amstext.sty
 Package: amstext 2000/06/29 v2.01 AMS text
 
 (D:\MikTex\tex/latex/amsmath\amsgen.sty
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsmat
+h/amstext.sty"
+Package: amstext 2000/06/29 v2.01 AMS text
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsmat
+h/amsgen.sty"
+>>>>>>> master
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks21
 \ex@=\dimen127
 ))
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/amsmath\amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen128
 )
 (D:\MikTex\tex/latex/amsmath\amsopn.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsmat
+h/amsbsy.sty"
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen128
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/amsmat
+h/amsopn.sty"
+>>>>>>> master
 Package: amsopn 2016/03/08 v2.02 operator names
 )
 \inf@bad=\count114
@@ -346,17 +579,37 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 730.
 LaTeX Info: Redefining \[ on input line 2844.
 LaTeX Info: Redefining \] on input line 2845.
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/tools\afterpage.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/tools/
+afterpage.sty"
+>>>>>>> master
 Package: afterpage 2014/10/28 v1.08 After-Page Package (DPC)
 \AP@output=\toks26
 \AP@partial=\box34
 \AP@footins=\box35
 )
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/listings\lstlang1.sty
 File: lstlang1.sty 2019/02/27 1.8b listings language file
 ) (D:\MikTex\tex/latex/here\here.sty) (D:\MikTex\tex/latex/ms\ragged2e.sty
 Package: ragged2e 2009/05/21 v2.1 ragged2e Package (MS)
  (D:\MikTex\tex/latex/ms\everysel.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/listin
+gs/lstlang1.sty"
+File: lstlang1.sty 2019/02/27 1.8b listings language file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/here/h
+ere.sty")
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/ms/rag
+ged2e.sty"
+Package: ragged2e 2009/05/21 v2.1 ragged2e Package (MS)
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/ms/eve
+rysel.sty"
+>>>>>>> master
 Package: everysel 2011/10/28 v1.2 EverySelectfont Package (MS)
 )
 \CenteringLeftskip=\skip47
@@ -375,8 +628,12 @@ Package: everysel 2011/10/28 v1.2 EverySelectfont Package (MS)
 \JustifyingParindent=\skip60
 )
 \c@unomenos=\count126
+<<<<<<< HEAD
 
 (Procesadores-Lenguajes.aux
+=======
+ (Procesadores-Lenguajes.aux
+>>>>>>> master
 LaTeX Info: Redefining \. on input line 23.
 LaTeX Info: Redefining \% on input line 23.
 LaTeX Info: Redefining \. on input line 24.
@@ -402,7 +659,13 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 78.
 LaTeX Font Info:    ... okay on input line 78.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 78.
 LaTeX Font Info:    ... okay on input line 78.
+<<<<<<< HEAD
  (D:\MikTex\tex/context/base/mkii\supp-pdf.mkii
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/context/base
+/mkii/supp-pdf.mkii"
+>>>>>>> master
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count127
 \scratchdimen=\dimen136
@@ -415,10 +678,20 @@ LaTeX Font Info:    ... okay on input line 78.
 \MPnumerator=\count131
 \makeMPintoPDFobject=\count132
 \everyMPtoPDFconversion=\toks28
+<<<<<<< HEAD
 ) (D:\MikTex\tex/latex/oberdiek\epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
 (D:\MikTex\tex/latex/oberdiek\grfext.sty
+=======
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/oberdi
+ek/epstopdf-base.sty"
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/oberdi
+ek/grfext.sty"
+>>>>>>> master
 Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
 )
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -431,10 +704,19 @@ G,.JBIG2,.JB2,.eps]
 \AtBeginShipoutBox=\box37
 Package hyperref Info: Link coloring ON on input line 78.
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/hyperref\nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 
 (D:\MikTex\tex/generic/oberdiek\gettitlestring.sty
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/hyperr
+ef/nameref.sty"
+Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/ober
+diek/gettitlestring.sty"
+>>>>>>> master
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count133
@@ -442,37 +724,61 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 78.
 LaTeX Info: Redefining \pageref on input line 78.
 LaTeX Info: Redefining \nameref on input line 78.
+<<<<<<< HEAD
 
 (Procesadores-Lenguajes.out) (Procesadores-Lenguajes.out)
+=======
+ (Procesadores-Lenguajes.out)
+(Procesadores-Lenguajes.out)
+>>>>>>> master
 \@outlinefile=\write3
 \openout3 = `Procesadores-Lenguajes.out'.
 
 \c@lstlisting=\count134
 LaTeX Info: Redefining \. on input line 78.
 LaTeX Info: Redefining \% on input line 78.
-
-ABD: EverySelectfont initializing macros
+ ABD: EverySelectfont initializing macros
 LaTeX Info: Redefining \selectfont on input line 78.
+<<<<<<< HEAD
 <../res/pics/logo.jpg, id=111, 332.15292pt x 102.55113pt>
+=======
+<../res/pics/logo.jpg, id=127, 332.15292pt x 102.55113pt>
+>>>>>>> master
 File: ../res/pics/logo.jpg Graphic file (type jpg)
 <use ../res/pics/logo.jpg>
 Package pdftex.def Info: ../res/pics/logo.jpg  used on input line 86.
 (pdftex.def)             Requested size: 284.52756pt x 87.85266pt.
+<<<<<<< HEAD
 <../res/pics/LogoEscuela.jpg, id=112, 2055.68pt x 1418.29875pt>
+=======
+<../res/pics/LogoEscuela.jpg, id=128, 2055.68pt x 1418.29875pt>
+>>>>>>> master
 File: ../res/pics/LogoEscuela.jpg Graphic file (type jpg)
 <use ../res/pics/LogoEscuela.jpg>
 Package pdftex.def Info: ../res/pics/LogoEscuela.jpg  used on input line 114.
 (pdftex.def)             Requested size: 85.35826pt x 58.88643pt.
  [1
 
+<<<<<<< HEAD
 {C:/Users/NESTOR/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <../res/pic
 s/logo.jpg> <../res/pics/LogoEscuela.jpg>] (Procesadores-Lenguajes.toc
+=======
+{/Users/cbr/Library/Application Support/MiKTeX/texmfs/data/pdftex/config/pdftex
+.map} <../res/pics/logo.jpg> <../res/pics/LogoEscuela.jpg>]
+(Procesadores-Lenguajes.toc
+>>>>>>> master
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
 LaTeX Info: Redefining \. on input line 2.
 LaTeX Info: Redefining \% on input line 2.
 LaTeX Font Info:    Try loading font information for T1+cmtt on input line 5.
+<<<<<<< HEAD
  (D:\MikTex\tex/latex/base\t1cmtt.fd
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/t
+1cmtt.fd"
+>>>>>>> master
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 ))
 \tf@toc=\write4
@@ -482,12 +788,20 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.122 \newpage
-               [1]
+l.122 	\newpage
+                [1]
+Overfull \hbox (1.1496pt too wide) in paragraph at lines 143--144
+[]\T1/cmr/m/n/10 Este tipo de dato representa número reales en coma flotante
+ []
+
 
 LaTeX Warning: Command \textendash invalid in math mode on input line 149.
 
+<<<<<<< HEAD
 <../res/pics/data-types/float_diag.png, id=158, 888.31876pt x 113.42375pt>
+=======
+<../res/pics/data-types/float_diag.png, id=178, 888.31876pt x 113.42375pt>
+>>>>>>> master
 File: ../res/pics/data-types/float_diag.png Graphic file (type png)
 <use ../res/pics/data-types/float_diag.png>
 Package pdftex.def Info: ../res/pics/data-types/float_diag.png  used on input l
@@ -495,8 +809,8 @@ ine 152.
 (pdftex.def)             Requested size: 362.77263pt x 46.31885pt.
 
 Overfull \hbox (19.50165pt too wide) in paragraph at lines 149--154
-\T1/cmr/m/n/10 Este ti-po de da-to se re-pre-sen-ta con el li-te-ral \T1/cmtt/m
-/n/10 real\T1/cmr/m/n/10 . Su ran-go de va-lo-res es de $[]$. 
+\T1/cmr/m/n/10 Este tipo de dato se representa con el literal \T1/cmtt/m/n/10 r
+eal\T1/cmr/m/n/10 . Su rango de valores es de $[]$. 
  []
 
 [2pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) 
@@ -504,12 +818,13 @@ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.157 	\item[Booleano]
-                       Se trata de un tipo de dato utilizado para representa...
+l.157 		\item[Booleano]
+                        Se trata de un tipo de dato utilizado para represent...
  <../res/pics/data-types/float_diag.png>]
 
 LaTeX Warning: Command \textendash invalid in math mode on input line 169.
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/listings\lstlang1.sty
 File: lstlang1.sty 2019/02/27 1.8b listings language file
 )
@@ -517,16 +832,43 @@ File: lstlang1.sty 2019/02/27 1.8b listings language file
 File: lstlang1.sty 2019/02/27 1.8b listings language file
 )
 (D:\MikTex\tex/latex/listings\lstmisc.sty
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/listin
+gs/lstlang1.sty"
+File: lstlang1.sty 2019/02/27 1.8b listings language file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/listin
+gs/lstlang1.sty"
+File: lstlang1.sty 2019/02/27 1.8b listings language file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/listin
+gs/lstmisc.sty"
+>>>>>>> master
 File: lstmisc.sty 2019/02/27 1.8b (Carsten Heinz)
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
 nput line 179.
+<<<<<<< HEAD
  (D:\MikTex\tex/latex/base\latin1.def
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 ) (D:\MikTex\tex/generic/oberdiek\se-utf8.def
 File: se-utf8.def 2016/05/16 v1.11 stringenc: UTF-8
 )
 (D:\MikTex\tex/generic/oberdiek\se-iso-8859-1.def
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/ober
+diek/se-utf8.def"
+File: se-utf8.def 2016/05/16 v1.11 stringenc: UTF-8
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/generic/ober
+diek/se-iso-8859-1.def"
+>>>>>>> master
 File: se-iso-8859-1.def 2016/05/16 v1.11 stringenc: ISO-8859-1
 )
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
@@ -536,17 +878,34 @@ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
+<<<<<<< HEAD
 l.204 L
        a gramÃ¡tica \ref{grammar:1.2.3} es necesaria para acceder al valor d...
 ] (D:\MikTex\tex/latex/base\latin1.def
+=======
+l.204 	L
+        a gramÃ¡tica \ref{grammar:1.2.3} es necesaria para acceder al valor ...
+]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+>>>>>>> master
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 ) [4]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 223.
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/base\latin1.def
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 ) (D:\MikTex\tex/latex/base\latin1.def
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+>>>>>>> master
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 )
 [5]
@@ -554,25 +913,49 @@ Overfull \hbox (48.56015pt too wide) in paragraph at lines 271--295
  [] 
  []
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/base\latin1.def
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+>>>>>>> master
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 ) [6pdfTeX warning (ext4): destination with the same identifier (name{table.2})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.313 
-      ]
+l.313 	
+       ]
+Overfull \hbox (5.50386pt too wide) in paragraph at lines 316--317
+[]\T1/cmr/m/n/10 Como dato adicional, también consideramos la posibilidad de ha
+cer uso de comparadores mediante
+ []
+
+
 Overfull \hbox (28.687pt too wide) in paragraph at lines 324--344
  [] 
  []
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/base\latin1.def
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+>>>>>>> master
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 )
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 351.
 
+<<<<<<< HEAD
  (D:\MikTex\tex/latex/base\omscmr.fd
+=======
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/o
+mscmr.fd"
+>>>>>>> master
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
@@ -587,8 +970,15 @@ as been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
+<<<<<<< HEAD
 l.384 
       ] (D:\MikTex\tex/latex/base\latin1.def
+=======
+l.384 	
+       ]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+>>>>>>> master
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 )
 Overfull \hbox (26.35612pt too wide) in paragraph at lines 407--422
@@ -600,20 +990,33 @@ as been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
+<<<<<<< HEAD
 l.424 
       ] (D:\MikTex\tex/latex/base\latin1.def
+=======
+l.424 	
+       ]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+>>>>>>> master
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 )
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10.95> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 446.
 
+<<<<<<< HEAD
 (D:\MikTex\tex/latex/base\latin1.def
+=======
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+>>>>>>> master
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 ) [9pdfTeX warning (ext4): destination with the same identifier (name{table.5})
  has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
+<<<<<<< HEAD
 l.458 	\item[Bloque \texttt{ifelse}]
                                      Si no se cumple la condiciÃ³n del bloqu...
 ] (D:\MikTex\tex/latex/base\latin1.def
@@ -660,6 +1063,97 @@ File: latin1.def 2018/08/11 v1.3c Input encoding file
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 ) [14] [15]
 (D:\MikTex\tex/latex/base\latin1.def
+=======
+l.458 		\item[Bloque \texttt{ifelse}]
+                                      Si no se cumple la condiciÃ³n del bloq...
+]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) [10]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) [11]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) [12]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+Overfull \hbox (2.33797pt too wide) in paragraph at lines 595--596
+[]\T1/cmr/m/n/10 En nuestro lenguaje, Van a existir predefinidas un conjunto de
+ funciones primitivas que facilitarán
+ []
+
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+Overfull \hbox (6.10263pt too wide) in paragraph at lines 622--623
+[]\T1/cmr/m/n/10 Devuelve \T1/cmtt/m/n/10 true \T1/cmr/m/n/10 si los dos arrays
+ son iguales en tamaño
+ []
+
+[13]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) [14]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) [15]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+>>>>>>> master
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 )
 
@@ -698,7 +1192,23 @@ LaTeX Warning: Command \textless invalid in math mode on input line 800.
 
 LaTeX Warning: Command \textless invalid in math mode on input line 801.
 
+<<<<<<< HEAD
 [16] [17] [18] [19]
+=======
+[16] [17] [18]
+Overfull \hbox (9.46103pt too wide) in paragraph at lines 824--825
+\T1/cmr/m/n/10 (tomando el valor de un tabulador equivalente a cuatro espacios)
+; con cada tabulador encontrado,
+ []
+
+
+Overfull \hbox (0.61264pt too wide) in paragraph at lines 824--825
+\T1/cmr/m/n/10 se devuelve un token OPEN_CONTEXT_TAG si accedemos a un nivel es
+trictamente superior
+ []
+
+[19]
+>>>>>>> master
 Underfull \hbox (badness 10000) in paragraph at lines 838--845
 
  []
@@ -708,6 +1218,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 838--845
 
  []
 
+<<<<<<< HEAD
 [20] (D:\MikTex\tex/latex/base\latin1.def
 File: latin1.def 2018/08/11 v1.3c Input encoding file
 ) (D:\MikTex\tex/latex/base\latin1.def
@@ -724,14 +1235,151 @@ File: latin1.def 2018/08/11 v1.3c Input encoding file
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 947.
  [23]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 947.
+=======
+[20]
+Overfull \hbox (1.47707pt too wide) in paragraph at lines 848--850
+[]\T1/cmr/m/n/10 Para comprobar si una cadena pertenece al lenguaje generado po
+r una gramática, los analizadores
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 848--850
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 851--853
+
+ []
+
+
+Overfull \hbox (10.57507pt too wide) in paragraph at lines 853--854
+[]\T1/cmr/m/n/10 Construyen el árbol sintáctico comenzando
+ []
+
+
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+Underfull \hbox (badness 10000) in paragraph at lines 882--884
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 882--884
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 882--884
+
+ []
+
+[21]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) [22]
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+)
+("/Users/cbr/Library/Application Support/MiKTeX/texmfs/install/tex/latex/base/l
+atin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+) [23]
+Underfull \hbox (badness 10000) in paragraph at lines 985--986
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 986--987
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 987--988
+
+ []
+
+
+Overfull \hbox (210.872pt too wide) in paragraph at lines 988--989
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 988--989
+
+ []
+
+[24]
+Underfull \hbox (badness 10000) in paragraph at lines 1002--1003
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1003--1004
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1004--1005
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1005--1006
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1013--1016
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1017--1029
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1030--1043
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1044--1057
+
+ []
+
+[25]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1061.
+ [26]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1061.
+>>>>>>> master
  (Procesadores-Lenguajes.aux
 LaTeX Info: Redefining \. on input line 23.
 LaTeX Info: Redefining \% on input line 23.
 LaTeX Info: Redefining \. on input line 24.
 LaTeX Info: Redefining \% on input line 24.
 )
+<<<<<<< HEAD
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 947.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 947.
+=======
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1061.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1061.
+
+>>>>>>> master
 
 
 Package rerunfilecheck Warning: File `Procesadores-Lenguajes.out' has changed.
@@ -739,6 +1387,7 @@ Package rerunfilecheck Warning: File `Procesadores-Lenguajes.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `Procesadores-Lenguajes.out':
+<<<<<<< HEAD
 (rerunfilecheck)             Before: A24047B0594BF2A4DABAEF211C041EF4;1994
 (rerunfilecheck)             After:  22E86316806FE244FBB7ED93E2E0EF38;2060.
 
@@ -784,4 +1433,60 @@ PDF statistics:
  1294 PDF objects out of 1440 (max. 8388607)
  354 named destinations out of 1000 (max. 500000)
  232 words of extra memory for PDF output out of 10000 (max. 10000000)
+=======
+(rerunfilecheck)             Before: AE4C6BE8459A7FE29C583FFDFCE0830C;2297
+(rerunfilecheck)             After:  6BF97EE9E6DC098A313922D73CADCC3F;2359.
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1061.
+ ) 
+Here is how much of TeX's memory you used:
+ 10558 strings out of 494865
+ 157006 string characters out of 3176749
+ 468563 words of memory out of 3000000
+ 13619 multiletter control sequences out of 15000+200000
+ 21051 words of font info for 49 fonts, out of 3000000 for 9000
+ 0 hyphenation exceptions out of 8191
+ 33i,15n,60p,768b,2347s stack positions out of 5000i,500n,10000p,200000b,50000s
+ </Users/cbr/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/j
+knappen/ec/dpi600/ecrm0700.pk> </Users/cbr/Library/Application Support/MiKTeX/t
+exmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/ecrm0800.pk> </Users/cbr/Library/
+Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/ectt1
+200.pk> </Users/cbr/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljf
+our/jknappen/ec/dpi600/ecti1095.pk> </Users/cbr/Library/Application Support/MiK
+TeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1200.pk> </Users/cbr/Lib
+rary/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/
+ecti1000.pk> </Users/cbr/Library/Application Support/MiKTeX/texmfs/data/fonts/p
+k/ljfour/jknappen/ec/dpi600/ecrm1000.pk> </Users/cbr/Library/Application Suppor
+t/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/ectt1000.pk> </Users/cb
+r/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dp
+i600/ecbx1000.pk> </Users/cbr/Library/Application Support/MiKTeX/texmfs/data/fo
+nts/pk/ljfour/jknappen/ec/dpi600/ectt1095.pk> </Users/cbr/Library/Application S
+upport/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1095.pk> </Use
+rs/cbr/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/
+ec/dpi600/ecbx1440.pk> </Users/cbr/Library/Application Support/MiKTeX/texmfs/da
+ta/fonts/pk/ljfour/jknappen/ec/dpi600/ecrm1095.pk> </Users/cbr/Library/Applicat
+ion Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/ecxc1440.pk> 
+</Users/cbr/Library/Application Support/MiKTeX/texmfs/data/fonts/pk/ljfour/jkna
+ppen/ec/dpi600/ecrm1200.pk> </Users/cbr/Library/Application Support/MiKTeX/texm
+fs/data/fonts/pk/ljfour/jknappen/ec/dpi600/eccc1200.pk></Users/cbr/Library/Appl
+ication Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb
+></Users/cbr/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/publ
+ic/amsfonts/cm/cmmi10.pfb></Users/cbr/Library/Application Support/MiKTeX/texmfs
+/install/fonts/type1/public/amsfonts/cm/cmmi7.pfb></Users/cbr/Library/Applicati
+on Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></Use
+rs/cbr/Library/Application Support/MiKTeX/texmfs/install/fonts/type1/public/ams
+fonts/cm/cmr7.pfb></Users/cbr/Library/Application Support/MiKTeX/texmfs/install
+/fonts/type1/public/amsfonts/cm/cmr8.pfb></Users/cbr/Library/Application Suppor
+t/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/cbr/L
+ibrary/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm
+/cmsy7.pfb></Users/cbr/Library/Application Support/MiKTeX/texmfs/install/fonts/
+type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on Procesadores-Lenguajes.pdf (27 pages, 1562788 bytes).
+PDF statistics:
+ 1339 PDF objects out of 1440 (max. 8388607)
+ 355 named destinations out of 1000 (max. 500000)
+ 264 words of extra memory for PDF output out of 10000 (max. 10000000)
+>>>>>>> master
 
