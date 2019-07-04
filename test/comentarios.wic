@@ -1,0 +1,4 @@
+float a = 3.0
+float b = 4.5
+float c = b - a
+.. c es igual a 1.5

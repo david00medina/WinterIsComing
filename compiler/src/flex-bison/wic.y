@@ -206,24 +206,85 @@ instr: data_init ID                               {
     						    $$ = assign;
     						    lst->show(id->get_id());
     						  }
-    | ID array_access ASSIGN expr
-    | if_instr
-    | for_instr
-    | while_instr
-    | expr                                        {
-    						    ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
-                                                    ast->print();
-                                                    std::cout << std::endl;
-                                                    //$$ = ast->get_root();
+    | ID array_access ASSIGN expr	{
+										wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+										
+										if (!id->is_registered()) {
+											std::cout << termcolor::red << termcolor::bold
+											<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+											<< "\' was not declared in this scope"
+											<< std::endl;
+											exit(-1);
+										}
+
+										wic::ASTNode* array_access = reinterpret_cast<wic::ASTNode *>($2);
+										
+										wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($4);
+										wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, expr);
+									}
+    | if_instr                                        {
+													ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                                                    //ast->print();
+                                                    //std::cout << std::endl;
+                                                    $$ = ast->get_root();
                                                   }
-    | fun_init
-    | fun_call
+    | for_instr                                        {
+													ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                                                    //ast->print();
+                                                    //std::cout << std::endl;
+                                                    $$ = ast->get_root();
+                                                  }
+    | while_instr                                        {
+													ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                                                    //ast->print();
+                                                    //std::cout << std::endl;
+                                                    $$ = ast->get_root();
+                                                  }
+    | expr                                        {
+													ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                                                    //ast->print();
+                                                    //std::cout << std::endl;
+                                                    $$ = ast->get_root();
+                                                  }
+    | fun_init                                        {
+													ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                                                    //ast->print();
+                                                    //std::cout << std::endl;
+                                                    $$ = ast->get_root();
+                                                  }
+    | fun_call                                        {
+													ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                                                    //ast->print();
+                                                    //std::cout << std::endl;
+                                                    $$ = ast->get_root();
+                                                  }
 
-params: params ELEM_SEPARATOR data_type ID
-    | data_type ID
+params: params ELEM_SEPARATOR data_type ID	{
+												wic::ASTNode* id = ast->tree_build($3, $4);
+												wic::ASTParamNode* param = new wic::ASTParamNode*(id);
+												wic::ASTNode* params = reinterpret_cast<wic::ASTNode*>($1);
+												
+												wic::ASTNode* p = ast->tree_build(params, param);
+												$$ = ast->tree_build(p);
+											}
+    | data_type ID	{
+						$$ = ast->tree_build($1, $2);
+					}
 
-args: args ELEM_SEPARATOR expr
-    | expr
+args: args ELEM_SEPARATOR expr				{
+												wic::ASTNode* expr = reinterpret_cast<wic::ASTNode*>($3);
+												wic::ASTNode* arg = reinterpret_cast<wic::ASTNode*>($1);
+												
+												wic::ASTNode* args = new wic::ASTNode*();
+												addNode(args, id);
+												addNode(args, arg);
+												
+												$$ = ast->tree_build(args);
+											}
+    | expr                                        {
+													ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                                                    $$ = ast->get_root();
+                                                  }
 
 fun_init: FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
@@ -236,9 +297,9 @@ fun_init: FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE HEADER_END EN
 
 fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR
 	{
-		wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+		wic::ASTIDNode* fun = reinterpret_cast<wic::ASTIDNode *>($1);
 
-	    if (!id->is_registered()) {
+	    if (!fun->is_registered()) {
 	    	std::cout << termcolor::red << termcolor::bold
 	    	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
 	    	<< "\' was not declared in this scope"
@@ -246,8 +307,12 @@ fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR
 	    	exit(-1);
 	    }
 
-		wic::ASTParamNode = 
-
+		wic::ASTNode* args = reinterpret_cast<wic::ASTNode*>($3);
+		wic::ASTNode* call = new wic::ASTNode*();
+		addNode(call, fun);
+		addNode(call, args);
+		
+		$$ = ast->tree_build(call);
 	}
 
 while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
@@ -292,21 +357,24 @@ if_end_block: ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
     OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
     | /* empty */
 
-array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
+array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE	{
+																	ast->tree_build(reinterpret_cast<wic::ASTNode *>($2));
+																	$$ = ast->get_root();
+																}
 
-expr: ID                                          {
-						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
-						    std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
+expr: ID            {
+						wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+					    //std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
 
-						    if (!id->is_registered()) {
-						  	std::cout << termcolor::red << termcolor::bold
-						  	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+					    if (!id->is_registered()) {
+							std::cout << termcolor::red << termcolor::bold
+							<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
 						  	<< "\' was not declared in this scope"
 						  	<< std::endl;
 						  	exit(-1);
-						    }
-						    $$ = id;
-						  }
+					    }
+					    $$ = id;
+					}
     | expr SUM term                               {
                                                     wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
@@ -479,8 +547,14 @@ expr: ID                                          {
 
 						$$ = ast<tree_build(less_equal);
 					}
-    | term
-    | data_vector
+    | term  {
+				ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                $$ = ast->get_root();
+            }
+    | data_vector  	{
+						ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+                        $$ = ast->get_root();
+                    }
 
 term: term PRODUCT power                          {
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
@@ -570,6 +644,9 @@ data_value: INT_VAL                               {
                                                     $$ = reinterpret_cast<void *>(node);
                                                   }
 
-data_vector: CURLY_BRACKET_OPEN args CURLY_BRACKET_CLOSE
+data_vector: CURLY_BRACKET_OPEN args CURLY_BRACKET_CLOSE	{
+																ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
+																$$ = ast->get_root();
+															}
 
 %%

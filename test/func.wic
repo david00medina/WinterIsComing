@@ -1,0 +1,10 @@
+fun bool isPositive (int n):
+	n > 0 ?:
+	return true
+	.?:
+	return false
+
+int a = 5
+int b = -5
+bool positive_a = isPositive(a)
+bool positive_b = isPositive(b)

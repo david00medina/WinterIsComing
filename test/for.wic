@@ -1,0 +1,12 @@
+float[9] numbers = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}
+int i = 0
+float suma = 0
+float multiplicacion = 1
+bool sumar = true
+bool multiplicar = false
+
+i < 10 && sumar ?? i++:
+suma = suma + numbers[i]
+. i < 10 && multiplicar ?? i++:
+multiplicacion = multiplicacion* numbers[i]
+

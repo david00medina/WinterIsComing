@@ -1,0 +1,7 @@
+int x = 128
+int base = 2
+int exp = 0
+
+a > 1 ??:
+x = x / base
+exp++

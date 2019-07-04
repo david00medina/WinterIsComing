@@ -174,7 +174,7 @@ namespace wic
     }
 
     ASTSubNode::ASTSubNode(wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode("SUBTRACT", wic::SUB, wic::UNKNOWN, op1, op2) {}
+            : ASTArithmeticNode("SUB", wic::SUB, wic::UNKNOWN, op1, op2) {}
 
     cpu_registers ASTSubNode::to_code(CodeGenerator *cg)
     {
