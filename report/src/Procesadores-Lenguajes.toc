@@ -31,3 +31,4 @@
 \contentsline {subsection}{\numberline {5.1}Introducci\IeC {\'o}n}{24}{subsection.5.1}% 
 \contentsline {subsection}{\numberline {5.2}Operaciones de la tabla de s\IeC {\'\i }mbolos}{25}{subsection.5.2}% 
 \contentsline {subsection}{\numberline {5.3}Ejemplo de uso de la tabla de s\IeC {\'\i }mbolos}{25}{subsection.5.3}% 
+\contentsline {section}{\numberline {6}Generaci\IeC {\'o}n de C\IeC {\'o}digo}{26}{section.6}% 

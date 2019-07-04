@@ -1,0 +1,334 @@
+/* Ajustes iniciales */
+
+%x COMMENT_BLOCK
+%x COMMENT_LINE
+%x CHAR_STATE
+%x STRING_STATE
+%x CHECK_LVL
+
+%option noyywrap
+
+%{
+
+    /* Declaraciones */
+
+    #include <string.h>
+
+    int level = 0;
+    int enter_special = 1;
+
+    /* Declaraciones de funciones */
+
+    int countSpaces(char* pattern);
+
+
+%}
+
+/* Definiciones regulares */
+
+/* Expresiones regulares reutilizables */
+letter                        [a-zA-Z]
+digit                         [0-9]
+
+/* Palabras reservadas */
+new                           (new)
+continue                      (continue)
+break                         (break)
+return                        (return)
+
+/* Valores segun el tipo de dato */
+int_val                       {digit}+
+real_val                      ({digit}+\.){digit}*|\.{digit}+
+bool_val                      (true|false)
+
+/* Tipos de dato */
+int_type                      (int)
+real_type                     (real)
+bool_type                     (bool)
+
+/* Expresiones regulares para estructuras de control y bucles */
+for_while                     (\?){2}
+header_end                    :
+
+/* Expresiones regulares delimitadoras */
+
+context_tag                   [ ]*
+/* Identificador */
+id                            {letter}({letter}|{digit})*
+
+%%
+  if (enter_special) {
+    BEGIN(CHECK_LVL);
+    enter_special = 0;
+  }
+
+
+   /* Reglas de traducción */
+
+   /* Cambios de ámbito */
+
+<CHECK_LVL>\n?{context_tag}    {
+                                printf("Procesando... \n<%s>\n", yytext);
+                                int level_change = countSpaces(yytext);
+                                printf("%d\n", level_change);
+
+                                if (level < level_change) {
+                                  level++;
+                                  if (level != level_change) yyless(0);
+                                  printf("Level <OPEN_CONTEXT_TAG> : %d\n", level);
+                                  return OPEN_CONTEXT_TAG;
+                                } else if (level > level_change) {
+                                   level--;
+                                   if (level != level_change) yyless(0);
+                                   printf("Level <CLOSE_CONTEXT_TAG> : %d\n", level);
+                                   return CLOSE_CONTEXT_TAG;
+                                }
+                                printf("Level : %d\n", level);
+                                BEGIN(INITIAL);
+                              }
+<CHECK_LVL><<EOF>>            {
+                                if (level > 0) {
+                                  level--;
+                                  return CLOSE_CONTEXT_TAG;
+                                } else return 0;
+                              }
+<CHECK_LVL>[^ \n]             {
+                                printf("Vamos para atrás\n");
+                                BEGIN(INITIAL);
+                                yyless(0);
+                              }
+<<EOF>>                       {
+                                BEGIN(CHECK_LVL);
+                              }
+"\n"                          {
+                                BEGIN(CHECK_LVL);
+                                yyless(0);
+                                printf("Nueva línea\n");
+                                return END_OF_INSTR;
+                              }
+
+   /* Reglas para las palabras reservadas */
+{break}                       {
+                                //printf("%s is a BREAK\n", yytext);
+                                return BREAK;
+                              }
+{return}                      {
+                                //printf("%s is a RETURN\n", yytext);
+                                return RETURN;
+                              }
+
+
+   /* Reglas para los valores segun el tipo de dato */
+{int_val}                     {
+                                yylval.integer = atoi(yytext);
+                                //printf("%d is a INT_VAL\n", yylval.integer);
+                                return INT_VAL;
+                              }
+
+{real_val}                    {
+                                yylval.real = atof(yytext);
+                                //printf("%f is a REAL_VAL\n", yylval.real);
+                                return REAL_VAL;
+                              }
+{bool_val}                    {
+                                if (strcmp("true", yytext) == 0) yylval.boolean = '\x01';
+                                else yylval.boolean = '\x00';
+                                //printf("%d is a BOOL_VAL\n", yylval.boolean);
+                                return BOOL_VAL;
+                              }
+
+
+   /* Reglas segun el tipo de dato */
+{int_type}                    {
+                                //printf("%s is a INT_TYPE\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
+                                return INT_TYPE;
+                              }
+{real_type}                   {
+                                //printf("%s is a REAL_TYPE\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
+                                return REAL_TYPE;
+                              }
+{bool_type}                   {
+                                //printf("%s is a BOOL_TYPE\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
+                                return BOOL_TYPE;
+                              }
+
+
+   /* Regla de asignación */
+"="                           {
+                                //printf("%s is an ASSIGN\n", yytext);
+                                return ASSIGN;
+                              }
+
+
+   /* Reglas para los operadores aritméticos */
+"\+"                          {
+                                //printf("%s is a SUM\n", yytext);
+                                return SUM;
+                              }
+"-"                           {
+                                //printf("%s is a SUBSTRACT\n", yytext);
+                                return SUBSTRACT;
+                              }
+"\*"                          {
+                                //printf("%s is a PRODUCT\n", yytext);
+                                return PRODUCT;
+                              }
+"/"                           {
+                                //printf("%s is a DIVIDE\n", yytext);
+                                return DIVIDE;
+                              }
+
+
+   /* Reglas para los operadores lógicos */
+"&&"                          {
+                                //printf("%s is a AND\n", yytext);
+                                return AND;
+                              }
+"||"                          {
+                                //printf("%s is a OR\n", yytext);
+                                return OR;
+                              }
+"!"                           {
+                                //printf("%s is a NOT\n", yytext);
+                                return NOT;
+                              }
+"=="                          {
+                                //printf("%s is a EQUALS\n", yytext);
+                                return EQUALS;
+                              }
+"!="                          {
+                                //printf("%s is a NOT_EQUALS\n", yytext);
+                                return NOT_EQUALS;
+                              }
+">"                           {
+                                //printf("%s is a GREATER\n", yytext);
+                                return GREATER;
+                              }
+">="                          {
+                                //printf("%s is a GREATER_EQUALS\n", yytext);
+                                return GREATER_EQUALS;
+                              }
+"<"                           {
+                                //printf("%s is a LESS\n", yytext);
+                                return LESS;
+                              }
+"<="                          {
+                                //printf("%s is a LESS_EQUALS\n", yytext);
+                                return LESS_EQUALS;
+                              }
+
+
+
+
+
+   /* Expresiones regulares para estructuras de control y bucles */
+{header_end}                  {
+                                //printf("%s is an HEADER_END\n", yytext);
+                                return HEADER_END;
+                              }
+{for_while}                   {
+                                //printf("%s is an FOR_WHILE_CLAUSE\n", yytext);
+                                return FOR_WHILE_CLAUSE;
+                              }
+
+
+
+   /* Expresiones regulares delimitadoras */
+"\["                          {
+                                //printf("%s is an SQUARE_BRACKET_OPEN\n", yytext);
+                                return SQUARE_BRACKET_OPEN;
+                              }
+"\]"                          {
+                                //printf("%s is an SQUARE_BRACKET_CLOSE\n", yytext);
+                                return SQUARE_BRACKET_CLOSE;
+
+                              }
+"\{"                          {
+                                //printf("%s is an CURLY_BRACKET_OPEN\n", yytext);
+                                return CURLY_BRACKET_OPEN;
+                              }
+"\}"                          {
+                                //printf("%s is an CURLY_BRACKET_CLOSE\n", yytext);
+                                return CURLY_BRACKET_CLOSE;
+                              }
+"\("                          {
+                                //printf("%s is an PARETHESES_OPEN\n", yytext);
+                                return PARETHESES_OPEN;
+                              }
+"\)"                          {
+                                //printf("%s is an PARETHESES_CLOSE\n", yytext);
+                                return PARETHESES_CLOSE;
+                              }
+
+
+  /* Identificador */
+{id}                          {
+                                //printf("%s is a ID\n", yytext);
+                                yylval.string = (char*)malloc(yyleng);
+                                strcpy(yylval.string, yytext);
+                                return ID;
+                              }
+
+
+
+  /* Reglas para los comentarios */
+\.\.                          {
+                                BEGIN(COMMENT_LINE);
+                                //printf("COMMENT_LINE_START\n");
+                              }
+<COMMENT_LINE>.+              {
+                                //printf("THIS IS A COMMENT_LINE\n");
+                              }
+<COMMENT_LINE>\n              {
+                                //printf("COMMENT_LINE_END\n");
+                                yylineno++;
+                                BEGIN(INITIAL);
+                              }
+<COMMENT_LINE><<EOF>>         /* Do error */
+
+
+",\."                         {
+                                BEGIN(COMMENT_BLOCK);
+                                //printf("COMMENT_BLOCK_START\n");
+                              }
+<COMMENT_BLOCK>"\.,"          {
+                                //printf("COMMENT_BLOCK_END\n");
+                                BEGIN(INITIAL);
+                              }
+<COMMENT_BLOCK>[^\n]
+<COMMENT_BLOCK>\n             {
+                                yylineno++;
+                              }
+<COMMENT_BLOCK><<EOF>>        /* Do error */
+
+
+"\t"+                          {
+                                printf("Esto es un tabulado\n");
+                              }
+
+   /* Unknowns & errors */
+.                             {
+                                printf("<%s> is an unknown\n", yytext);
+                              }
+
+%%
+
+/* Funciones y declaraciones auxiliares */
+
+int countSpaces(char* pattern) {
+  int i = 0;
+  int numSpaces = 0;
+  int total = 0;
+  while (pattern[i] != '\0') {
+    if (pattern[i] == ' ') numSpaces++;
+    if ((numSpaces % 4) == 0 && numSpaces > 0) total++;
+    i++;
+  }
+  return total;
+}

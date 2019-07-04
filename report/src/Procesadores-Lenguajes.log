@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6980) (preloaded format=pdflatex 2019.3.19)  2 JUN 2019 11:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6980) (preloaded format=pdflatex 2019.3.19)  2 JUN 2019 12:25
 entering extended mode
 **./Procesadores-Lenguajes.tex
 (Procesadores-Lenguajes.tex
@@ -1005,30 +1005,35 @@ Underfull \hbox (badness 10000) in paragraph at lines 1044--1057
  []
 
 [25]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1059.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1061.
  [26]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1059.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1061.
  (Procesadores-Lenguajes.aux
 LaTeX Info: Redefining \. on input line 23.
 LaTeX Info: Redefining \% on input line 23.
 LaTeX Info: Redefining \. on input line 24.
 LaTeX Info: Redefining \% on input line 24.
 )
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1059.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1059.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1061.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1061.
 
-Package rerunfilecheck Info: File `Procesadores-Lenguajes.out' has not changed.
 
-(rerunfilecheck)             Checksum: AE4C6BE8459A7FE29C583FFDFCE0830C;2297.
 
+Package rerunfilecheck Warning: File `Procesadores-Lenguajes.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `Procesadores-Lenguajes.out':
+(rerunfilecheck)             Before: AE4C6BE8459A7FE29C583FFDFCE0830C;2297
+(rerunfilecheck)             After:  6BF97EE9E6DC098A313922D73CADCC3F;2359.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1059.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1061.
  ) 
 Here is how much of TeX's memory you used:
- 10557 strings out of 494865
- 156871 string characters out of 3176749
+ 10558 strings out of 494865
+ 157006 string characters out of 3176749
  468563 words of memory out of 3000000
  13619 multiletter control sequences out of 15000+200000
  21051 words of font info for 49 fonts, out of 3000000 for 9000
@@ -1068,9 +1073,9 @@ t/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/cbr/L
 ibrary/Application Support/MiKTeX/texmfs/install/fonts/type1/public/amsfonts/cm
 /cmsy7.pfb></Users/cbr/Library/Application Support/MiKTeX/texmfs/install/fonts/
 type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on Procesadores-Lenguajes.pdf (27 pages, 1561153 bytes).
+Output written on Procesadores-Lenguajes.pdf (27 pages, 1562788 bytes).
 PDF statistics:
- 1334 PDF objects out of 1440 (max. 8388607)
- 354 named destinations out of 1000 (max. 500000)
+ 1339 PDF objects out of 1440 (max. 8388607)
+ 355 named destinations out of 1000 (max. 500000)
  264 words of extra memory for PDF output out of 10000 (max. 10000000)
 
