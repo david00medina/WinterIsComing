@@ -1,0 +1,8 @@
+pivote > 1 || pivote <= 2 && 1 == 1??:
+    int x = base / pivote
+    pivote = pivote + 1
+    int a = 0
+    a < 100 ??:
+        a = a + base
+    int prueba = 100
+
