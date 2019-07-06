@@ -16,10 +16,10 @@ compile:
 					#gcc -o wic build/lex.yy.c build/wic.tab.c -lfl -lm
 					/usr/bin/g++ -std=gnu++11 -c build/wic.tab.c build/lex.yy.c
 					mv *.o build
-					ar rvs build/libwic.a build/wic.tab.o build/lex.yy.o
+					ar rvs include/libwic.a build/wic.tab.o build/lex.yy.o
 
 					/usr/bin/g++ -std=gnu++11 -Wall -Wextra -g -o wic \
-					Main.cpp build/libwic.a \
+					Main.cpp include/libwic.a \
 					symbol-table/SymbolTable.cpp \
 					code-generator/CodeGenerator.cpp \
 					ast/AbstractSyntaxTree.cpp \

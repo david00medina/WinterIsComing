@@ -4,9 +4,9 @@
 #include "../../../../code-generator/CodeGenerator.hpp"
 #include "../symbol-table-node/ASTSymbolTableNode.hpp"
 
-extern wic::GSymbolTable gst;
-extern wic::SSymbolTable sst;
-extern wic::LSymbolTable lst;
+extern wic::GSymbolTable* gst;
+extern wic::SSymbolTable* sst;
+extern wic::LSymbolTable* lst;
 
 extern int yylineno;
 extern int level;
@@ -41,7 +41,7 @@ namespace wic
             curr = curr->next;
         }
 
-        lst.erase(level);
+        lst->erase(level);
         return NONE;
     }
 
@@ -257,7 +257,7 @@ namespace wic
             entry_d.var.array_selection = 0;
             entry_d.var.offset = (4 * count) + (entry_d.var.array_length / 4) + param_mem;
 
-            lst.insert(curr->get_id(), entry_d, yylineno, level+1);
+            lst->insert(curr->get_id(), entry_d, yylineno, level+1);
 
             curr = reinterpret_cast<ASTIDNode *>(curr->next);
 

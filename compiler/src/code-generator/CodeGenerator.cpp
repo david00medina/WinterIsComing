@@ -13,6 +13,7 @@ namespace wic
     {
         fdata.open("data.s", std::ios::in | std::ios::out | std::ios::app);
         fcode.open("code.s", std::ios::in | std::ios::out | std::ios::app);
+        ffunc.open("func.s", std::ios::in | std::ios::out | std::ios::app);
 
         file_p.data_p = 0;
         file_p.code_p = 0;
@@ -34,6 +35,7 @@ namespace wic
         fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::trunc);
         fdata.open("data.s", std::ios::in | std::ios::out | std::ios::app);
         fcode.open("code.s", std::ios::in | std::ios::out | std::ios::app);
+        ffunc.open("func.s", std::ios::in | std::ios::out | std::ios::app);
 
         file_p.data_p = 0;
         file_p.code_p = 0;
@@ -140,134 +142,89 @@ namespace wic
         write(CODE, "c%s#s", "pushl", get_mem_var(offset), msg);
     }
 
-    void CodeGenerator::write(section_enum select, const char* fmt, ...)
+    void CodeGenerator::write_to_file(std::fstream &f, va_list argv, const char *fmt)
     {
-        va_list argv;
-        va_start(argv, fmt);
-
         bool comment = false;
         bool op = false;
 
         std::string s;
         const char* c;
 
+        for (const char* p = fmt; *p != '\0'; p++)
+        {
+            switch (*p)
+            {
+                case 's':
+                {
+                    s = *va_arg(argv, std::string *);
+
+                    ++p;
+
+                    if (op && *p == '%') f << s << ", ";
+                    else if (op && *p != '%') f << s;
+                    else if (comment) f << initial_spacing << comment_spacing + "# " + s;
+                    else f << initial_spacing + s + instr_spacing;
+
+                    --p;
+                    comment = false;
+                    op = false;
+                }
+                    break;
+                case 'c':
+                {
+                    c = va_arg(argv, const char*);
+                    s = c;
+
+                    ++p;
+
+                    if (op && *p == '%') f << s << ", ";
+                    else if (op && *p != '%') f << s;
+                    else if (comment) f << initial_spacing << comment_spacing + "# " + s;
+                    else f << initial_spacing + s + instr_spacing;
+
+                    --p;
+                    comment = false;
+                    op = false;
+                }
+                    break;
+                case '#':
+                {
+                    comment = true;
+                }
+                    break;
+                case '%':
+                {
+                    op = true;
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        f << std::endl;
+    }
+
+    void CodeGenerator::write(section_enum select, const char* fmt, ...)
+    {
+        va_list argv;
+        va_start(argv, fmt);
+
+
         switch (select)
         {
             case CODE:
-                for (const char* p = fmt; *p != '\0'; p++)
-                {
-                    switch (*p)
-                    {
-                        case 's':
-                            {
-                                s = *va_arg(argv, std::string *);
-
-                                ++p;
-
-                                if (op && *p == '%') fcode << s << ", ";
-                                else if (op && *p != '%') fcode << s;
-                                else if (comment) fcode << initial_spacing << comment_spacing + "# " + s;
-                                else fcode << initial_spacing + s + instr_spacing;
-
-                                --p;
-                                comment = false;
-                                op = false;
-                            }
-                            break;
-                        case 'c':
-                            {
-                                c = va_arg(argv, const char*);
-                                s = c;
-
-                                ++p;
-
-                                if (op && *p == '%') fcode << s << ", ";
-                                else if (op && *p != '%') fcode << s;
-                                else if (comment) fcode << initial_spacing << comment_spacing + "# " + s;
-                                else fcode << initial_spacing + s + instr_spacing;
-
-                                --p;
-                                comment = false;
-                                op = false;
-                            }
-                            break;
-                        case '#':
-                            {
-                                comment = true;
-                            }
-                            break;
-                        case '%':
-                            {
-                                op = true;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                fcode << std::endl;
+                write_to_file(fcode, argv, fmt);
                 break;
-
             case DATA:
-                for (const char* p = fmt; *p != '\0'; p++)
-                {
-                    switch (*p)
-                    {
-                        case 's':
-                            {
-                                s = *va_arg(argv, std::string *);
-
-                                ++p;
-
-                                if (op && *p == '%') fdata << s << ", ";
-                                else if (op && *p != '%') fdata << s;
-                                else if (comment) fdata << initial_spacing << comment_spacing << "# " + s;
-                                else fdata << initial_spacing + s + instr_spacing;
-
-                                --p;
-                                comment = false;
-                                op = false;
-                            }
-                            break;
-                        case 'c':
-                            {
-                                c = va_arg(argv, const char*);
-                                s = c;
-
-                                ++p;
-
-                                if (op && *p == '%') fdata << s << ", ";
-                                else if (op && *p != '%') fdata << s;
-                                else if (comment) fdata << initial_spacing << comment_spacing << "# " + s;
-                                else fdata << initial_spacing + s + instr_spacing;
-
-                                --p;
-                                comment = false;
-                                op = false;
-                            }
-                            break;
-                        case '#':
-                            {
-                                comment = true;
-                            }
-                            break;
-                        case '%':
-                            {
-                                op = true;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                fdata << std::endl;
+                write_to_file(fdata, argv, fmt);
                 break;
-
+            case FUNCTION_CODE:
+                write_to_file(ffunc, argv, fmt);
+                break;
             default:
                 break;
         }
-
 
         va_end(argv);
     }
@@ -449,10 +406,20 @@ namespace wic
         }
         fcode.close();
 
+        ffunc.seekg(0);
+        ffunc.seekp(0);
+        while(!ffunc.eof())
+        {
+            ffunc.get(ch);
+            fout << ch;
+        }
+        ffunc.close();
+
         fout.close();
 
         std::remove("data.s");
         std::remove("code.s");
+        std::remove("func.s");
     }
 
     void CodeGenerator::print_reg_use()

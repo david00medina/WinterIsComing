@@ -108,6 +108,7 @@ namespace wic
         fun_info->params_no = param->get_num_params();
         fun_info->return_type = data_t;
 
+
         ASTIDNode* curr = params->get_params();
 
         param_list* curr_params = nullptr;
@@ -174,6 +175,7 @@ namespace wic
         cg->write(CODE, "c%s#s", "call", "_" + id, "Call the function \'" + id + "\'");
 
         // TODO: Si el registro EAX no está libre pasar el contenido a otro registro diferente.
+        if (cg->is_used(EAX)) cg->lock_reg(EAX);
 
         return EAX;
     }

@@ -140,7 +140,7 @@ int main(int argc, char const **argv) {
         lst->insert("hoal", entry_d, yylineno, 0);
         lst->insert("alho", entry_d, yylineno, 0);
         lst->show("ohla");
-        lst->erase("ohla");
+        lst->erase("hoal");
         lst->show("ohla");
         wic::TableEntry* entry = lst->lookup("hola");
         wic::ASTIDNode* id = new wic::ASTIDNode("hola", wic::INT, nullptr, nullptr, entry);

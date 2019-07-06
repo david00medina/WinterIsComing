@@ -61,13 +61,13 @@ namespace wic
     {
     protected:
         TableEntry* head[MAX_ENTRIES];
-        int memory = 0;
+        int addr;
 
         virtual int hash(const char*);
 
     public:
-        SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
-        virtual ~SymbolTable() { for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr; }
+        SymbolTable();
+        virtual ~SymbolTable();
 
         virtual bool insert(const char*, entry_data, unsigned int, unsigned int);
         virtual bool erase(const char*);

@@ -23,6 +23,17 @@ namespace wic
         return scope;
     }
 
+    SymbolTable::SymbolTable()
+    {
+        for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr;
+        addr = 0;
+    }
+
+    SymbolTable::~SymbolTable()
+    {
+        delete *head;
+    }
+
     int SymbolTable::hash(const char* id)
     {
         int hash = 0;
@@ -46,8 +57,8 @@ namespace wic
             ErrorManager::send(REDECLARATION_VAR, id);
         }
 
-        memory -= entry_d.var.size;
-        entry_d.var.offset = memory;
+        addr -= entry_d.var.size;
+        entry_d.var.offset = addr;
 
         TableEntry* tEntry = new TableEntry(id, entry_d, line, scope);
 
@@ -73,29 +84,25 @@ namespace wic
 
         TableEntry* next = curr->next;
 
-
-        while (next != nullptr)
+        while (curr != nullptr)
         {
-
             if (strcmp(curr->id, id) == 0 && prev == nullptr)
             {
                 head[i] = next;
-                memory += curr->entry_d.var.size;
+                addr += curr->entry_d.var.size;
+                delete curr;
+                return true;
+            } else if (strcmp(curr->id, id) == 0)
+            {
+                prev->next = next;
+                addr += curr->entry_d.var.size;
                 delete curr;
                 return true;
             }
 
             prev = curr;
             curr = next;
-            next = curr->next;
-        }
-
-        if (strcmp(curr->id, id) == 0)
-        {
-            prev->next = next;
-            memory += curr->entry_d.var.size;
-            delete curr;
-            return true;
+            next = next->next;
         }
 
         return false;
@@ -107,34 +114,28 @@ namespace wic
 
         for (int i = 0; i < MAX_ENTRIES; i++)
         {
-            TableEntry* curr = head[i];
             TableEntry* prev = nullptr;
+            TableEntry* curr = head[i];
+            TableEntry* next = nullptr;
+
+            if (curr != nullptr) next = curr->next;
 
             while (curr != nullptr)
             {
                 if (curr->scope == scope)
                 {
-
-                    memory += curr->entry_d.var.size;
-
-                    if (prev != nullptr)
-                    {
-                        prev->next = curr->next;
-                        prev = prev->next;
-                    } else
-                    {
-                        head[i] = curr->next;
-                        prev = head[i];
-                    }
-
-                    delete curr;
-                    curr = prev->next;
                     erased++;
-
+                    delete curr;
+                    prev = next;
+                    if (next != nullptr) curr = next->next;
+                    else curr = nullptr;
+                    std::cout << "HOLA" << std::endl;
+                    if (curr != nullptr) next = curr->next;
                 } else
                 {
                     prev = curr;
-                    curr = prev->next;
+                    curr = next;
+                    if (next != nullptr) next = next->next;
                 }
             }
         }
