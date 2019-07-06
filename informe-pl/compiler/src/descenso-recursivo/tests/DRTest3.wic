@@ -1,7 +1,0 @@
-pivote > 1 || pivote <= 2 && 1 == 1??:
-    real x = base / pivote
-    pivote = pivote + 1
-
-
-
-
