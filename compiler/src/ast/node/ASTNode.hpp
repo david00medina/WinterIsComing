@@ -13,6 +13,9 @@ namespace wic
 {
     class AbstractSyntaxTree;
     class ASTBodyNode;
+    class ASTArgumentNode;
+    class ASTParamNode;
+    class ASTFunctionNode;
     class CodeGenerator;
 
     class ASTNode
@@ -68,6 +71,9 @@ namespace wic
 
         friend class AbstractSyntaxTree;
         friend class ASTBodyNode;
+        friend class ASTArgumentNode;
+        friend class ASTParamNode;
+        friend class ASTFunctionNode;
     };
 }
 

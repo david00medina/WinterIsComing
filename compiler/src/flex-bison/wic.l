@@ -377,7 +377,7 @@ id                            {letter}({letter}|{digit})*
 {id}                          {
                                 //std::string id = yytext;
                                 //yylval = reinterpret_cast<void *>(new wic::ASTIDNode(id, wic::UNKNOWN));
-                                //return ID;
+                                return ID;
                               }
 
 

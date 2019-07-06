@@ -134,7 +134,7 @@ namespace wic
 
         if (else_body != nullptr) write_else_body(cg);
 
-        cg->write_code_label(exit_l);
+        cg->write_label(CODE, exit_l);
     }
 
     ASTRelationalNode* ASTClauseNode::get_cond()
@@ -157,8 +157,8 @@ namespace wic
         cpu_registers r1 = cond->to_code(cg);
 
         cpu_registers r_true = cg->get_reg();
-        cg->write_code_section("movl", "$1", cg->translate_reg(r_true), "Set true register to 1");
-        cg->write_code_section("cmpl", cg->translate_reg(r_true), cg->translate_reg(r1), "\'IF\' condition accomplished?");
+        cg->write(CODE, "c%c%s#c", "movl", "$1", cg->translate_reg(r_true), "Set true register to 1");
+        cg->write(CODE, "c%s%s#c", "cmpl", cg->translate_reg(r_true), cg->translate_reg(r1), "\'IF\' condition accomplished?");
 
         cg->free_reg(r_true);
         cg->free_reg(r1);
@@ -172,14 +172,14 @@ namespace wic
         while (curr != nullptr) {
             if_l = cg->get_label(CODE);
 
-            if (curr->next != nullptr) cg->write_code_section("jne", if_l, "Jump to next \'IF\' condition at " + if_l);
-            else cg->write_code_section("jne", else_l, "Jump to \'ELSE\' at " + else_l);
+            if (curr->next != nullptr) cg->write(CODE, "c%s#s", "jne", if_l, "Jump to next \'IF\' condition at " + if_l);
+            else cg->write(CODE, "c%s#s", "jne", else_l, "Jump to \'ELSE\' at " + else_l);
 
             curr->body->to_code(cg);
 
-            cg->write_code_section("jmp", exit_l, "\'IF\' clause got to an end");
+            cg->write(CODE, "c%s#c", "jmp", exit_l, "\'IF\' clause got to an end");
 
-            if (curr->next != nullptr) cg->write_code_label(if_l);
+            if (curr->next != nullptr) cg->write_label(CODE, if_l);
 
             curr = reinterpret_cast<ASTIfNode *>(curr->next);
             if (curr != nullptr) write_condition(curr->cond, cg);
@@ -188,7 +188,7 @@ namespace wic
 
     void ASTIfNode::write_else_body(CodeGenerator *cg)
     {
-        cg->write_code_label(else_l);
+        cg->write_label(CODE, else_l);
 
         else_body->to_code(cg);
     }

@@ -92,7 +92,7 @@ namespace wic
     cpu_registers ASTOperatorNode::int_to_float(cpu_registers r, CodeGenerator *cg)
     {
         cpu_registers fr = cg->get_float_reg();
-        cg->write_code_section("cvtsi2ss", cg->translate_reg(r), cg->translate_reg(fr),
+        cg->write(CODE, "c%s%s#s", "cvtsi2ss", cg->translate_reg(r), cg->translate_reg(fr),
                                "Convert int to real (" + cg->translate_reg(r) + ")");
         cg->free_reg(r);
         return fr;
@@ -101,7 +101,7 @@ namespace wic
     cpu_registers ASTOperatorNode::float_to_int(cpu_registers r, CodeGenerator *cg)
     {
         cpu_registers ir = cg->get_reg();
-        cg->write_code_section("cvttss2sil", cg->translate_reg(r), cg->translate_reg(ir),
+        cg->write(CODE, "c%s%s#s", "cvttss2sil", cg->translate_reg(r), cg->translate_reg(ir),
                                "Convert real to int (" + cg->translate_reg(r) + ")");
         cg->free_reg(r);
         return ir;
@@ -169,6 +169,7 @@ namespace wic
                 {
                     return execute_float(r1, r2, cg);
                 }
+                break;
 
             default:
                 if (type1 != REAL)
@@ -179,6 +180,7 @@ namespace wic
                 {
                     return execute_float(r1, r, cg);
                 }
+                break;
         }
     }
 }

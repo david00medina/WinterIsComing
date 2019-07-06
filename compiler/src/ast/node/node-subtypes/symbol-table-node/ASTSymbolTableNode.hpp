@@ -4,10 +4,14 @@
 #include "../../ASTNode.hpp"
 #include "../../../../symbol-table/SymbolTablePack.hpp"
 #include "../../../../code-generator/CodeGeneratorPack.hpp"
+#include "../structural-node/ASTStructuralNode.hpp"
 
 namespace wic {
     class TableEntry;
     class CodeGenerator;
+    class ASTParamNode;
+    class ASTArgumentNode;
+    class ASTBodyNode;
 
     class ASTSymbolTableNode : public ASTNode
     {
@@ -17,7 +21,7 @@ namespace wic {
         TableEntry* static_te;
         TableEntry* local_te;
 
-        void check_error(std::string) {};
+        void check_error(std::string);
 
     public:
         ASTSymbolTableNode() = default;
@@ -36,20 +40,35 @@ namespace wic {
         virtual void print();
     };
 
+    class ASTFunctionNode : public ASTSymbolTableNode
+    {
+    private:
+        ASTParamNode* params;
+        ASTBodyNode* body;
+        ASTReturnNode* ret;
+        function* fun_info;
+
+    public:
+        ASTFunctionNode() = default;
+        ASTFunctionNode(std::string, data_type, ASTParamNode*, ASTBodyNode*, ASTReturnNode*);
+        ~ASTFunctionNode();
+
+        ASTNode* get_body();
+
+        cpu_registers to_code(CodeGenerator*);
+    };
+
     class ASTCallNode : public ASTSymbolTableNode
     {
     private:
         ASTNode* args;
-        ASTNode* body;
 
     public:
         ASTCallNode() = default;
-        ASTCallNode(std::string, data_type, ASTNode *, ASTNode *);
-        ASTCallNode(std::string, data_type, ASTNode *, ASTNode *, TableEntry*);
+        ASTCallNode(std::string, data_type, ASTArgumentNode *);
         ~ASTCallNode();
 
         ASTNode* get_args();
-        ASTNode* get_body();
 
         cpu_registers to_code(CodeGenerator*);
     };

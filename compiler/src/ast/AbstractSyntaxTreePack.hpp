@@ -32,10 +32,12 @@ namespace wic
         SCAN,
         PRINT,
         ASSIGN,
+        FUNCTION,
         BODY,
         RET,
         CALL,
         PARAM,
+        ARG,
         MAIN
     } node_type;
 

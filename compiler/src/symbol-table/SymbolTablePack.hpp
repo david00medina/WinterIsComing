@@ -13,7 +13,6 @@ namespace wic
         ARRAY_INT,
         ARRAY_REAL,
         ARRAY_BOOL,
-        FUNCTION,
         UNKNOWN
     } data_type;
 
@@ -22,6 +21,7 @@ namespace wic
         int offset;
         unsigned int size;
         unsigned int array_length;
+        unsigned int array_selection;
         bool global;
         bool stat;
         bool local;
@@ -37,11 +37,6 @@ namespace wic
         data_type return_type;
         unsigned int params_no;
         param_list params;
-        unsigned int init_addr;
-        unsigned int return_addr;
-        bool global;
-        bool stat;
-        bool local;
     } function;
 
     typedef union entry_data {

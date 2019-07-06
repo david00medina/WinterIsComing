@@ -71,13 +71,24 @@ namespace wic
         fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::trunc);
     }
 
+    void CodeGenerator::push_stack(){
+        write(CODE, "c%s#c", "pushl", reg[EBP], "Save previous scope");
+        write(CODE, "c%s%s#c", "movl", reg[ESP], reg[EBP], "Set new scope");
+    }
+
+    void CodeGenerator::pop_stack()
+    {
+        write(CODE, "c%s#c", "popl", reg[EBP], "Save previous scope");
+        write(CODE, "c%s%s#c", "movl", reg[EBP], reg[ESP], "Set new scope");
+    }
+
     void CodeGenerator::push_scope()
     {
         for (int i = 0; i < TOTAL_REG; i++)
         {
-            write_code_section("pushl", reg[EAX+i], "Push scope (" + reg[EAX+i] + ")");
-            write_code_section("sub", "$4", reg[ESP], "Advance register");
-            write_code_section("movss", reg[XMM0+i], reg[ESP], "Push scope (" + reg[XMM0+i] + ")");
+            push_reg(static_cast<cpu_registers>(EAX+i), "Push scope (" + reg[EAX+i] + ")");
+            push_float_reg(static_cast<cpu_registers>(XMM0+i), "Push scope (" + reg[XMM0+i] + ")");
+
             free_reg(static_cast<cpu_registers>(EAX+i));
             free_reg(static_cast<cpu_registers>(XMM0+i));
         }
@@ -87,59 +98,195 @@ namespace wic
     {
         for (int i = 0; i < TOTAL_REG; i++)
         {
+            pop_reg(static_cast<cpu_registers>(EAX+i), "Pop scope (" + reg[EAX+i] + ")");
+            pop_float_reg(static_cast<cpu_registers>(XMM0+i), "Pop scope (" + reg[XMM0+i] + ")");
 
-            write_code_section("popl", reg[XMM0+i], "Pop scope (" + reg[XMM0+i] + ")");
-            write_code_section("movss", reg[ESP], reg[XMM0+i], "Pop scope (" + reg[XMM0+i] + ")");
-            write_code_section("add", "$4", reg[ESP], "Restore register " + reg[ESP]);
             lock_reg(static_cast<cpu_registers>(EAX+i));
             lock_reg(static_cast<cpu_registers>(XMM0+i));
         }
     }
 
-    void CodeGenerator::write_data_section(unsigned int argc, ...)
+    void CodeGenerator::push_reg(cpu_registers r, std::string msg)
+    {
+        write(CODE, "c%s#s", "pushl", reg[r], msg);
+        free_reg(r);
+    }
+
+    void CodeGenerator::pop_reg(cpu_registers r, std::string msg)
+    {
+        write(CODE, "c%s#s", "popl", reg[r], msg);
+        lock_reg(r);
+
+    }
+
+    void CodeGenerator::push_float_reg(cpu_registers r, std::string msg)
+    {
+        cpu_registers r2 = get_reg();
+        write(CODE, "c%s%s#s", "movd", reg[r], reg[r2], "Save float value temporarily in a general register (" + reg[r2] + ")");
+        free_reg(r);
+        write(CODE, "c%s#s", "pushl", reg[r2], msg);
+        free_reg(r2);
+    }
+
+    void CodeGenerator::pop_float_reg(cpu_registers r, std::string msg)
+    {
+        write(CODE, "c%s%s%s", "movss", reg[ESP], reg[r], msg);
+        write(CODE, "c%c%s#c", "add", "$4", reg[ESP], "Restore stack pointer");
+        lock_reg(r);
+    }
+
+    void CodeGenerator::push_mem(int offset, std::string msg)
+    {
+        write(CODE, "c%s#s", "pushl", get_mem_var(offset), msg);
+    }
+
+    void CodeGenerator::write(section_enum select, const char* fmt, ...)
     {
         va_list argv;
-        va_start(argv, argc);
+        va_start(argv, fmt);
 
-        for (unsigned int i = 0; i < argc; ++i) {
-            fdata << initial_spacing << *static_cast<const std::string *>(va_arg(argv, void*)) << std::endl;
+        bool comment = false;
+        bool op = false;
+
+        std::string s;
+        const char* c;
+
+        switch (select)
+        {
+            case CODE:
+                for (const char* p = fmt; *p != '\0'; p++)
+                {
+                    switch (*p)
+                    {
+                        case 's':
+                            {
+                                s = *va_arg(argv, std::string *);
+
+                                ++p;
+
+                                if (op && *p == '%') fcode << s << ", ";
+                                else if (op && *p != '%') fcode << s;
+                                else if (comment) fcode << initial_spacing << comment_spacing + "# " + s;
+                                else fcode << initial_spacing + s + instr_spacing;
+
+                                --p;
+                                comment = false;
+                                op = false;
+                            }
+                            break;
+                        case 'c':
+                            {
+                                c = va_arg(argv, const char*);
+                                s = c;
+
+                                ++p;
+
+                                if (op && *p == '%') fcode << s << ", ";
+                                else if (op && *p != '%') fcode << s;
+                                else if (comment) fcode << initial_spacing << comment_spacing + "# " + s;
+                                else fcode << initial_spacing + s + instr_spacing;
+
+                                --p;
+                                comment = false;
+                                op = false;
+                            }
+                            break;
+                        case '#':
+                            {
+                                comment = true;
+                            }
+                            break;
+                        case '%':
+                            {
+                                op = true;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                fcode << std::endl;
+                break;
+
+            case DATA:
+                for (const char* p = fmt; *p != '\0'; p++)
+                {
+                    switch (*p)
+                    {
+                        case 's':
+                            {
+                                s = *va_arg(argv, std::string *);
+
+                                ++p;
+
+                                if (op && *p == '%') fdata << s << ", ";
+                                else if (op && *p != '%') fdata << s;
+                                else if (comment) fdata << initial_spacing << comment_spacing << "# " + s;
+                                else fdata << initial_spacing + s + instr_spacing;
+
+                                --p;
+                                comment = false;
+                                op = false;
+                            }
+                            break;
+                        case 'c':
+                            {
+                                c = va_arg(argv, const char*);
+                                s = c;
+
+                                ++p;
+
+                                if (op && *p == '%') fdata << s << ", ";
+                                else if (op && *p != '%') fdata << s;
+                                else if (comment) fdata << initial_spacing << comment_spacing << "# " + s;
+                                else fdata << initial_spacing + s + instr_spacing;
+
+                                --p;
+                                comment = false;
+                                op = false;
+                            }
+                            break;
+                        case '#':
+                            {
+                                comment = true;
+                            }
+                            break;
+                        case '%':
+                            {
+                                op = true;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                fdata << std::endl;
+                break;
+
+            default:
+                break;
         }
+
 
         va_end(argv);
     }
 
-    void CodeGenerator::write_data_section(const std::string label, unsigned int argc, ...)
+    void CodeGenerator::write_label(section_enum select, const std::string label)
     {
-        va_list argv;
-        va_start(argv, argc);
+        switch (select)
+        {
+            case CODE:
+                fcode << label << ":" << std::endl;
+                break;
 
-        fdata << label << ":" << std::endl;
+            case DATA:
+                fdata << label << ":" << std::endl;
+                break;
 
-        for (unsigned int i = 0; i < argc; ++i) {
-            fdata << initial_spacing << *static_cast<const std::string *>(va_arg(argv, void*)) << std::endl;
+            default:
+                break;
         }
-
-        va_end(argv);
-    }
-
-    void CodeGenerator::write_code_label(const std::string label)
-    {
-        fcode << label << ":" << std::endl;
-    }
-
-    void CodeGenerator::write_code_section(const std::string instr, const std::string comment)
-    {
-        fcode << initial_spacing << instr << instr_spacing << instr_spacing << comment_spacing << "# " << comment << std::endl;
-    }
-
-    void CodeGenerator::write_code_section(const std::string instr, const std::string op, const std::string comment)
-    {
-        fcode << initial_spacing << instr << instr_spacing << op << "\t" << comment_spacing << "# " << comment << std::endl;
-    }
-
-    void CodeGenerator::write_code_section(const std::string instr, const std::string op1, const std::string op2, const std::string comment)
-    {
-        fcode << initial_spacing << instr << instr_spacing << op1 << ", " << op2 << comment_spacing << "# " << comment << std::endl;
     }
 
     const std::string CodeGenerator::translate_reg(cpu_registers r)
@@ -165,7 +312,7 @@ namespace wic
 
         cpu_registers r = static_cast<cpu_registers>(general_spill_count);
         general_spill_count = (general_spill_count + 1) % TOTAL_REG;
-        write_code_section("pushl", translate_reg(r), "General register spilling (" + translate_reg(r) + ")");
+        write(CODE, "c%s#s", "pushl", translate_reg(r), "General register spilling (" + translate_reg(r) + ")");
         return r;
     }
 
@@ -182,18 +329,23 @@ namespace wic
 
         cpu_registers r = static_cast<cpu_registers>(float_spill_count);
         float_spill_count = (float_spill_count + 1) % TOTAL_REG + 8;
-        write_code_section("pushl", translate_reg(r), "General register spilling (" + translate_reg(r) + ")");
+        write(CODE, "c%s#s", "pushl", translate_reg(r), "General register spilling (" + translate_reg(r) + ")");
         return r;
     }
 
-    void CodeGenerator::free_reg(cpu_registers reg)
+    std::string CodeGenerator::get_mem_var(int offset)
     {
-        reg_use[reg] = false;
+        return std::to_string(offset) + "(" + reg[EBP] + ")";
     }
 
-    void CodeGenerator::lock_reg(cpu_registers reg)
+    void CodeGenerator::free_reg(cpu_registers r)
     {
-        reg_use[reg] = true;
+        reg_use[r] = false;
+    }
+
+    void CodeGenerator::lock_reg(cpu_registers r)
+    {
+        reg_use[r] = true;
     }
 
     bool CodeGenerator::is_used(cpu_registers r)
@@ -206,9 +358,6 @@ namespace wic
         fcode << initial_spacing <<".section\t.text" << std::endl;
         fcode << initial_spacing << ".globl main" << std::endl;
         fcode << "main:" << std::endl;
-
-        fcode << initial_spacing << "pushl" << instr_spacing << reg[EBP] << "\t" << comment_spacing << "# Save previous scope" << std::endl;
-        fcode << initial_spacing << "movl" << instr_spacing << reg[ESP] << ", " << reg[EBP] << comment_spacing << "# Set new scope up" << std::endl;
     }
 
     void CodeGenerator::print(std::string msg, unsigned int argc, ...)
@@ -276,13 +425,12 @@ namespace wic
 
     void CodeGenerator::exit()
     {
-        write_code_section("leave", "Leave the main program");
+        write(CODE, "c#c", "leave", "Leave the main program");
     }
 
     void CodeGenerator::end()
     {
         char ch;
-
         fdata.seekg(0);
         fdata.seekp(0);
         while(!fdata.eof())

@@ -39,8 +39,8 @@ namespace wic
     {
         int i = hash(id);
 
-        // TODO: Buscar variable y si ya existe en el nivel de ámbito dar mensaje de error
         TableEntry* existing_entry = lookup(id);
+
         if (existing_entry != nullptr && existing_entry->scope == scope)
         {
             ErrorManager::send(REDECLARATION_VAR, id);
@@ -80,7 +80,7 @@ namespace wic
             if (strcmp(curr->id, id) == 0 && prev == nullptr)
             {
                 head[i] = next;
-                memory += curr->entry_d.var.offset;
+                memory += curr->entry_d.var.size;
                 delete curr;
                 return true;
             }
@@ -93,11 +93,53 @@ namespace wic
         if (strcmp(curr->id, id) == 0)
         {
             prev->next = next;
+            memory += curr->entry_d.var.size;
             delete curr;
             return true;
         }
 
         return false;
+    }
+
+    int SymbolTable::erase(int scope)
+    {
+        int erased = 0;
+
+        for (int i = 0; i < MAX_ENTRIES; i++)
+        {
+            TableEntry* curr = head[i];
+            TableEntry* prev = nullptr;
+
+            while (curr != nullptr)
+            {
+                if (curr->scope == scope)
+                {
+
+                    memory += curr->entry_d.var.size;
+
+                    if (prev != nullptr)
+                    {
+                        prev->next = curr->next;
+                        prev = prev->next;
+                    } else
+                    {
+                        head[i] = curr->next;
+                        prev = head[i];
+                    }
+
+                    delete curr;
+                    curr = prev->next;
+                    erased++;
+
+                } else
+                {
+                    prev = curr;
+                    curr = prev->next;
+                }
+            }
+        }
+
+        return erased;
     }
 
 

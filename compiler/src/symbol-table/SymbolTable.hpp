@@ -71,6 +71,7 @@ namespace wic
 
         virtual bool insert(const char*, entry_data, unsigned int, unsigned int);
         virtual bool erase(const char*);
+        virtual int erase(int);
         virtual bool modify(const char*, entry_data, unsigned int, unsigned int);
         virtual TableEntry* lookup(const char*);
         virtual void show(const char*);

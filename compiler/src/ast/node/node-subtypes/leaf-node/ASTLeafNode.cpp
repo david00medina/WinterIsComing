@@ -28,31 +28,32 @@ namespace wic
             case INT:
                 {
                     cpu_registers r = cg->get_reg();
-                    cg->write_code_section("movl", "$" + std::to_string(data_v.int_val), cg->translate_reg(r), "Move int to " + cg->translate_reg(r));
+                    cg->write(CODE, "c%s%s#s", "movl", "$" + std::to_string(data_v.int_val), cg->translate_reg(r), "Move int to " + cg->translate_reg(r));
                     return r;
                 }
             case REAL:
                 {
                     std::string l = cg->get_label(LABEL_FLOAT);
-                    std::string s1 = ".section\t.rodata";
-                    std::string s2 = ".align 4";
-                    cg->write_data_section(2, s1, s2);
-                    cg->write_data_section(l, 1, ".float " + std::to_string(data_v.real_val));
+
+                    cg->write(DATA, "c", ".section\t.rodata");
+                    cg->write(DATA, "c", ".align 4");
+                    cg->write_label(DATA, l);
+                    cg->write(DATA, "c%s", ".float", std::to_string(data_v.real_val));
 
                     cpu_registers r = cg->get_float_reg();
-                    cg->write_code_section("movss", l, cg->translate_reg(r), "Move real to " + cg->translate_reg(r));
+                    cg->write(CODE, "c%s%s#s", "movss", l, cg->translate_reg(r), "Move real to " + cg->translate_reg(r));
                     return r;
                 }
             case CHAR:
                 {
                     cpu_registers r = cg->get_reg();
-                    cg->write_code_section("movl", "$" + std::to_string((int) data_v.char_val), cg->translate_reg(r), "Move char to " + cg->translate_reg(r));
+                    cg->write(CODE, "c%s%s#s", "movl", "$" + std::to_string((int) data_v.char_val), cg->translate_reg(r), "Move char to " + cg->translate_reg(r));
                     return r;
                 }
             case BOOL:
                 {
                     cpu_registers r = cg->get_reg();
-                    cg->write_code_section("movl", "$" + std::to_string((int) data_v.bool_val), cg->translate_reg(r), "Move bool to " + cg->translate_reg(r));
+                    cg->write(CODE, "c%s%s#s", "movl", "$" + std::to_string((int) data_v.bool_val), cg->translate_reg(r), "Move bool to " + cg->translate_reg(r));
                     return r;
                 }
             default:

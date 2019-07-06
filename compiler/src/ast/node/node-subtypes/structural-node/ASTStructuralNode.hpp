@@ -3,6 +3,7 @@
 
 #include "../../ASTNode.hpp"
 #include "../../../../symbol-table/SymbolTablePack.hpp"
+#include "../symbol-table-node/ASTSymbolTableNode.hpp"
 
 namespace wic
 {
@@ -11,7 +12,6 @@ namespace wic
     public:
         ASTStructuralNode();
         ASTStructuralNode(std::string, node_type, data_type);
-        ASTStructuralNode(std::string, node_type, data_type, ASTNode*);
         ~ASTStructuralNode() = default;
     };
 
@@ -19,12 +19,13 @@ namespace wic
     private:
         ASTNode* instr;
         ASTBodyNode* next;
+
         void check_error(std::string) {};
 
     public:
         ASTBodyNode();
         ASTBodyNode(ASTNode*);
-        ~ASTBodyNode() = default;
+        ~ASTBodyNode();
 
         void add_instr(ASTNode*);
         cpu_registers to_code(CodeGenerator*);
@@ -35,12 +36,13 @@ namespace wic
     class ASTMainNode : public ASTStructuralNode {
     private:
         ASTBodyNode* body;
+
         void check_error(std::string) {};
 
     public:
         ASTMainNode();
-        ASTMainNode(ASTNode*);
-        ~ASTMainNode() = default;
+        ASTMainNode(ASTBodyNode*);
+        ~ASTMainNode();
 
         void add_body(ASTBodyNode*);
         cpu_registers to_code(CodeGenerator*);
@@ -51,6 +53,8 @@ namespace wic
         void check_error(std::string) {};
 
     public:
+        ASTNode* ret;
+
         ASTReturnNode();
         ASTReturnNode(ASTNode*);
         ~ASTReturnNode() = default;
@@ -58,14 +62,41 @@ namespace wic
         cpu_registers to_code(CodeGenerator*);
     };
 
+    class ASTArgumentNode : public ASTStructuralNode {
+    private:
+        ASTNode* args;
+        unsigned int num_args;
+        int memory;
+
+        void check_error(std::string) {};
+        void load_args(ASTNode*, CodeGenerator*);
+
+    public:
+        ASTArgumentNode();
+        ASTArgumentNode(ASTNode*);
+        ~ASTArgumentNode();
+
+        void add_argument(ASTNode*);
+        cpu_registers to_code(CodeGenerator*);
+    };
+
     class ASTParamNode : public ASTStructuralNode {
     private:
+        ASTIDNode* params;
+        unsigned int num_params;
+        int param_mem;
+
         void check_error(std::string) {};
 
     public:
         ASTParamNode();
         ASTParamNode(ASTNode*);
-        ~ASTParamNode() = default;
+        ~ASTParamNode();
+
+        unsigned int get_num_params();
+        ASTIDNode* get_params();
+        void add_params(ASTNode*);
+        ASTIDNode* lookup(std::string);
 
         cpu_registers to_code(CodeGenerator*);
     };
