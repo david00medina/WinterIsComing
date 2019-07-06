@@ -152,7 +152,6 @@ int main(int argc, char const **argv) {
 //        main->add_instr(body);
         entry_d.fun.params_no = 0;
         entry_d.fun.return_type = wic::INT;
-        entry_d.fun.global = true;
 
         gst->insert("func", entry_d, yylineno, 1);
 

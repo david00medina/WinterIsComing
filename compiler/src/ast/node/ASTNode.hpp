@@ -26,6 +26,8 @@ namespace wic
         data_type data_t;
         ASTNode* next;
 
+        void add_node(ASTNode*&, ASTNode*);
+
         const char *type_data_str[DATA_TYPE_NUM] =
                 {
                         "int",
@@ -43,7 +45,6 @@ namespace wic
 
         const char *type_node_str[NODE_TYPE_NUM] =
                 {
-                        "if",
                         "while",
                         "for",
                         "scan",
@@ -61,7 +62,6 @@ namespace wic
         data_type get_data_type();
         void set_data_type(data_type);
 
-        void add_node(ASTNode*&, ASTNode*);
         ASTNode* find(unsigned int, node_type, ASTNode*);
 
         virtual void check_error(std::string);

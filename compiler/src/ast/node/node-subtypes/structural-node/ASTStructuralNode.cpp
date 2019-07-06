@@ -171,13 +171,13 @@ namespace wic
     ASTParamNode::ASTParamNode() : ASTStructuralNode("PARAM", PARAM, UNKNOWN)
     {
         num_params = 0;
-        param_mem = 2 * 4: // Make room for the return address and previous EBP
+        param_mem = 2 * 4; // Make room for the return address and previous EBP
     }
 
-    ASTParamNode::ASTParamNode(ASTNode* param) : ASTStructuralNode("PARAM", PARAM, UNKNOWN)
+    ASTParamNode::ASTParamNode(ASTIDNode* param) : ASTStructuralNode("PARAM", PARAM, UNKNOWN)
     {
         num_params = 1;
-        param_mem = 2 * 4: // Make room for the return address and previous EBP
+        param_mem = 2 * 4; // Make room for the return address and previous EBP
         add_params(param);
     }
 
@@ -198,7 +198,19 @@ namespace wic
 
     void ASTParamNode::add_params(wic::ASTIDNode *param)
     {
-        add_node(params, param);
+        if (params == nullptr)
+        {
+            params = param;
+            return;
+        }
+
+        ASTIDNode* curr = params;
+        while (curr != nullptr)
+        {
+            curr = reinterpret_cast<ASTIDNode *>(curr->next);
+        }
+        curr = param;
+
         num_params++;
     }
 
@@ -209,8 +221,8 @@ namespace wic
         while (curr->next != nullptr)
         {
             std::string node_id = curr->get_id();
-            if (node_id.copare(id) == 0) return curr;
-            curr = curr->next;
+            if (node_id.compare(id) == 0) return curr;
+            curr = reinterpret_cast<ASTIDNode *>(curr->next);
         }
 
         return nullptr;
@@ -247,7 +259,7 @@ namespace wic
 
             lst.insert(curr->get_id(), entry_d, yylineno, level+1);
 
-            curr = curr->next;
+            curr = reinterpret_cast<ASTIDNode *>(curr->next);
 
             count--;
         }

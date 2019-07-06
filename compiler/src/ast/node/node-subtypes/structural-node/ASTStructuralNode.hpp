@@ -3,10 +3,11 @@
 
 #include "../../ASTNode.hpp"
 #include "../../../../symbol-table/SymbolTablePack.hpp"
-#include "../symbol-table-node/ASTSymbolTableNode.hpp"
 
 namespace wic
 {
+    class ASTIDNode;
+
     class ASTStructuralNode : public ASTNode
     {
     public:
@@ -90,12 +91,12 @@ namespace wic
 
     public:
         ASTParamNode();
-        ASTParamNode(ASTNode*);
+        ASTParamNode(ASTIDNode*);
         ~ASTParamNode();
 
         unsigned int get_num_params();
         ASTIDNode* get_params();
-        void add_params(ASTNode*);
+        void add_params(ASTIDNode*);
         ASTIDNode* lookup(std::string);
 
         cpu_registers to_code(CodeGenerator*);

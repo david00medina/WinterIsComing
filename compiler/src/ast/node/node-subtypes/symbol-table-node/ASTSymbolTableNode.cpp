@@ -116,7 +116,7 @@ namespace wic
         {
             if (curr_params == nullptr) curr_params = &fun_info->params;
 
-            curr_params->id = curr->get_id();
+            curr_params->id = (char*)curr->get_id();
             curr_params->type = curr->get_data_type();
 
             curr = reinterpret_cast<ASTIDNode *>(curr->next);
@@ -127,7 +127,8 @@ namespace wic
 
         entry_d.fun = *fun_info;
 
-        global_te = gst->insert(id.c_str(), entry_d, yylineno, level);
+        gst->insert(id.c_str(), entry_d, yylineno, level);
+        global_te = gst->lookup(id.c_str());
     }
 
     ASTFunctionNode::~ASTFunctionNode()
@@ -145,7 +146,7 @@ namespace wic
     {
         params->to_code(cg);
         body->to_code(cg);
-        return ret->to_code();
+        return ret->to_code(cg);
     }
 
     ASTCallNode::ASTCallNode(std::string id, wic::data_type data_t, wic::ASTArgumentNode *arg)
