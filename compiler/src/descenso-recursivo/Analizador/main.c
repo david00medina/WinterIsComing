@@ -7,8 +7,13 @@ int yylex();
 int fails = 0;
 char terminals [][20] = {"END_OF_INSTR","RETURN","BREAK","VARIABLE","INT_VAL","REAL_VAL","BOOL_VAL","INT_TYPE","REAL_TYPE","BOOL_TYPE","ASSIGN","SUM","SUBSTRACT","PRODUCT","DIVIDE","AND","OR","NOT","EQUALS","NOT_EQUALS","GREATER","GREATER_EQUALS","LESS","LESS_EQUALS","HEADER_END","FOR_WHILE_CLAUSE","SQUARE_BRACKET_OPEN","SQUARE_BRACKET_CLOSE","PARETHESES_OPEN","PARETHESES_CLOSE","ID","OPEN_CONTEXT_TAG","CLOSE_CONTEXT_TAG"};
 
-int main() {
-    yyin = fopen("./tests/DRTest7.wic", "r");
+int main(int argc, char** argv) {
+    //yyin = fopen("./tests/DRTest7.wic", "r");
+	printf("\n--------[%s]--------\n",argv[1]);
+	//char ss []= "./tests/DRTest";
+	//strcat(ss, argv[1]);
+	//strcat(ss,".wic");
+	yyin = fopen(argv[1], "r");
     l = getChar();
     while_instr();
     if(fails==0){
