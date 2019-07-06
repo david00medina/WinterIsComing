@@ -6,6 +6,8 @@
 extern wic::GSymbolTable* gst;
 extern wic::SSymbolTable* sst;
 extern wic::LSymbolTable* lst;
+
+extern int yylineno;
 extern int level;
 
 namespace wic
@@ -123,7 +125,9 @@ namespace wic
             curr_params->next = new_param;
         }
 
-        global_te = gst->insert(id.c_str());
+        entry_d.fun = *fun_info;
+
+        global_te = gst->insert(id.c_str(), entry_d, yylineno, level);
     }
 
     ASTFunctionNode::~ASTFunctionNode()
