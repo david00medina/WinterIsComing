@@ -104,8 +104,8 @@ namespace wic
         this->ret = ret;
 
         entry_data entry_d;
-
-        fun_info->params_no = param->get_num_params();
+        fun_info = new function;
+        fun_info->params_no = params->get_num_params();
         fun_info->return_type = data_t;
 
 
@@ -143,10 +143,33 @@ namespace wic
         return body;
     }
 
+    bool ASTFunctionNode::match(std::string id, wic::function* call)
+    {
+        if (id.compare(id) != 0 || fun_info->params_no != call->params_no || fun_info->return_type != call->return_type) return false;
+
+        param_list* curr = &(fun_info->params);
+        param_list* curr_call = &(call->params);
+
+        while (curr != nullptr && curr_call != nullptr)
+        {
+            if (curr->type != curr_call->type) return false;
+            curr = curr->next;
+            curr_call = curr_call->next;
+        }
+
+        return true;
+    }
+
     cpu_registers ASTFunctionNode::to_code(wic::CodeGenerator *cg)
     {
+        cg->write(FUNCTION_CODE, "c", ".text");
+        cg->write(FUNCTION_CODE, "c%s", ".globl", "_" + id);
+        cg->write(FUNCTION_CODE, "c%s%c", ".type", "_" + id, "@function");
+        cg->write_label(FUNCTION_CODE, "_" + id);
+
         params->to_code(cg);
         body->to_code(cg);
+
         return ret->to_code(cg);
     }
 
@@ -167,9 +190,27 @@ namespace wic
         return args;
     }
 
+    entry_data ASTCallNode::get_entry_data()
+    {
+        return entry_d;
+    }
+
     cpu_registers ASTCallNode::to_code(CodeGenerator *cg)
     {
         check_error(id);
+        entry_d.fun.params_no = args->get_num_args();
+        entry_d.fun.return_type = data_t;
+
+        ASTArgumentNode* curr = args;
+        param_list* curr_param = new param_list;
+
+        while (curr != nullptr)
+        {
+            curr_param->type = curr->get_data_type();
+            curr_param->next = new param_list;
+            curr_param = curr_param->next;
+            curr = reinterpret_cast<ASTArgumentNode *>(curr->next);
+        }
 
         if (args != nullptr) args->to_code(cg);
         cg->write(CODE, "c%s#s", "call", "_" + id, "Call the function \'" + id + "\'");

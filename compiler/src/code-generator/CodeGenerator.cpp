@@ -25,8 +25,7 @@ namespace wic
         float_spill_count = 8;
 
         for (int i = 0; i < TOTAL_REG; ++i) {
-            if (i != ESP && i != EBP) reg_use[i] = false;
-            else reg_use[i] = true;
+            reg_use[i] = !(i != ESP && i != EBP);
         }
     }
 
@@ -47,8 +46,7 @@ namespace wic
         float_spill_count = 8;
 
         for (int i = 0; i < TOTAL_REG; ++i) {
-            if (i != ESP && i != EBP) reg_use[i] = false;
-            else reg_use[i] = true;
+            reg_use[i] = !(i != ESP && i != EBP);
         }
     }
 
@@ -240,7 +238,9 @@ namespace wic
             case DATA:
                 fdata << label << ":" << std::endl;
                 break;
-
+            case FUNCTION_CODE:
+                ffunc << "_" + label << ":" << std::endl;
+                break;
             default:
                 break;
         }
@@ -397,15 +397,6 @@ namespace wic
         }
         fdata.close();
 
-        fcode.seekg(0);
-        fcode.seekp(0);
-        while(!fcode.eof())
-        {
-            fcode.get(ch);
-            fout << ch;
-        }
-        fcode.close();
-
         ffunc.seekg(0);
         ffunc.seekp(0);
         while(!ffunc.eof())
@@ -415,11 +406,20 @@ namespace wic
         }
         ffunc.close();
 
+        fcode.seekg(0);
+        fcode.seekp(0);
+        while(!fcode.eof())
+        {
+            fcode.get(ch);
+            fout << ch;
+        }
+        fcode.close();
+
         fout.close();
 
         std::remove("data.s");
-        std::remove("code.s");
         std::remove("func.s");
+        std::remove("code.s");
     }
 
     void CodeGenerator::print_reg_use()

@@ -118,7 +118,7 @@ namespace wic
             TableEntry* curr = head[i];
             TableEntry* next = nullptr;
 
-            if (curr != nullptr) next = curr->next;
+            if (curr != nullptr && curr->next != nullptr) next = curr->next;
 
             while (curr != nullptr)
             {
@@ -129,7 +129,6 @@ namespace wic
                     prev = next;
                     if (next != nullptr) curr = next->next;
                     else curr = nullptr;
-                    std::cout << "HOLA" << std::endl;
                     if (curr != nullptr) next = curr->next;
                 } else
                 {

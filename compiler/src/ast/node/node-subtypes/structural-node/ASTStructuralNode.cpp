@@ -3,6 +3,8 @@
 #include "../../../../symbol-table/SymbolTable.hpp"
 #include "../../../../code-generator/CodeGenerator.hpp"
 #include "../symbol-table-node/ASTSymbolTableNode.hpp"
+#include "../../../../error-manager/ErrorManager.hpp"
+#include "../leaf-node/ASTLeafNode.hpp"
 
 extern wic::GSymbolTable* gst;
 extern wic::SSymbolTable* sst;
@@ -16,10 +18,14 @@ namespace wic
     ASTStructuralNode::ASTStructuralNode(std::string name, wic::node_type node_t, wic::data_type data_t)
         : ASTNode(name, node_t, data_t) {}
 
-    ASTBodyNode::ASTBodyNode() : ASTStructuralNode("BODY", BODY, UNKNOWN) {}
+    ASTBodyNode::ASTBodyNode() : ASTStructuralNode("BODY", BODY, UNKNOWN)
+    {
+        instr_count = 0;
+    }
 
     ASTBodyNode::ASTBodyNode(ASTNode* instr) : ASTStructuralNode("BODY", BODY, UNKNOWN)
     {
+        instr_count = 0;
         add_instr(instr);
     }
 
@@ -29,27 +35,53 @@ namespace wic
         delete next;
     }
 
+    void ASTBodyNode::set_main(wic::ASTMainNode *main)
+    {
+        this->main = main;
+    }
+
     void ASTBodyNode::add_instr(ASTNode *node)
     {
         add_node(instr, node);
+        instr_count++;
+    }
+
+    unsigned int ASTBodyNode::get_instr_count()
+    {
+        return instr_count;
     }
 
     cpu_registers ASTBodyNode::to_code(CodeGenerator *cg) {
-        ASTNode *curr = instr;
+        ASTNode* curr = instr;
+        level++;
         while (curr != nullptr) {
-            cpu_registers ret = curr->to_code(cg);
+            curr->to_code(cg);
+            if (curr->get_node_type() == CALL) {
+                ASTCallNode* call = reinterpret_cast<ASTCallNode *>(curr);
+
+                function fun = call->get_entry_data().fun;
+                if (!main->match_function(call->get_id(), &fun))
+                    ErrorManager::send(NOT_DECLARED_FUN, call->get_id());
+            }
+
             curr = curr->next;
         }
 
         lst->erase(level);
+        level--;
         return NONE;
     }
 
-    ASTMainNode::ASTMainNode() : ASTStructuralNode("MAIN", MAIN, UNKNOWN) {}
+    ASTMainNode::ASTMainNode() : ASTStructuralNode("MAIN", MAIN, UNKNOWN)
+    {
+        body = nullptr;
+        fun_list = nullptr;
+    }
 
     ASTMainNode::ASTMainNode(ASTBodyNode* n) : ASTStructuralNode("MAIN",  MAIN, UNKNOWN)
     {
         add_body(n);
+        fun_list = nullptr;
     }
 
     ASTMainNode::~ASTMainNode()
@@ -73,10 +105,42 @@ namespace wic
         curr = node;
     }
 
+    void ASTMainNode::add_function(wic::ASTFunctionNode *node)
+    {
+        if (fun_list == nullptr)
+        {
+            fun_list = node;
+            return;
+        }
+
+        ASTFunctionNode* curr = fun_list;
+        while (curr != nullptr)
+        {
+            curr = reinterpret_cast<ASTFunctionNode *>(curr->next);
+        }
+        curr = node;
+    }
+
+    bool ASTMainNode::match_function(std::string id, function* call)
+    {
+        if(gst->lookup(id.c_str()) == nullptr) return false;
+
+        ASTFunctionNode* curr = fun_list;
+
+        while (curr != nullptr)
+        {
+            if (curr->match(id, call)) return true;
+            curr = reinterpret_cast<ASTFunctionNode *>(curr->next);
+        }
+
+        return false;
+    }
+
     cpu_registers ASTMainNode::to_code(CodeGenerator *cg) {
         cg->init();
         cg->push_stack();
 
+        body->set_main(this);
         ASTBodyNode* node = body;
 
         while (node != nullptr)
@@ -85,6 +149,14 @@ namespace wic
             node = node->next;
         }
         cg->exit();
+
+        ASTFunctionNode* fun = fun_list;
+        while (fun != nullptr)
+        {
+            fun->to_code(cg);
+            fun = reinterpret_cast<ASTFunctionNode *>(fun->next);
+        }
+
         cg->end();
 
         return NONE;
@@ -97,7 +169,7 @@ namespace wic
 
     ASTArgumentNode::ASTArgumentNode(wic::ASTNode *arg) : ASTStructuralNode("ARGUMENT", ARG, UNKNOWN)
     {
-        num_args = 1;
+        num_args = 0;
         memory += 4;
         add_argument(arg);
     }
@@ -157,13 +229,19 @@ namespace wic
         cg->free_reg(r);
     }
 
+    int ASTArgumentNode::get_num_args()
+    {
+        return num_args;
+    }
+
     cpu_registers ASTArgumentNode::to_code(wic::CodeGenerator *cg)
     {
         ASTNode* curr = args;
+        curr = curr->next;
+
         while (curr != nullptr)
         {
             load_args(curr, cg);
-
             curr = curr->next;
         }
     }

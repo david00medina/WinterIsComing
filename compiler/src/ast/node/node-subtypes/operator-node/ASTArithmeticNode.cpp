@@ -58,7 +58,7 @@ namespace wic
 
     cpu_registers ASTArithmeticNode::division(div_selector selector, CodeGenerator *cg)
     {
-        cg->write(CODE, "c%s%s#s", "movl", "$0", cg->translate_reg(EDX), cg->translate_reg(EDX) + " = 0");
+        cg->write(CODE, "c%c%s#s", "movl", "$0", cg->translate_reg(EDX), cg->translate_reg(EDX) + " = 0");
         cg->write(CODE, "c#s", "cltd", cg->translate_reg(EDX) + ":" + cg->translate_reg(EAX));
 
         std::string comment;

@@ -12,10 +12,12 @@
 namespace wic
 {
     class AbstractSyntaxTree;
+    class ASTMainNode;
     class ASTBodyNode;
     class ASTArgumentNode;
     class ASTParamNode;
     class ASTFunctionNode;
+    class ASTCallNode;
     class CodeGenerator;
 
     class ASTNode
@@ -70,10 +72,12 @@ namespace wic
         virtual void print();
 
         friend class AbstractSyntaxTree;
+        friend class ASTMainNode;
         friend class ASTBodyNode;
         friend class ASTArgumentNode;
         friend class ASTParamNode;
         friend class ASTFunctionNode;
+        friend class ASTCallNode;
     };
 }
 

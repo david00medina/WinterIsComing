@@ -54,6 +54,7 @@ namespace wic {
         ~ASTFunctionNode();
 
         ASTNode* get_body();
+        bool match(std::string, function*);
 
         cpu_registers to_code(CodeGenerator*);
     };
@@ -61,7 +62,8 @@ namespace wic {
     class ASTCallNode : public ASTSymbolTableNode
     {
     private:
-        ASTNode* args;
+        ASTArgumentNode* args;
+        entry_data entry_d;
 
     public:
         ASTCallNode() = default;
@@ -69,6 +71,7 @@ namespace wic {
         ~ASTCallNode();
 
         ASTNode* get_args();
+        entry_data get_entry_data();
 
         cpu_registers to_code(CodeGenerator*);
     };

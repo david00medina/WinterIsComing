@@ -7,6 +7,7 @@
 namespace wic
 {
     class ASTIDNode;
+    class ASTFunctionNode;
 
     class ASTStructuralNode : public ASTNode
     {
@@ -18,8 +19,10 @@ namespace wic
 
     class ASTBodyNode : public ASTStructuralNode {
     private:
+        ASTMainNode* main;
         ASTNode* instr;
         ASTBodyNode* next;
+        unsigned int instr_count;
 
         void check_error(std::string) {};
 
@@ -28,7 +31,9 @@ namespace wic
         ASTBodyNode(ASTNode*);
         ~ASTBodyNode();
 
+        void set_main(ASTMainNode*);
         void add_instr(ASTNode*);
+        unsigned int get_instr_count();
         cpu_registers to_code(CodeGenerator*);
 
         friend class ASTMainNode;
@@ -37,6 +42,7 @@ namespace wic
     class ASTMainNode : public ASTStructuralNode {
     private:
         ASTBodyNode* body;
+        ASTFunctionNode* fun_list;
 
         void check_error(std::string) {};
 
@@ -46,6 +52,8 @@ namespace wic
         ~ASTMainNode();
 
         void add_body(ASTBodyNode*);
+        void add_function(ASTFunctionNode*);
+        bool match_function(std::string, function*);
         cpu_registers to_code(CodeGenerator*);
     };
 
@@ -78,6 +86,7 @@ namespace wic
         ~ASTArgumentNode();
 
         void add_argument(ASTNode*);
+        int get_num_args();
         cpu_registers to_code(CodeGenerator*);
     };
 
