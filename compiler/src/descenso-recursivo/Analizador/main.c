@@ -60,13 +60,8 @@ void instr () {
     }else if (l == ID) {
 		match(ID);
         if(l == LESS || l == GREATER || l == GREATER_EQUALS || l == NOT_EQUALS || l == LESS_EQUALS){
-            match(l);
-            if(l == INT_VAL || l == REAL_VAL || l == BOOL_VAL){
-                match(l);
-            } else if (l == ID){
-                match(ID);
-            }
-            anid_while();
+            preanid_while();
+			anid_while();
         } else {
             match(ASSIGN);
             term();
@@ -81,19 +76,23 @@ void instr () {
     } else if(l == INT_VAL || l == REAL_VAL || l == BOOL_VAL){
         match(l);
         if(l == LESS || l == GREATER || l == GREATER_EQUALS || l == NOT_EQUALS || l == LESS_EQUALS){
-            match(l);
-            if(l == INT_VAL || l == REAL_VAL || l == BOOL_VAL){
-                match(l);
-            } else if (l == ID){
-                match(l);
-            } else {
-                printf("ERROR[instr]: Expresión de while no correcta.\n");
-            }
+            preanid_while();
         }
 		anid_while(); 
 	} else {
         printf("ERROR[instr]: Algo va mal con la inicialización de una instrucción.\n");
     }
+}
+
+void preanid_while(){
+	match(l);
+	if(l == INT_VAL || l == REAL_VAL || l == BOOL_VAL){
+		match(l);
+	} else if (l == ID){
+		match(ID);
+	} else {
+		printf("ERROR[instr]: Expresión de while no correcta.\n");
+	}
 }
 
 void anid_while(){
@@ -133,7 +132,7 @@ void expr () {
 void term () {
 	if (l == INT_VAL || l == REAL_VAL || l == BOOL_VAL) {
 		data_value();
-	} else {
+	} else if(l == ID){
 		match(ID);
 	}
 	if (l == SUM) {
@@ -148,7 +147,7 @@ void term () {
 	} else if (l == DIVIDE) {
 		match(DIVIDE);
 		term();
-	} //else if (l != END_OF_INSTR && l != FOR_WHILE_CLAUSE) {
+	}// else if (l != END_OF_INSTR && l != FOR_WHILE_CLAUSE) {
 		//printf("WARNING[term]: Es posible que se haya introducido un operando no reconocible. -> [%s]\n", terminals[l-257]);
 	//}
 }

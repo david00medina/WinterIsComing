@@ -1,0 +1,10 @@
+true ??:
+    int x = base / pivote
+    pivote = pivote + 1
+    int a = 0
+    a < 100 ??:
+        a = a + base
+        a < 100 ??:
+            a = a + base
+            break
+    int prueba = 100
