@@ -85,15 +85,24 @@
 %right POWER
 %nonassoc INCREMENT DECREMENT
 
-%start input
+%start main
 
 %%
 
 /* Definición de gramáticas */
 
+main: input {	wic::ASTMainNode* main_ = new wic::ASTMainNode();
+				wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($1);
+				main_->add_body(input);
+				$$ = ast-> tree_build(main_);
+			}
+
 input: instr END_OF_INSTR input
-    | END_OF_INSTR input
-    | OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG input
+    | {wic::ASTBodyNode* body = new wic::ASTBodyNode();} OPEN_CONTEXT_TAG instr {
+																					wic::ASTNode* instr = reinterpret_cast<wic::ASTNode* >($3);
+																					body->add_instr(instr);
+																				} 
+	  CLOSE_CONTEXT_TAG {} input 
     | /* empty */
 
 data_init: GLOBAL data_type			  {
@@ -182,22 +191,17 @@ instr: data_init ID                               {
     						    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
     						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, term);
 
-    						    ast->tree_build(assign);
-    						    $$ = assign;
+    						    $$ = ast->tree_build(assign);
     						    lst->show(id->get_id());
     						  }
     | ID array_access ASSIGN expr
-    | if_instr
+    | if_instr {$$ = ($1);}
     | for_instr
-    | while_instr
-    | expr                                        {
-    						    ast->tree_build(reinterpret_cast<wic::ASTNode *>($1));
-                                                    ast->print();
-                                                    std::cout << std::endl;
-                                                    //$$ = ast->get_root();
-                                                  }
-    | fun_init
+    | while_instr {$$ = ($1);}
+    | expr { $$ = ($1); }
+    | fun_init 
     | fun_call
+	| /* empty */
 
 params: params ELEM_SEPARATOR data_type ID
     | data_type ID
@@ -216,18 +220,23 @@ fun_init: FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE HEADER_END EN
 
 fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR
 
-while_instr: expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      while_middle_blocks
-      while_end_block
+while_instr: expr { wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* >($1); } FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input { wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($7); } CLOSE_CONTEXT_TAG
+      while_middle_blocks { wic::ASTWhileNode* whilemid_= reinterpret_cast<wic::ASTWhileNode* >($10); }
+      while_end_block {
+							wic::ASTBodyNode* welse_ = reinterpret_cast<wic::ASTBody *>($12);
+							wic::ASTWhileNode* while_ = new wic::ASTWhileNode(expr, input, welse_);
+							while_->add_mid_block(whilemid_);
+				    		$$ = ast->tree_build(while_);
+					  }
 
 while_middle_blocks: while_middle_blocks
-      ELSE_IF_FOR_WHILE_CLAUSE expr FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+      ELSE_IF_FOR_WHILE_CLAUSE expr { wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* <($3); } FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input { wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($8); } CLOSE_CONTEXT_TAG { $$ = wic::ASTWhileNode* while_ = new wic::ASTWhileNode(expr, input); }
     | /* empty */
 
 while_end_block: ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG { $$ = ($5); }
     | /* empty */
 
 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
@@ -244,18 +253,23 @@ for_end_block: ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
     | /* empty */
 
-if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-      if_middle_blocks
-      if_end_block
+if_instr: expr { wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* >($1); } IF_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input { wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($7); } CLOSE_CONTEXT_TAG
+      if_middle_blocks { wic::ASTIfNode* ifmid_= reinterpret_cast<wic::ASTIfNode* >($10); }
+      if_end_block {
+						wic::ASTBodyNode* else_ = reinterpret_cast<wic::ASTBody *>($12);
+						wic::ASTIfNode* if_ = new wic::ASTIfNode(expr, input, else_);
+						if_->add_mid_block(ifmid_);
+				    	$$ = ast->tree_build(if_);
+				   }
 
 if_middle_blocks: if_middle_blocks
-      ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+      ELSE_IF_FOR_WHILE_CLAUSE expr { wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* <($3); } IF_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input { wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($8); } CLOSE_CONTEXT_TAG { $$ = wic::ASTIfNode* if_ = new wic::ASTIfNode(expr, input); }
     | /* empty */
 
 if_end_block: ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
-    OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+    OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG { $$ = ($5); }
     | /* empty */
 
 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
@@ -271,7 +285,7 @@ expr: ID                                          {
 						  	<< std::endl;
 						  	exit(-1);
 						    }
-						    $$ = id;
+						    $$ = ast->tree_build(id);
 						  }
     | expr SUM term                               {
                                                     wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
@@ -310,7 +324,7 @@ expr: ID                                          {
     | expr UNION term
     | expr DIFFERENCE term
     | expr INTERSECTION term
-    | term
+    | term { $$ = ($1); }
     | data_vector
 
 term: term PRODUCT power                          {
