@@ -36,4 +36,4 @@ compile:
 					#mv *.a *.o build
 
 clean:
-					rm -rf build wic *.s wic.output
+					rm -rf build wic *.s wic.output *.o

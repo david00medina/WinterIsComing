@@ -13,6 +13,8 @@
     #include "../ast/node/node-subtypes/leaf-node/ASTLeafNode.hpp"
     #include "../ast/node/node-subtypes/symbol-table-node/ASTSymbolTableNode.hpp"
     #include "../ast/node/node-subtypes/operator-node/ASTArithmeticNode.hpp"
+    #include "../ast/node/node-subtypes/operator-node/ASTRelationalNode.hpp"
+    #include "../ast/node/node-subtypes/clause-node/ASTClauseNode.hpp"
     #include "../symbol-table/SymbolTable.hpp"
     #include "../code-generator/CodeGenerator.hpp"
 
@@ -92,16 +94,17 @@
 /* Definición de gramáticas */
 
 main: input {	wic::ASTMainNode* main_ = new wic::ASTMainNode();
-				wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($1);
-				main_->add_body(input);
-				$$ = ast-> tree_build(main_);
-			}
+		wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($1);
+		main_->add_body(input);
+		$$ = ast-> tree_build(main_);
+	    }
 
 input: instr END_OF_INSTR input
-    | {wic::ASTBodyNode* body = new wic::ASTBodyNode();} OPEN_CONTEXT_TAG instr {
-																					wic::ASTNode* instr = reinterpret_cast<wic::ASTNode* >($3);
-																					body->add_instr(instr);
-																				} 
+    | { $$ = new wic::ASTBodyNode();} OPEN_CONTEXT_TAG instr {
+							       wic::ASTBodyNode* body_ = reinterpret_cast<wic::ASTBodyNode *>($1);
+							       wic::ASTNode* instr = reinterpret_cast<wic::ASTNode* >($3);
+							       body_->add_instr(instr);
+							     }
 	  CLOSE_CONTEXT_TAG {} input 
     | /* empty */
 
@@ -177,23 +180,6 @@ instr: data_init ID                               {
     						    std::cout << std::endl;
     						  }
     | ID array_access                             { printf("Término (VectorVal)");}
-    | ID ASSIGN expr                              {
-    						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
-
-    						    if (!id->is_registered()) {
-    						    	std::cout << termcolor::red << termcolor::bold
-    						    	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
-    						    	<< "\' was not declared in this scope"
-    						    	<< std::endl;
-    						    	exit(-1);
-    						    }
-
-    						    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
-    						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, term);
-
-    						    $$ = ast->tree_build(assign);
-    						    lst->show(id->get_id());
-    						  }
     | ID array_access ASSIGN expr
     | if_instr {$$ = ($1);}
     | for_instr
@@ -201,7 +187,7 @@ instr: data_init ID                               {
     | expr { $$ = ($1); }
     | fun_init 
     | fun_call
-	| /* empty */
+    | /* empty */
 
 params: params ELEM_SEPARATOR data_type ID
     | data_type ID
@@ -220,23 +206,23 @@ fun_init: FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE HEADER_END EN
 
 fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR
 
-while_instr: expr { wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* >($1); } FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input { wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($7); } CLOSE_CONTEXT_TAG
-      while_middle_blocks { wic::ASTWhileNode* whilemid_= reinterpret_cast<wic::ASTWhileNode* >($10); }
-      while_end_block {
+while_instr: expr /*{ wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* >($1); }*/ FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input /*{ wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($7); }*/ CLOSE_CONTEXT_TAG
+      while_middle_blocks /*{ wic::ASTWhileNode* whilemid_= reinterpret_cast<wic::ASTWhileNode* >($10); }*/
+      while_end_block /*{
 							wic::ASTBodyNode* welse_ = reinterpret_cast<wic::ASTBody *>($12);
 							wic::ASTWhileNode* while_ = new wic::ASTWhileNode(expr, input, welse_);
 							while_->add_mid_block(whilemid_);
 				    		$$ = ast->tree_build(while_);
-					  }
+					  }*/
 
 while_middle_blocks: while_middle_blocks
-      ELSE_IF_FOR_WHILE_CLAUSE expr { wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* <($3); } FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input { wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($8); } CLOSE_CONTEXT_TAG { $$ = wic::ASTWhileNode* while_ = new wic::ASTWhileNode(expr, input); }
+      ELSE_IF_FOR_WHILE_CLAUSE expr /*{ wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* <($3); }*/ FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input /*{ wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($8); }*/ CLOSE_CONTEXT_TAG /*{ $$ = wic::ASTWhileNode* while_ = new wic::ASTWhileNode(expr, input); }*/
     | /* empty */
 
 while_end_block: ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG { $$ = ($5); }
+      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG /*{ $$ = ($5); }*/
     | /* empty */
 
 for_instr: expr FOR_WHILE_CLAUSE expr HEADER_END END_OF_INSTR
@@ -253,19 +239,27 @@ for_end_block: ELSE_IF_FOR_WHILE_CLAUSE FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
     | /* empty */
 
-if_instr: expr { wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* >($1); } IF_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input { wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($7); } CLOSE_CONTEXT_TAG
-      if_middle_blocks { wic::ASTIfNode* ifmid_= reinterpret_cast<wic::ASTIfNode* >($10); }
+if_instr: expr IF_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+      if_middle_blocks
       if_end_block {
-						wic::ASTBodyNode* else_ = reinterpret_cast<wic::ASTBody *>($12);
-						wic::ASTIfNode* if_ = new wic::ASTIfNode(expr, input, else_);
-						if_->add_mid_block(ifmid_);
-				    	$$ = ast->tree_build(if_);
-				   }
+      		     wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode *>($1);
+      		     wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode *>($6);
+      		     wic::ASTIfNode* ifmid_= reinterpret_cast<wic::ASTIfNode *>($8);
+		     wic::ASTBodyNode* else_ = reinterpret_cast<wic::ASTBodyNode *>($9);
 
-if_middle_blocks: if_middle_blocks
-      ELSE_IF_FOR_WHILE_CLAUSE expr { wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* <($3); } IF_CLAUSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input { wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($8); } CLOSE_CONTEXT_TAG { $$ = wic::ASTIfNode* if_ = new wic::ASTIfNode(expr, input); }
+		     wic::ASTIfNode* if_ = new wic::ASTIfNode(expr, input, else_);
+		     if_->add_mid_block(ifmid_);
+
+		     $$ = ast->tree_build(if_);
+		   }
+
+if_middle_blocks: if_middle_blocks ELSE_IF_FOR_WHILE_CLAUSE expr IF_CLAUSE HEADER_END END_OF_INSTR
+      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG {
+        					  wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode *>($3);
+      						  wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($8);
+      						  $$ = new wic::ASTIfNode(expr, input);
+      					       }
     | /* empty */
 
 if_end_block: ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
@@ -274,18 +268,22 @@ if_end_block: ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
 
 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
 
-expr: ID                                          {
+expr: ID ASSIGN expr                              {
 						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
-						    std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
 
 						    if (!id->is_registered()) {
-						  	std::cout << termcolor::red << termcolor::bold
-						  	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
-						  	<< "\' was not declared in this scope"
-						  	<< std::endl;
-						  	exit(-1);
+							std::cout << termcolor::red << termcolor::bold
+							<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+							<< "\' was not declared in this scope"
+							<< std::endl;
+							exit(-1);
 						    }
-						    $$ = ast->tree_build(id);
+
+						    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, term);
+
+						    $$ = ast->tree_build(assign);
+						    lst->show(id->get_id());
 						  }
     | expr SUM term                               {
                                                     wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
@@ -327,7 +325,21 @@ expr: ID                                          {
     | term { $$ = ($1); }
     | data_vector
 
-term: term PRODUCT power                          {
+term: ID                                          {
+      						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+      						    std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
+
+      						    if (!id->is_registered())
+      						    {
+      						  	std::cout << termcolor::red << termcolor::bold
+      						  	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+      						  	<< "\' was not declared in this scope"
+      						  	<< std::endl;
+      						  	exit(-1);
+      						    }
+      						    $$ = ast->tree_build(id);
+      						  }
+    | term PRODUCT power                          {
                                                     wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
                                                     wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
