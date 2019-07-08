@@ -268,52 +268,127 @@ if_end_block: ELSE_IF_FOR_WHILE_CLAUSE IF_CLAUSE HEADER_END END_OF_INSTR
 
 array_access: SQUARE_BRACKET_OPEN INT_VAL SQUARE_BRACKET_CLOSE
 
-expr: ID ASSIGN expr                              {
-						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+expr: ID ASSIGN expr
+				{
+					    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
 
-						    if (!id->is_registered()) {
-							std::cout << termcolor::red << termcolor::bold
+					    if (!id->is_registered()) {
+						std::cout << termcolor::red << termcolor::bold
 							<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
 							<< "\' was not declared in this scope"
 							<< std::endl;
-							exit(-1);
-						    }
+						exit(-1);
+				    	}
 
-						    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
-						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, term);
+				    	wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+				    	wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, term);
 
-						    $$ = ast->tree_build(assign);
-						    lst->show(id->get_id());
-						  }
-    | expr SUM term                               {
-                                                    wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
-                                                    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+				 	$$ = ast->tree_build(assign);
+					lst->show(id->get_id());
 
-                                                    wic::ASTSumNode* sum = new wic::ASTSumNode(expr, term);
-						    sum->to_code(cg);
-                                                    $$ = ast->tree_build(sum);
-                                                  }
-    | expr SUBSTRACT term                         {
-                                                    wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
-                                                    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+			  	}
+    | expr SUM term
+             			{
+				    	wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+				    	wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTSubNode* sub = new wic::ASTSubNode(expr, term);
+				    	wic::ASTSumNode* sum = new wic::ASTSumNode(expr, term);
+				 	sum->to_code(cg);
+				    	$$ = ast->tree_build(sum);
+				}
+    | expr SUBSTRACT term
+    				{
+                                	wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+                                        wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    $$ = ast->tree_build(sub);
-                                                  }
+                                        wic::ASTSubNode* sub = new wic::ASTSubNode(expr, term);
+
+                                        $$ = ast->tree_build(sub);
+			  	}
     | INCREMENT ID
     | ID INCREMENT
     | DECREMENT ID
     | ID DECREMENT
     | expr LESS term
+ 				{
+ 					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+
+ 					wic::ASTLessNode* less = new wic::ASTLessNode(expr, term);
+
+ 					$$ = ast<tree_build(less);
+ 				}
     | expr LESS_EQUALS term
+ 				{
+ 					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+
+ 					wic::ASTLessEqualNode* less_equal = new wic::ASTLessEqualNode(expr, term);
+
+ 					$$ = ast<tree_build(less_equal);
+ 				}
     | expr GREATER term
+ 				{
+ 					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+
+ 					wic::ASTGreaterNode* greater = new wic::AST_GreaterNode(expr, term);
+
+ 					$$ = ast<tree_build(greater);
+ 				}
     | expr GREATER_EQUALS term
+ 				{
+ 					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+
+ 					wic::ASTGreaterEqualNode* greater_equal = new wic::ASTGreaterEqualNode(expr, term);
+
+ 					$$ = ast<tree_build(greater_equal);
+ 				}
     | expr EQUALS term
+ 				{
+ 					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+
+ 					wic::ASTEqualNode* equal = new wic::ASTEqualNode(expr, term);
+
+ 					$$ = ast<tree_build(equal);
+ 				}
     | expr NOT_EQUALS term
+ 				{
+ 					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+
+ 					wic::ASTNotEqualNode* not_equal = new wic::ASTNotEqualNode(expr, term);
+
+ 					$$ = ast<tree_build(not_equal);
+ 				}
     | expr AND term
+ 				{
+ 					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+
+ 					wic::ASTAndNode* and = new wic::ASTAndNode(expr, term);
+
+ 					$$ = ast<tree_build(and);
+ 				}
     | expr OR term
+ 				{
+ 					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
+
+ 					wic::ASTOrNode* or = new wic::ASTOrNode(expr, term);
+
+ 					$$ = ast<tree_build(or);
+ 				}
     | NOT term
+ 				{
+ 					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($2);
+
+ 					wic::ASTNotNode* not = new wic::ASTNotNode(term);
+
+ 					$$ = ast<tree_build(not);
+ 				}
     | expr AND_BIT term
     | expr OR_BIT term
     | expr XOR_BIT term
@@ -325,100 +400,112 @@ expr: ID ASSIGN expr                              {
     | term { $$ = ($1); }
     | data_vector
 
-term: ID                                          {
-      						    wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
-      						    std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
+term: ID
+				{
+				    	wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+				    	std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
 
-      						    if (!id->is_registered())
-      						    {
-      						  	std::cout << termcolor::red << termcolor::bold
-      						  	<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
+				    	if (!id->is_registered())
+				    	{
+						std::cout << termcolor::red << termcolor::bold
+							<< "[!] Error: " << termcolor::reset << "\'" << id->get_id()
       						  	<< "\' was not declared in this scope"
       						  	<< std::endl;
       						  	exit(-1);
-      						    }
-      						    $$ = ast->tree_build(id);
-      						  }
-    | term PRODUCT power                          {
-                                                    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
-                                                    wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
+				    	}
+				    		$$ = ast->tree_build(id);
+			  	}
+    | term PRODUCT power
+				{
+				    	wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
+				    	wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTProdNode* prod = new wic::ASTProdNode(term, power);
+				    	wic::ASTProdNode* prod = new wic::ASTProdNode(term, power);
 
-                                                    $$ = ast->tree_build(prod);
-                                                  }
-    | term DIVIDE power                           {
-                                                    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
-                                                    wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
+				    	$$ = ast->tree_build(prod);
+			  	}
+    | term DIVIDE power
+                      		{
+				    	wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
+				    	wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTDivNode* div = new wic::ASTDivNode(term, power);
+				    	wic::ASTDivNode* div = new wic::ASTDivNode(term, power);
 
-                                                    $$ = ast->tree_build(div);
-                                                  }
-    | term MODULUS power                          {
-                                                    wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
-                                                    wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
+				    	$$ = ast->tree_build(div);
+			  	}
+    | term MODULUS power
+	      			{
+				    	wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($1);
+				    	wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTModNode* mod = new wic::ASTModNode(term, power);
+				    	wic::ASTModNode* mod = new wic::ASTModNode(term, power);
 
-                                                    $$ = ast->tree_build(mod);
-                                                  }
+				    	$$ = ast->tree_build(mod);
+			  	}
     | power
 
-power: power RADICAL factor                       {
-                                                    wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($1);
-                                                    wic::ASTNode* factor = reinterpret_cast<wic::ASTNode *>($3);
+power: power RADICAL factor
+                  		{
+				    	wic::ASTNode* power = reinterpret_cast<wic::ASTNode *>($1);
+				    	wic::ASTNode* factor = reinterpret_cast<wic::ASTNode *>($3);
 
-                                                    wic::ASTRadicalNode* radical = new wic::ASTRadicalNode(power, factor);
+				    	wic::ASTRadicalNode* radical = new wic::ASTRadicalNode(power, factor);
 
-                                                    $$ = ast->tree_build(radical);
-                                                  }
+				    	$$ = ast->tree_build(radical);
+			  	}
     | power POWER factor
     | factor
 
 factor: PARETHESES_OPEN expr PARETHESES_CLOSE
     | data_value
 
-data_value: INT_VAL                               {
-                                                    wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);
-                                                    std::cout << "Factor : INT(value=" << node->get_data_value().int_val << ")" << std::endl;
-                                                    $$ = reinterpret_cast<void *>(node);
-                                                  }
-    | SUBSTRACT INT_VAL                           {
-                                                    wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($2);
-                                                    int val = -node->get_data_value().int_val;
-                                                    node->set_data_value((void*)&val);
-                                                    std::cout << "Factor: NEG_INT(value=" << node->get_data_value().int_val << ")" << std::endl;
-                                                    $$ = reinterpret_cast<void *>(node);
-                                                  }
-    | REAL_VAL                                    {
-                                                    wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);
-                                                    std::cout << "Factor : REAL(value=" << node->get_data_value().real_val << ")" << std::endl;
-                                                    $$ = reinterpret_cast<void *>(node);
-                                                  }
-    | SUBSTRACT REAL_VAL                          {
-                                                    wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($2);
-                                                    float val = -node->get_data_value().real_val;
-                                                    node->set_data_value((void*)&val);
-                                                    std::cout << "Factor: NEG_REAL(value=" << node->get_data_value().real_val << ")" << std::endl;
-                                                    $$ = reinterpret_cast<void *>(node);
-                                                  }
-    | BOOL_VAL                                    {
-                                                    wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);
-                                                    std::cout << "Factor : BOOL(value=" << node->get_data_value().bool_val << ")" << std::endl;
-                                                    $$ = reinterpret_cast<void *>(node);
-                                                  }
-    | CHAR_QUOTE CHAR_VAL CHAR_QUOTE              {
-                                                    wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($2);
-                                                    std::cout << "Factor : CHAR(value=" << node->get_data_value().char_val << ",ascii="
-                                                    << (int)node->get_data_value().char_val << ")" << std::endl;
-                                                    $$ = reinterpret_cast<void *>(node);
-                                                  }
-    | STRING_QUOTE STRING_VAL STRING_QUOTE        {
-                                                    wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($2);
-                                                    std::cout << "Factor : STRING(value=" << node->get_data_value().str_val << ")" << std::endl;
-                                                    $$ = reinterpret_cast<void *>(node);
-                                                  }
+data_value: INT_VAL
+ 				{
+				    	wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);
+				    	std::cout << "Factor : INT(value=" << node->get_data_value().int_val << ")" << std::endl;
+				    	$$ = reinterpret_cast<void *>(node);
+			  	}
+    | SUBSTRACT INT_VAL
+    				{
+				    	wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($2);
+				    	int val = -node->get_data_value().int_val;
+				    	node->set_data_value((void*)&val);
+				    	std::cout << "Factor: NEG_INT(value=" << node->get_data_value().int_val << ")" << std::endl;
+				    	$$ = reinterpret_cast<void *>(node);
+			  	}
+    | REAL_VAL
+                      		{
+				    	wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);
+				    	std::cout << "Factor : REAL(value=" << node->get_data_value().real_val << ")" << std::endl;
+				    	$$ = reinterpret_cast<void *>(node);
+			  	}
+    | SUBSTRACT REAL_VAL
+                      		{
+				    	wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($2);
+				    	float val = -node->get_data_value().real_val;
+				    	node->set_data_value((void*)&val);
+				    	std::cout << "Factor: NEG_REAL(value=" << node->get_data_value().real_val << ")" << std::endl;
+					$$ = reinterpret_cast<void *>(node);
+			  	}
+    | BOOL_VAL
+                      		{
+			    		wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($1);
+				    	std::cout << "Factor : BOOL(value=" << node->get_data_value().bool_val << ")" << std::endl;
+				    	$$ = reinterpret_cast<void *>(node);
+				}
+    | CHAR_QUOTE CHAR_VAL CHAR_QUOTE
+    				{
+				    	wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($2);
+				    	std::cout << "Factor : CHAR(value=" << node->get_data_value().char_val << ",ascii="
+					    << (int)node->get_data_value().char_val << ")" << std::endl;
+				    	$$ = reinterpret_cast<void *>(node);
+			  	}
+    | STRING_QUOTE STRING_VAL STRING_QUOTE
+    				{
+			    		wic::ASTLeafNode* node = reinterpret_cast<wic::ASTLeafNode *>($2);
+				    	std::cout << "Factor : STRING(value=" << node->get_data_value().str_val << ")" << std::endl;
+				    	$$ = reinterpret_cast<void *>(node);
+			  	}
 
 data_vector: CURLY_BRACKET_OPEN args CURLY_BRACKET_CLOSE
 
