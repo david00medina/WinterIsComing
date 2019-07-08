@@ -316,7 +316,7 @@ expr: ID ASSIGN expr
 
  					wic::ASTLessNode* less = new wic::ASTLessNode(expr, term);
 
- 					$$ = ast<tree_build(less);
+ 					$$ = ast->tree_build(less);
  				}
     | expr LESS_EQUALS term
  				{
@@ -325,16 +325,16 @@ expr: ID ASSIGN expr
 
  					wic::ASTLessEqualNode* less_equal = new wic::ASTLessEqualNode(expr, term);
 
- 					$$ = ast<tree_build(less_equal);
+ 					$$ = ast->tree_build(less_equal);
  				}
     | expr GREATER term
  				{
  					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
  					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
- 					wic::ASTGreaterNode* greater = new wic::AST_GreaterNode(expr, term);
+ 					wic::ASTGreaterNode* greater = new wic::ASTGreaterNode(expr, term);
 
- 					$$ = ast<tree_build(greater);
+ 					$$ = ast->tree_build(greater);
  				}
     | expr GREATER_EQUALS term
  				{
@@ -343,7 +343,7 @@ expr: ID ASSIGN expr
 
  					wic::ASTGreaterEqualNode* greater_equal = new wic::ASTGreaterEqualNode(expr, term);
 
- 					$$ = ast<tree_build(greater_equal);
+ 					$$ = ast->tree_build(greater_equal);
  				}
     | expr EQUALS term
  				{
@@ -352,7 +352,7 @@ expr: ID ASSIGN expr
 
  					wic::ASTEqualNode* equal = new wic::ASTEqualNode(expr, term);
 
- 					$$ = ast<tree_build(equal);
+ 					$$ = ast->tree_build(equal);
  				}
     | expr NOT_EQUALS term
  				{
@@ -361,33 +361,33 @@ expr: ID ASSIGN expr
 
  					wic::ASTNotEqualNode* not_equal = new wic::ASTNotEqualNode(expr, term);
 
- 					$$ = ast<tree_build(not_equal);
+ 					$$ = ast->tree_build(not_equal);
  				}
     | expr AND term
  				{
  					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
  					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
- 					wic::ASTAndNode* and = new wic::ASTAndNode(expr, term);
+ 					wic::ASTAndNode* and_ = new wic::ASTAndNode(expr, term);
 
- 					$$ = ast<tree_build(and);
+ 					$$ = ast->tree_build(and_);
  				}
     | expr OR term
  				{
  					wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($1);
  					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
- 					wic::ASTOrNode* or = new wic::ASTOrNode(expr, term);
+ 					wic::ASTOrNode* or_ = new wic::ASTOrNode(expr, term);
 
- 					$$ = ast<tree_build(or);
+ 					$$ = ast->tree_build(or_);
  				}
     | NOT term
  				{
  					wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($2);
 
- 					wic::ASTNotNode* not = new wic::ASTNotNode(term);
+ 					wic::ASTNotNode* not_ = new wic::ASTNotNode(term);
 
- 					$$ = ast<tree_build(not);
+ 					$$ = ast->tree_build(not_);
  				}
     | expr AND_BIT term
     | expr OR_BIT term
