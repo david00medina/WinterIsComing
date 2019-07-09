@@ -1,6 +1,9 @@
 #include "ErrorManager.hpp"
 #include "ErrorManagerPack.hpp"
 #include "../utils/termcolor.hpp"
+#include "../code-generator/CodeGenerator.hpp"
+
+extern wic::CodeGenerator* cg;
 
 namespace wic
 {
@@ -20,6 +23,7 @@ namespace wic
         }
 
         std::cout << termcolor::red << termcolor::bold << error_header << termcolor::reset << out << std::endl;
+        cg->end();
         exit(-1);
     }
 
@@ -30,6 +34,9 @@ namespace wic
         {
             case NOT_DECLARED_VAR:
                 out = "\'" + msg + "\' was not declared in this scope";
+                break;
+            case NOT_DECLARED_FUN:
+                out = "Function with name \'" + msg + "\' was not declared";
                 break;
             case REDECLARATION_VAR:
                 out = "Redeclaration of \'" + msg + "\'";
@@ -54,6 +61,7 @@ namespace wic
         }
 
         std::cout << termcolor::red << termcolor::bold << error_header << termcolor::reset << out << std::endl;
+        cg->end();
         exit(-1);
     }
 }

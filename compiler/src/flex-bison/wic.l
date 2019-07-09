@@ -16,6 +16,7 @@
 
     #include "../symbol-table/SymbolTablePack.hpp"
     #include "../ast/node/node-subtypes/leaf-node/ASTLeafNode.hpp"
+    #include "../ast/node/node-subtypes/symbol-table-node/ASTSymbolTableNode.hpp"
     #include "../ast/node/ASTNode.hpp"
     #include "../ast/node/node-subtypes/operator-node/ASTOperatorNode.hpp"
     #include "wic.tab.h"
@@ -375,9 +376,9 @@ id                            {letter}({letter}|{digit})*
 
   /* Identificador */
 {id}                          {
-                                //std::string id = yytext;
-                                //yylval = reinterpret_cast<void *>(new wic::ASTIDNode(id, wic::UNKNOWN));
-                                //return ID;
+                                std::string id = yytext;
+                                yylval = reinterpret_cast<void *>(new wic::ASTIDNode(id, wic::UNKNOWN));
+                                return ID;
                               }
 
 

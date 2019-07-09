@@ -18,7 +18,7 @@ namespace wic {
         unsigned int general_spill_count;
         unsigned int float_spill_count;
         std::string path;
-        std::fstream fout, fcode, fdata;
+        std::fstream fout, fcode, fdata, ffunc;
         fstream_p file_p;
         label_c label;
 
@@ -31,6 +31,8 @@ namespace wic {
         const std::string reg[ALL_REG] = { "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%esp", "%ebp", "%xmm0", "%xmm1", "%xmm2", "%xmm3" };
         const std::string low_reg[ALL_REG] = { "%al", "%bl", "%cl", "%el", "%sil", "%dil", "spl", "bpl" };
 
+        void write_to_file(std::fstream&, va_list, const char*);
+
     public:
         CodeGenerator();
         CodeGenerator(const std::string);
@@ -38,22 +40,28 @@ namespace wic {
 
         void set_path(const std::string);
 
+        void push_stack();
+        void pop_stack();
         void push_scope();
         void pop_scope();
+        void push_reg(cpu_registers, std::string);
+        void push_float_reg(cpu_registers, std::string);
+        void push_mem(int, std::string);
+        void pop_reg(cpu_registers, std::string);
+        void pop_float_reg(cpu_registers, std::string);
 
-        void write_data_section(unsigned int, ...);
-        void write_data_section(const std::string, unsigned int, ...);
-        void write_code_label(const std::string);
-        void write_code_section(const std::string, const std::string);
-        void write_code_section(const std::string, const std::string, const std::string);
-        void write_code_section(const std::string, const std::string, const std::string, const std::string);
 
+        void write(section_enum, const char*, ...);
+        void write_label(section_enum, const std::string);
         std::string get_label(section_enum);
 
         const std::string translate_reg(cpu_registers);
         const std::string translate_low_reg(cpu_registers);
+
         cpu_registers get_reg();
         cpu_registers get_float_reg();
+        std::string get_mem_var(int);
+
         void lock_reg(cpu_registers);
         void free_reg(cpu_registers);
         bool is_used(cpu_registers);

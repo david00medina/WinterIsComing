@@ -3,3 +3,4 @@
 /compiler/src/*.tab.*
 /compiler/src/*yy.c
 /compiler/src/wic
+.vscode/

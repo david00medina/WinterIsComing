@@ -23,6 +23,17 @@ namespace wic
         return scope;
     }
 
+    SymbolTable::SymbolTable()
+    {
+        for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr;
+        addr = 0;
+    }
+
+    SymbolTable::~SymbolTable()
+    {
+        delete *head;
+    }
+
     int SymbolTable::hash(const char* id)
     {
         int hash = 0;
@@ -40,15 +51,15 @@ namespace wic
         printf("\n-----------------linea-%d-----------valor-%d-------\n", line, entry_d);
         int i = hash(id);
 
-        // TODO: Buscar variable y si ya existe en el nivel de ámbito dar mensaje de error
         TableEntry* existing_entry = lookup(id);
+
         if (existing_entry != nullptr && existing_entry->scope == scope)
         {
             ErrorManager::send(REDECLARATION_VAR, id);
         }
 
-        memory -= entry_d.var.size;
-        entry_d.var.offset = memory;
+        addr -= entry_d.var.size;
+        entry_d.var.offset = addr;
 
         TableEntry* tEntry = new TableEntry(id, entry_d, line, scope);
 
@@ -74,31 +85,62 @@ namespace wic
 
         TableEntry* next = curr->next;
 
-
-        while (next != nullptr)
+        while (curr != nullptr)
         {
-
             if (strcmp(curr->id, id) == 0 && prev == nullptr)
             {
                 head[i] = next;
-                memory += curr->entry_d.var.offset;
+                addr += curr->entry_d.var.size;
+                delete curr;
+                return true;
+            } else if (strcmp(curr->id, id) == 0)
+            {
+                prev->next = next;
+                addr += curr->entry_d.var.size;
                 delete curr;
                 return true;
             }
 
             prev = curr;
             curr = next;
-            next = curr->next;
-        }
-
-        if (strcmp(curr->id, id) == 0)
-        {
-            prev->next = next;
-            delete curr;
-            return true;
+            next = next->next;
         }
 
         return false;
+    }
+
+    int SymbolTable::erase(int scope)
+    {
+        int erased = 0;
+
+        for (int i = 0; i < MAX_ENTRIES; i++)
+        {
+            TableEntry* prev = nullptr;
+            TableEntry* curr = head[i];
+            TableEntry* next = nullptr;
+
+            if (curr != nullptr && curr->next != nullptr) next = curr->next;
+
+            while (curr != nullptr)
+            {
+                if (curr->scope == scope)
+                {
+                    erased++;
+                    delete curr;
+                    prev = next;
+                    if (next != nullptr) curr = next->next;
+                    else curr = nullptr;
+                    if (curr != nullptr) next = curr->next;
+                } else
+                {
+                    prev = curr;
+                    curr = next;
+                    if (next != nullptr) next = next->next;
+                }
+            }
+        }
+
+        return erased;
     }
 
 

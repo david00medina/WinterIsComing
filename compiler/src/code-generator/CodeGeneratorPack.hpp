@@ -30,6 +30,7 @@ namespace wic
     {
         DATA,
         CODE,
+        FUNCTION_CODE,
         LABEL_FLOAT
     } section_enum;
 
