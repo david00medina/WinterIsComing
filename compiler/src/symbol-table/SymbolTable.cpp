@@ -37,6 +37,7 @@ namespace wic
 
     bool SymbolTable::insert(const char* id, entry_data entry_d, unsigned int line, unsigned int scope)
     {
+        printf("\n-----------------linea-%d-----------valor-%d-------\n", line, entry_d);
         int i = hash(id);
 
         // TODO: Buscar variable y si ya existe en el nivel de ámbito dar mensaje de error
