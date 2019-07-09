@@ -175,9 +175,11 @@ instr: data_init ID                               {
 
     						    wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($4);
     						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id->get_data_type(), id, expr);
+								//assign->to_code(cg);
     						    $$ = ast->tree_build(assign);
     						    ast->print();
-    						    std::cout << std::endl;
+								printf("Numero de linea actual es igual a %d",yylineno);
+								//lst->show(0);
     						  }
     | ID array_access                             { printf("Término (VectorVal)");}
     | ID array_access ASSIGN expr
@@ -185,26 +187,47 @@ instr: data_init ID                               {
     | for_instr
     | while_instr {$$ = ($1);}
     | expr { $$ = ($1); }
-    | fun_init 
+    | fun_init { $$ =($1); }
     | fun_call
     | /* empty */
 
-params: params ELEM_SEPARATOR data_type ID
-    | data_type ID
+params: params ELEM_SEPARATOR data_type ID 	{
+        										wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($3);
+        										wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($4);
+        										id->set_data_type(entry_d->var.type);
+												wic::ASTParamNode* params = reinterpret_cast<wic::ASTParamNode *>($1);
+												params->add_params(id);
+												$$ = ast->tree_build(params);
+											}
+    | data_type ID	{
+						wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($1);
+        				wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($2);
+        				id->set_data_type(entry_d->var.type);
+						wic::ASTParamNode* params = new wic::ASTParamNode(id);
+						$$ = ast->tree_build(params);
+					}
 
 args: args ELEM_SEPARATOR expr
     | expr
 
 fun_init: FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+      OPEN_CONTEXT_TAG input RETURN expr END_OF_INSTR CLOSE_CONTEXT_TAG
      {
-        // TODO: Pendiente
-        // wic::ASTLeafNode* node = reinterpret_cast<wic::ASTIDNode *>($3);
-        // printf("Función (nombre=%s)\n", node->get_id());
+        wic::ASTNode* id = ast->tree_build($2,$3);
+		printf("HOLA MUNDO\n");
+		wic::ASTParamNode* param = reinterpret_cast<wic::ASTParamNode *>($5);
+		wic::ASTBodyNode* body = reinterpret_cast<wic::ASTBodyNode *>($10);
+		wic::ASTIDNode* expr = reinterpret_cast<wic::ASTIDNode *>($12);
+		wic::ASTReturnNode* ret = new wic::ASTReturnNode(expr);
+		wic::ASTFunctionNode* func = new wic::ASTFunctionNode(id->get_id(),id->get_data_type(),param,body,ret);
+		$$ = ast->tree_build(func);
      }
     | FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE END_OF_INSTR
 
-fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR
+fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR	
+								{
+									
+								}
 
 while_instr: expr /*{ wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* >($1); }*/ FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input /*{ wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($7); }*/ CLOSE_CONTEXT_TAG
@@ -293,7 +316,8 @@ expr: ID ASSIGN expr
 				    	wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
 				    	wic::ASTSumNode* sum = new wic::ASTSumNode(expr, term);
-				 	sum->to_code(cg);
+				 		//sum->to_code(cg);
+						//cg->print_reg_use();
 				    	$$ = ast->tree_build(sum);
 				}
     | expr SUBSTRACT term
