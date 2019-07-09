@@ -32,6 +32,7 @@
     wic::CodeGenerator* cg;
 
     wic::ASTMainNode* main_ = new wic::ASTMainNode();
+    wic::ASTBodyNode* main_body = new wic::ASTBodyNode();
 
 %}
 
@@ -96,19 +97,19 @@
 /* Definición de gramáticas */
 
 main: input {
-		wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($1);
-		main_->add_body(input);
-		$$ = ast->tree_build(main_);
+		main_->add_body(main_body);
+		ast->tree_build(main_);
+		ast->to_code(cg);
+		//$$ = ast->tree_build(main_);
 	    }
 
-input: instr END_OF_INSTR input
-    | { $$ = new wic::ASTBodyNode();} OPEN_CONTEXT_TAG instr {
-							       wic::ASTBodyNode* body_ = reinterpret_cast<wic::ASTBodyNode *>($1);
-							       wic::ASTNode* instr = reinterpret_cast<wic::ASTNode* >($3);
-							       body_->add_instr(instr);
-							     }
-	  CLOSE_CONTEXT_TAG {} input 
-    | /* empty */
+input: instr END_OF_INSTR {
+			    ASTNode* node = reinterpret_cast<ASTNode *>($1);
+			    main_body->add_instr(node);
+			  }
+    | OPEN_CONTEXT_TAG instr CLOSE_CONTEXT_TAG input {wic::ASTBodyNode* body_ = reinterpret_cast<wic::ASTBodyNode *>($1);
+					       wic::ASTNode* instr = reinterpret_cast<wic::ASTNode* >($3);
+					       body_->add_instr(instr);}
 
 data_init: GLOBAL data_type			  {
 						    wic::entry_data* entry_d = reinterpret_cast<wic::entry_data *>($2);

@@ -139,7 +139,6 @@ namespace wic
     cpu_registers ASTMainNode::to_code(section_enum section, CodeGenerator *cg) {
         cg->init();
         cg->push_stack();
-
         body->set_main(this);
         ASTBodyNode* node = body;
 

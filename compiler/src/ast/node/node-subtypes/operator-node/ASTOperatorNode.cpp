@@ -71,6 +71,9 @@ namespace wic
                 if (type1 != BOOL || type2 != BOOL) ErrorManager::send(WRONG_RELATIONAL_OPERANDS, op);
                 break;
             default:
+                std::cout << "HOLA: " << get_node_data_type(op1);
+                std::cout << "HOLA: " << op2->get_node_type();
+
                 if (type1 == UNKNOWN || type2 == UNKNOWN) ErrorManager::send(INCOMPATIBLE_OPERANDS, op);
                 break;
         }

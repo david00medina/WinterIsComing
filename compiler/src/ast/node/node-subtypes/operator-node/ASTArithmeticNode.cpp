@@ -169,6 +169,7 @@ namespace wic
 
     cpu_registers ASTSumNode::to_code(section_enum section, CodeGenerator *cg)
     {
+        std::cout << "MIRA ESTO: " << op1->get_node_type() << ", " << op1->get_data_type() << std::endl;
         check_error("sum");
         return operate(section, cg);
     }

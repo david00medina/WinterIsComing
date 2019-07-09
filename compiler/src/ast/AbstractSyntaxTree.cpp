@@ -18,6 +18,7 @@ namespace wic
 {
     ASTNode* AbstractSyntaxTree::tree_build(ASTNode *node)
     {
+        std::cout << "TREE BUILD" << std::endl;
         root = node;
         return root;
     }

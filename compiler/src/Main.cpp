@@ -30,7 +30,7 @@ extern wic::CodeGenerator* cg;
 
 int main(int argc, char const **argv) {
     // Turn debug mode ON (yydebug = 1)
-    yydebug = 0;
+    yydebug = 1;
 
     ast = new wic::AbstractSyntaxTree();
     gst = new wic::GSymbolTable();
@@ -79,7 +79,7 @@ int main(int argc, char const **argv) {
 
         cg = new wic::CodeGenerator(mid_code_path);
 
-        /*cg.init();
+       /* *//*cg.init();
         wic::data_value d1;
         d1.str_val = (char*)"rojo";
         wic::ASTLeafNode node1(wic::STRING, &d1);
@@ -102,7 +102,7 @@ int main(int argc, char const **argv) {
 
         cg.print("caballo loco %s loquisimo, %d, %c, %r, %b", 4, node1, node2, node3, node4, node5);
         cg.exit();
-        cg.end();*/
+        cg.end();*//*
         wic::ASTMainNode* main = new wic::ASTMainNode();
         wic::ASTBodyNode* body = new wic::ASTBodyNode();
         wic::ASTBodyNode* func_body = new wic::ASTBodyNode();
@@ -193,14 +193,12 @@ int main(int argc, char const **argv) {
 //        ge->to_code(wic::CODE, cg);
 //        nnot->to_code(wic::CODE, cg);
 //        andn->to_code(wic::CODE, cg);
-//        orn->to_code(wic::CODE, cg);
+//        orn->to_code(wic::CODE, cg);*/
     }
 
     if (cg == nullptr) cg = new wic::CodeGenerator();
 
     int result = yyparse();
-
-    ast->to_code(cg);
 
     //int result = 1;
     //while(1) { /* TODO: Quitar este bucle cuando entreguemos el trabajo */
