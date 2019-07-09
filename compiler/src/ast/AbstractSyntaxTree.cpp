@@ -6,6 +6,7 @@
 #include "node/node-subtypes/operator-node/ASTRelationalNode.hpp"
 #include "node/node-subtypes/structural-node/ASTStructuralNode.hpp"
 #include "node/node-subtypes/symbol-table-node/ASTSymbolTableNode.hpp"
+#include "../code-generator/CodeGenerator.hpp"
 
 extern int yylineno;
 extern int level;
@@ -116,8 +117,8 @@ namespace wic
         }
     }
 
-    void AbstractSyntaxTree::toCode()
+    void AbstractSyntaxTree::to_code(CodeGenerator* cg)
     {
-        // TODO: Aquí generaremos todo el código en ensamblador a partir del AST
+        root->to_code(CODE, cg);
     }
 }

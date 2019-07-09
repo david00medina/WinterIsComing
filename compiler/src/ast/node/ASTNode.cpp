@@ -68,7 +68,7 @@ namespace wic {
 
     void ASTNode::check_error(std::string) {}
 
-    cpu_registers ASTNode::to_code(wic::CodeGenerator *) { return NONE; }
+    cpu_registers ASTNode::to_code(section_enum section, wic::CodeGenerator *cg) { return NONE; }
 
     void ASTNode::print()
     {

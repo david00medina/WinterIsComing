@@ -34,7 +34,7 @@ namespace wic
         void set_main(ASTMainNode*);
         void add_instr(ASTNode*);
         unsigned int get_instr_count();
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
 
         friend class ASTMainNode;
     };
@@ -54,7 +54,7 @@ namespace wic
         void add_body(ASTBodyNode*);
         void add_function(ASTFunctionNode*);
         bool match_function(std::string, function*);
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTReturnNode : public ASTStructuralNode {
@@ -68,7 +68,7 @@ namespace wic
         ASTReturnNode(ASTNode*);
         ~ASTReturnNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTArgumentNode : public ASTStructuralNode {
@@ -78,7 +78,7 @@ namespace wic
         int memory;
 
         void check_error(std::string) {};
-        void load_args(ASTNode*, CodeGenerator*);
+        void load_args(ASTNode*, section_enum, CodeGenerator*);
 
     public:
         ASTArgumentNode();
@@ -87,7 +87,7 @@ namespace wic
 
         void add_argument(ASTNode*);
         int get_num_args();
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTParamNode : public ASTStructuralNode {
@@ -108,7 +108,7 @@ namespace wic
         void add_params(ASTIDNode*);
         ASTIDNode* lookup(std::string);
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 }
 

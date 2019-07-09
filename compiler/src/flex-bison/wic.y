@@ -31,6 +31,8 @@
     wic::AbstractSyntaxTree* ast;
     wic::CodeGenerator* cg;
 
+    wic::ASTMainNode* main_ = new wic::ASTMainNode();
+
 %}
 
 /* Definición de tipo de valores */
@@ -93,10 +95,10 @@
 
 /* Definición de gramáticas */
 
-main: input {	wic::ASTMainNode* main_ = new wic::ASTMainNode();
+main: input {
 		wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($1);
 		main_->add_body(input);
-		$$ = ast-> tree_build(main_);
+		$$ = ast->tree_build(main_);
 	    }
 
 input: instr END_OF_INSTR input
@@ -293,7 +295,6 @@ expr: ID ASSIGN expr
 				    	wic::ASTNode* term = reinterpret_cast<wic::ASTNode *>($3);
 
 				    	wic::ASTSumNode* sum = new wic::ASTSumNode(expr, term);
-				 	sum->to_code(cg);
 				    	$$ = ast->tree_build(sum);
 				}
     | expr SUBSTRACT term

@@ -5,6 +5,8 @@
 
 namespace wic
 {
+    class CodeGenerator;
+
     class ASTNode;
 
     class AbstractSyntaxTree
@@ -21,7 +23,7 @@ namespace wic
         ASTNode* tree_build(void*, void*);
         ASTNode* get_root();
         void print();
-        void toCode();
+        void to_code(CodeGenerator*);
     };
 }
 

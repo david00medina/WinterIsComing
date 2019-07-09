@@ -13,13 +13,13 @@ namespace wic
             REMAINDER
         } div_selector;
 
-        virtual cpu_registers div_mod(cpu_registers, cpu_registers, div_selector, CodeGenerator*);
-        virtual cpu_registers division(div_selector, CodeGenerator*);
+        virtual cpu_registers div_mod(cpu_registers, cpu_registers, div_selector, section_enum, CodeGenerator*);
+        virtual cpu_registers division(div_selector, section_enum, CodeGenerator*);
 
-        virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers instr_reg3(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers instr_reg3_float(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
+        virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
+        virtual cpu_registers instr_reg3(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
+        virtual cpu_registers instr_reg3_float(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
 
     public:
         ASTArithmeticNode() = default;
@@ -34,7 +34,7 @@ namespace wic
         ASTSumNode(ASTNode*, ASTNode*);
         ~ASTSumNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTSubNode : public ASTArithmeticNode
@@ -44,7 +44,7 @@ namespace wic
         ASTSubNode(ASTNode*, ASTNode*);
         ~ASTSubNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTProdNode : public ASTArithmeticNode
@@ -54,7 +54,7 @@ namespace wic
         ASTProdNode(ASTNode*, ASTNode*);
         ~ASTProdNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTDivNode : public ASTArithmeticNode
@@ -64,7 +64,7 @@ namespace wic
         ASTDivNode(ASTNode*, ASTNode*);
         ~ASTDivNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTPowerNode : public ASTArithmeticNode
@@ -74,7 +74,7 @@ namespace wic
         ASTPowerNode(ASTNode*, ASTNode*);
         ~ASTPowerNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTRadicalNode : public ASTArithmeticNode
@@ -84,7 +84,7 @@ namespace wic
         ASTRadicalNode(ASTNode*, ASTNode*);
         ~ASTRadicalNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTModNode : public ASTArithmeticNode
@@ -94,7 +94,7 @@ namespace wic
         ASTModNode(ASTNode*, ASTNode*);
         ~ASTModNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTAssignNode : public ASTArithmeticNode
@@ -104,7 +104,7 @@ namespace wic
         ASTAssignNode(data_type, ASTNode*, ASTNode*);
         ~ASTAssignNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 }
 

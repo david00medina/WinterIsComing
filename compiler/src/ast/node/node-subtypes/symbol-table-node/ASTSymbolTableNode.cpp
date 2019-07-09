@@ -160,17 +160,17 @@ namespace wic
         return true;
     }
 
-    cpu_registers ASTFunctionNode::to_code(wic::CodeGenerator *cg)
+    cpu_registers ASTFunctionNode::to_code(section_enum section, wic::CodeGenerator *cg)
     {
         cg->write(FUNCTION_CODE, "c", ".text");
         cg->write(FUNCTION_CODE, "c%s", ".globl", "_" + id);
         cg->write(FUNCTION_CODE, "c%s%c", ".type", "_" + id, "@function");
-        cg->write_label(FUNCTION_CODE, "_" + id);
+        cg->write_label(FUNCTION_CODE, id);
 
-        params->to_code(cg);
-        body->to_code(cg);
+        params->to_code(FUNCTION_CODE, cg);
+        body->to_code(FUNCTION_CODE, cg);
 
-        return ret->to_code(cg);
+        return ret->to_code(FUNCTION_CODE, cg);
     }
 
     ASTCallNode::ASTCallNode(std::string id, wic::data_type data_t, wic::ASTArgumentNode *arg)
@@ -195,7 +195,7 @@ namespace wic
         return entry_d;
     }
 
-    cpu_registers ASTCallNode::to_code(CodeGenerator *cg)
+    cpu_registers ASTCallNode::to_code(section_enum section, CodeGenerator *cg)
     {
         check_error(id);
         entry_d.fun.params_no = args->get_num_args();
@@ -212,8 +212,8 @@ namespace wic
             curr = reinterpret_cast<ASTArgumentNode *>(curr->next);
         }
 
-        if (args != nullptr) args->to_code(cg);
-        cg->write(CODE, "c%s#s", "call", "_" + id, "Call the function \'" + id + "\'");
+        if (args != nullptr) args->to_code(section, cg);
+        cg->write(section, "c%s#s", "call", "_" + id, "Call the function \'" + id + "\'");
 
         // TODO: Si el registro EAX no está libre pasar el contenido a otro registro diferente.
         if (cg->is_used(EAX)) cg->lock_reg(EAX);
@@ -245,7 +245,7 @@ namespace wic
     ASTIDNode::ASTIDNode(std::string id, wic::data_type data_t, wic::TableEntry *global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
         : ASTSymbolTableNode("ID", id, wic::ID, data_t, global_te, static_te, local_te) {}
 
-    cpu_registers ASTIDNode::to_code(CodeGenerator *cg)
+    cpu_registers ASTIDNode::to_code(section_enum section, CodeGenerator *cg)
     {
         check_error(id);
         cpu_registers r = cg->get_reg();
@@ -256,7 +256,7 @@ namespace wic
         else if (global_te != nullptr) global_te->get_data();
 
         int offset = entry_d.var.offset - entry_d.var.array_selection;
-        cg->write(CODE, "c%s%s#s", "movl", std::to_string(offset) + cg->translate_reg(EBP), cg->translate_reg(r), "Get value from \'" + id + "\' variable");
+        cg->write(section, "c%s%s#s", "movl", std::to_string(offset) + cg->translate_reg(EBP), cg->translate_reg(r), "Get value from \'" + id + "\' variable");
 
         return r;
     }

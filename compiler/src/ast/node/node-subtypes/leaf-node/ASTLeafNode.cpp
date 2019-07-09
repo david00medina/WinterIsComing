@@ -21,14 +21,14 @@ namespace wic
         else if (data_t == wic::ARRAY_BOOL) this->data_v.bool_array_val = (bool *) val;
     }
 
-    cpu_registers ASTLeafNode::to_code(CodeGenerator *cg)
+    cpu_registers ASTLeafNode::to_code(section_enum section, CodeGenerator *cg)
     {
         switch (data_t)
         {
             case INT:
                 {
                     cpu_registers r = cg->get_reg();
-                    cg->write(CODE, "c%s%s#s", "movl", "$" + std::to_string(data_v.int_val), cg->translate_reg(r), "Move int to " + cg->translate_reg(r));
+                    cg->write(section, "c%s%s#s", "movl", "$" + std::to_string(data_v.int_val), cg->translate_reg(r), "Move int to " + cg->translate_reg(r));
                     return r;
                 }
             case REAL:
@@ -41,19 +41,19 @@ namespace wic
                     cg->write(DATA, "c%s", ".float", std::to_string(data_v.real_val));
 
                     cpu_registers r = cg->get_float_reg();
-                    cg->write(CODE, "c%s%s#s", "movss", l, cg->translate_reg(r), "Move real to " + cg->translate_reg(r));
+                    cg->write(section, "c%s%s#s", "movss", l, cg->translate_reg(r), "Move real to " + cg->translate_reg(r));
                     return r;
                 }
             case CHAR:
                 {
                     cpu_registers r = cg->get_reg();
-                    cg->write(CODE, "c%s%s#s", "movl", "$" + std::to_string((int) data_v.char_val), cg->translate_reg(r), "Move char to " + cg->translate_reg(r));
+                    cg->write(section, "c%s%s#s", "movl", "$" + std::to_string((int) data_v.char_val), cg->translate_reg(r), "Move char to " + cg->translate_reg(r));
                     return r;
                 }
             case BOOL:
                 {
                     cpu_registers r = cg->get_reg();
-                    cg->write(CODE, "c%s%s#s", "movl", "$" + std::to_string((int) data_v.bool_val), cg->translate_reg(r), "Move bool to " + cg->translate_reg(r));
+                    cg->write(section, "c%s%s#s", "movl", "$" + std::to_string((int) data_v.bool_val), cg->translate_reg(r), "Move bool to " + cg->translate_reg(r));
                     return r;
                 }
             default:

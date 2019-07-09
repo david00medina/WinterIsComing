@@ -10,14 +10,14 @@ namespace wic {
     class ASTRelationalNode : public ASTOperatorNode
     {
     protected:
-        cpu_registers compare(std::string, std::string, cpu_registers, cpu_registers, CodeGenerator*, bool);
-        cpu_registers do_and(cpu_registers, cpu_registers, CodeGenerator*);
-        cpu_registers do_or(cpu_registers, cpu_registers, CodeGenerator*);
+        cpu_registers compare(std::string, std::string, cpu_registers, cpu_registers, section_enum, CodeGenerator*, bool);
+        cpu_registers do_and(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
+        cpu_registers do_or(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
 
-        virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers instr_reg3(cpu_registers, cpu_registers, CodeGenerator*);
-        virtual cpu_registers instr_reg3_float(cpu_registers, cpu_registers, CodeGenerator*);
+        virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
+        virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
+        virtual cpu_registers instr_reg3(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
+        virtual cpu_registers instr_reg3_float(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
 
     public:
         ASTRelationalNode() = default;
@@ -35,7 +35,7 @@ namespace wic {
         ASTGreaterEqualNode(ASTNode*, ASTNode*);
         ~ASTGreaterEqualNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTGreaterNode : public ASTRelationalNode
@@ -45,7 +45,7 @@ namespace wic {
         ASTGreaterNode(ASTNode*, ASTNode*);
         ~ASTGreaterNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTLessEqualNode : public ASTRelationalNode
@@ -55,7 +55,7 @@ namespace wic {
         ASTLessEqualNode(ASTNode*, ASTNode*);
         ~ASTLessEqualNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTLessNode : public ASTRelationalNode
@@ -65,7 +65,7 @@ namespace wic {
         ASTLessNode(ASTNode*, ASTNode*);
         ~ASTLessNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTEqualNode : public ASTRelationalNode
@@ -75,7 +75,7 @@ namespace wic {
         ASTEqualNode(ASTNode*, ASTNode*);
         ~ASTEqualNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTNotEqualNode : public ASTRelationalNode
@@ -85,7 +85,7 @@ namespace wic {
         ASTNotEqualNode(ASTNode*, ASTNode*);
         ~ASTNotEqualNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTNotNode : public ASTRelationalNode
@@ -95,7 +95,7 @@ namespace wic {
         ASTNotNode(ASTNode*);
         ~ASTNotNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTAndNode : public ASTRelationalNode
@@ -105,7 +105,7 @@ namespace wic {
         ASTAndNode(ASTNode*, ASTNode*);
         ~ASTAndNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTOrNode : public ASTRelationalNode
@@ -115,7 +115,7 @@ namespace wic {
         ASTOrNode(ASTNode*, ASTNode*);
         ~ASTOrNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 }
 

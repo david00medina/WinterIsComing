@@ -22,9 +22,9 @@ namespace wic
 
         void check_error(std::string);
 
-        virtual void write_condition(ASTRelationalNode*, CodeGenerator*) = 0;
-        virtual void write_body(CodeGenerator*) = 0;
-        virtual void write_else_body(CodeGenerator*) = 0;
+        virtual void write_condition(ASTRelationalNode*, section_enum, CodeGenerator*) = 0;
+        virtual void write_body(section_enum, CodeGenerator*) = 0;
+        virtual void write_else_body(section_enum, CodeGenerator*) = 0;
 
     public:
         ASTClauseNode(const ASTClauseNode&);
@@ -47,9 +47,9 @@ namespace wic
     class ASTIfNode : public ASTClauseNode
     {
     private:
-        void write_condition(ASTRelationalNode*, CodeGenerator*);
-        void write_body(CodeGenerator*);
-        void write_else_body(CodeGenerator*);
+        void write_condition(ASTRelationalNode*, section_enum, CodeGenerator*);
+        void write_body(section_enum, CodeGenerator*);
+        void write_else_body(section_enum, CodeGenerator*);
 
     public:
         ASTIfNode(const ASTIfNode&);
@@ -58,15 +58,15 @@ namespace wic
         ASTIfNode(ASTRelationalNode*,ASTNode*, ASTNode*);
         ~ASTIfNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTWhileNode : public ASTClauseNode
     {
     private:
-        void write_condition(ASTRelationalNode*, CodeGenerator*);
-        void write_body(CodeGenerator*);
-        void write_else_body(CodeGenerator*);
+        void write_condition(ASTRelationalNode*, section_enum, CodeGenerator*);
+        void write_body(section_enum, CodeGenerator*);
+        void write_else_body(section_enum, CodeGenerator*);
 
     public:
         ASTWhileNode() = default;
@@ -74,15 +74,15 @@ namespace wic
         ASTWhileNode(ASTRelationalNode*,ASTNode*, ASTNode*);
         ~ASTWhileNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTForNode : public ASTClauseNode
     {
     private:
-        void write_condition(ASTRelationalNode*, CodeGenerator*);
-        void write_body(CodeGenerator*);
-        void write_else_body(CodeGenerator*);
+        void write_condition(ASTRelationalNode*, section_enum, CodeGenerator*);
+        void write_body(section_enum, CodeGenerator*);
+        void write_else_body(section_enum, CodeGenerator*);
 
     public:
         ASTForNode() = default;
@@ -90,7 +90,7 @@ namespace wic
         ASTForNode(ASTRelationalNode*,ASTNode*, ASTNode*);
         ~ASTForNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 }
 

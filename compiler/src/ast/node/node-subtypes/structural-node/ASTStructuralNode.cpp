@@ -51,11 +51,11 @@ namespace wic
         return instr_count;
     }
 
-    cpu_registers ASTBodyNode::to_code(CodeGenerator *cg) {
+    cpu_registers ASTBodyNode::to_code(section_enum section, CodeGenerator *cg) {
         ASTNode* curr = instr;
         level++;
         while (curr != nullptr) {
-            curr->to_code(cg);
+            curr->to_code(section, cg);
             if (curr->get_node_type() == CALL) {
                 ASTCallNode* call = reinterpret_cast<ASTCallNode *>(curr);
 
@@ -136,7 +136,7 @@ namespace wic
         return false;
     }
 
-    cpu_registers ASTMainNode::to_code(CodeGenerator *cg) {
+    cpu_registers ASTMainNode::to_code(section_enum section, CodeGenerator *cg) {
         cg->init();
         cg->push_stack();
 
@@ -145,7 +145,7 @@ namespace wic
 
         while (node != nullptr)
         {
-            node->to_code(cg);
+            node->to_code(section, cg);
             node = node->next;
         }
         cg->exit();
@@ -153,7 +153,7 @@ namespace wic
         ASTFunctionNode* fun = fun_list;
         while (fun != nullptr)
         {
-            fun->to_code(cg);
+            fun->to_code(section, cg);
             fun = reinterpret_cast<ASTFunctionNode *>(fun->next);
         }
 
@@ -186,9 +186,9 @@ namespace wic
         memory += 4;
     }
 
-    void ASTArgumentNode::load_args(wic::ASTNode *node, wic::CodeGenerator *cg)
+    void ASTArgumentNode::load_args(wic::ASTNode *node, section_enum section, wic::CodeGenerator *cg)
     {
-        cpu_registers r = node->to_code(cg);
+        cpu_registers r = node->to_code(section, cg);
 
         switch (node->get_node_type())
         {
@@ -207,13 +207,13 @@ namespace wic
                     {
                         if (id_node->get_data_type() != REAL)
                         {
-                            cg->write(CODE, "c%s%s#s", "movl", "." + id, cg->get_mem_var(offset),
+                            cg->write(section, "c%s%s#s", "movl", "." + id, cg->get_mem_var(offset),
                                  "Loading variable \'" + id + "\' at "
                                  + cg->get_mem_var(offset) + " as function arguments");
                         }
                         else
                         {
-                            cg->write(CODE, "c%s%s#s", "movs", "." + id, cg->get_mem_var(offset),
+                            cg->write(section, "c%s%s#s", "movs", "." + id, cg->get_mem_var(offset),
                                                    "Loading variable \'" + id + "\' at "
                                                    + cg->get_mem_var(offset) + " as function arguments");
                         }
@@ -234,14 +234,14 @@ namespace wic
         return num_args;
     }
 
-    cpu_registers ASTArgumentNode::to_code(wic::CodeGenerator *cg)
+    cpu_registers ASTArgumentNode::to_code(section_enum section, wic::CodeGenerator *cg)
     {
         ASTNode* curr = args;
         curr = curr->next;
 
         while (curr != nullptr)
         {
-            load_args(curr, cg);
+            load_args(curr, section, cg);
             curr = curr->next;
         }
     }
@@ -306,7 +306,7 @@ namespace wic
         return nullptr;
     }
 
-    cpu_registers ASTParamNode::to_code(CodeGenerator *cg)
+    cpu_registers ASTParamNode::to_code(section_enum section, CodeGenerator *cg)
     {
         ASTIDNode* curr = params;
         int count = num_params;
@@ -350,10 +350,10 @@ namespace wic
         this->ret = ret;
     }
 
-    cpu_registers ASTReturnNode::to_code(CodeGenerator *cg)
+    cpu_registers ASTReturnNode::to_code(section_enum section, CodeGenerator *cg)
     {
-        cpu_registers r = ret->to_code(cg);
+        cpu_registers r = ret->to_code(section, cg);
         cg->free_reg(EAX);
-        cg->write(CODE, "c%s%s#s", "movl", cg->translate_reg(r), cg->translate_reg(EAX), "Return value saved in " + cg->translate_reg(EAX) + " register");
+        cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r), cg->translate_reg(EAX), "Return value saved in " + cg->translate_reg(EAX) + " register");
     }
 }

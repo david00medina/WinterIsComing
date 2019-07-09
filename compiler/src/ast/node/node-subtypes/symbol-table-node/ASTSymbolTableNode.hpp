@@ -36,7 +36,7 @@ namespace wic {
         virtual void set_static_entry(TableEntry*);
         virtual void set_local_entry(TableEntry*);
         virtual bool is_registered();
-        virtual cpu_registers to_code(CodeGenerator*) = 0;
+        virtual cpu_registers to_code(section_enum, CodeGenerator*) = 0;
         virtual void print();
     };
 
@@ -56,7 +56,7 @@ namespace wic {
         ASTNode* get_body();
         bool match(std::string, function*);
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTCallNode : public ASTSymbolTableNode
@@ -73,7 +73,7 @@ namespace wic {
         ASTNode* get_args();
         entry_data get_entry_data();
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 
     class ASTIDNode : public ASTSymbolTableNode
@@ -84,7 +84,7 @@ namespace wic {
         ASTIDNode(std::string, data_type, TableEntry*, TableEntry*, TableEntry*);
         ~ASTIDNode() = default;
 
-        cpu_registers to_code(CodeGenerator*);
+        cpu_registers to_code(section_enum, CodeGenerator*);
     };
 }
 

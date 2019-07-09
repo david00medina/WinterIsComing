@@ -122,19 +122,19 @@ namespace wic
 
     ASTIfNode::ASTIfNode(ASTRelationalNode *n1, ASTNode *n2, ASTNode *n3) : ASTClauseNode("IF", IF, n1, n2, n3) {}
 
-    cpu_registers ASTIfNode::to_code(wic::CodeGenerator *cg)
+    cpu_registers ASTIfNode::to_code(section_enum section, wic::CodeGenerator *cg)
     {
         check_error("\'IF\'");
 
-        else_l = cg->get_label(CODE);
-        exit_l = cg->get_label(CODE);
+        else_l = cg->get_label(section);
+        exit_l = cg->get_label(section);
 
-        write_condition(cond, cg);
-        write_body(cg);
+        write_condition(cond, section, cg);
+        write_body(section, cg);
 
-        if (else_body != nullptr) write_else_body(cg);
+        if (else_body != nullptr) write_else_body(section, cg);
 
-        cg->write_label(CODE, exit_l);
+        cg->write_label(section, exit_l);
     }
 
     ASTRelationalNode* ASTClauseNode::get_cond()
@@ -152,44 +152,44 @@ namespace wic
         return else_body;
     }
 
-    void ASTIfNode::write_condition(ASTRelationalNode* cond, CodeGenerator *cg)
+    void ASTIfNode::write_condition(ASTRelationalNode* cond, section_enum section, CodeGenerator *cg)
     {
-        cpu_registers r1 = cond->to_code(cg);
+        cpu_registers r1 = cond->to_code(section, cg);
 
         cpu_registers r_true = cg->get_reg();
-        cg->write(CODE, "c%c%s#c", "movl", "$1", cg->translate_reg(r_true), "Set true register to 1");
-        cg->write(CODE, "c%s%s#c", "cmpl", cg->translate_reg(r_true), cg->translate_reg(r1), "\'IF\' condition accomplished?");
+        cg->write(section, "c%c%s#c", "movl", "$1", cg->translate_reg(r_true), "Set true register to 1");
+        cg->write(section, "c%s%s#c", "cmpl", cg->translate_reg(r_true), cg->translate_reg(r1), "\'IF\' condition accomplished?");
 
         cg->free_reg(r_true);
         cg->free_reg(r1);
     }
 
-    void ASTIfNode::write_body(CodeGenerator *cg)
+    void ASTIfNode::write_body(section_enum section, CodeGenerator *cg)
     {
         ASTIfNode* curr = new ASTIfNode(*this);
         std::string if_l;
 
         while (curr != nullptr) {
-            if_l = cg->get_label(CODE);
+            if_l = cg->get_label(section);
 
-            if (curr->next != nullptr) cg->write(CODE, "c%s#s", "jne", if_l, "Jump to next \'IF\' condition at " + if_l);
-            else cg->write(CODE, "c%s#s", "jne", else_l, "Jump to \'ELSE\' at " + else_l);
+            if (curr->next != nullptr) cg->write(section, "c%s#s", "jne", if_l, "Jump to next \'IF\' condition at " + if_l);
+            else cg->write(section, "c%s#s", "jne", else_l, "Jump to \'ELSE\' at " + else_l);
 
-            curr->body->to_code(cg);
+            curr->body->to_code(section, cg);
 
-            cg->write(CODE, "c%s#c", "jmp", exit_l, "\'IF\' clause got to an end");
+            cg->write(section, "c%s#c", "jmp", exit_l, "\'IF\' clause got to an end");
 
-            if (curr->next != nullptr) cg->write_label(CODE, if_l);
+            if (curr->next != nullptr) cg->write_label(section, if_l);
 
             curr = reinterpret_cast<ASTIfNode *>(curr->next);
-            if (curr != nullptr) write_condition(curr->cond, cg);
+            if (curr != nullptr) write_condition(curr->cond, section, cg);
         }
     }
 
-    void ASTIfNode::write_else_body(CodeGenerator *cg)
+    void ASTIfNode::write_else_body(section_enum section, CodeGenerator *cg)
     {
-        cg->write_label(CODE, else_l);
+        cg->write_label(section, else_l);
 
-        else_body->to_code(cg);
+        else_body->to_code(section, cg);
     }
 }

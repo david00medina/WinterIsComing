@@ -56,6 +56,7 @@ namespace wic
         {
             case DATA:
                 return data_label + std::to_string(label.data_l++);
+            case FUNCTION_CODE:
             case CODE:
                 return code_label + std::to_string(label.code_l++);
             case LABEL_FLOAT:

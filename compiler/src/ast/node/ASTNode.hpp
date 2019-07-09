@@ -67,7 +67,7 @@ namespace wic
         ASTNode* find(unsigned int, node_type, ASTNode*);
 
         virtual void check_error(std::string);
-        virtual cpu_registers to_code(CodeGenerator*);
+        virtual cpu_registers to_code(section_enum, CodeGenerator*);
 
         virtual void print();
 
