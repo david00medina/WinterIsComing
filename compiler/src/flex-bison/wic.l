@@ -14,17 +14,14 @@
 
     #include <string>
 
+    #include "wic.tab.h"
     #include "../symbol-table/SymbolTablePack.hpp"
     #include "../ast/node/node-subtypes/leaf-node/ASTLeafNode.hpp"
     #include "../ast/node/node-subtypes/symbol-table-node/ASTSymbolTableNode.hpp"
-    #include "../ast/node/ASTNode.hpp"
     #include "../ast/node/node-subtypes/operator-node/ASTOperatorNode.hpp"
-    #include "wic.tab.h"
 
     int level = 0;
     int enter_special = 1;
-
-    wic::ASTNode* node;
 
     /* Declaraciones de funciones */
 
