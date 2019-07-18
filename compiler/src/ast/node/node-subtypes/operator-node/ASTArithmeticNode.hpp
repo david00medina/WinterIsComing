@@ -101,7 +101,7 @@ namespace wic
     {
     public:
         ASTAssignNode() = default;
-        ASTAssignNode(data_type, ASTNode*, ASTNode*);
+        ASTAssignNode(ASTNode*, ASTNode*);
         ~ASTAssignNode() = default;
 
         cpu_registers to_code(section_enum, CodeGenerator*);

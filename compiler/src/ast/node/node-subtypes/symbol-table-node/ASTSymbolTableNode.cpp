@@ -15,7 +15,7 @@ namespace wic
     ASTSymbolTableNode::ASTSymbolTableNode(std::string name, std::string id, wic::node_type node_t, wic::data_type data_t)
         : ASTNode(name, node_t, data_t)
     {
-        this->id = id;
+        this->id = id.c_str();
     }
 
     ASTSymbolTableNode::ASTSymbolTableNode(std::string name, std::string id, wic::node_type node_t, wic::data_type data_t,
@@ -40,8 +40,8 @@ namespace wic
         switch (get_node_type())
         {
             case ID:
-                if (local_te->get_scope() == static_te->get_scope()) ErrorManager::send(REDECLARATION_VAR, msg);
-                else if (local_te == nullptr && static_te == nullptr && global_te == nullptr) ErrorManager::send(NOT_DECLARED_VAR, msg);
+                if (local_te != nullptr && static_te != nullptr && local_te->get_scope() == static_te->get_scope()) ErrorManager::send(REDECLARATION_VAR, msg);
+                if (local_te == nullptr && static_te == nullptr && global_te == nullptr) ErrorManager::send(NOT_DECLARED_VAR, msg);
                 break;
             case CALL:
                 if (global_te == nullptr) ErrorManager::send(NOT_DECLARED_FUN, msg);
@@ -221,6 +221,13 @@ namespace wic
         return EAX;
     }
 
+    ASTIDNode::ASTIDNode(void *entry_data, void *id)
+    {
+        name = "ID";
+        node_t = wic::ID;
+        register_id(entry_data, id);
+    }
+
     ASTIDNode::ASTIDNode(std::string id, wic::data_type data_t) : ASTSymbolTableNode("ID", id, wic::ID, data_t)
     {
         local_te = lst->lookup(id.c_str());
@@ -245,18 +252,41 @@ namespace wic
     ASTIDNode::ASTIDNode(std::string id, wic::data_type data_t, wic::TableEntry *global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
         : ASTSymbolTableNode("ID", id, wic::ID, data_t, global_te, static_te, local_te) {}
 
+    void ASTIDNode::register_id(void* elem1, void* elem2)
+    {
+        entry_data* entry_d = reinterpret_cast<entry_data *>(elem1);
+        id = static_cast<char *>(elem2);
+        data_t = entry_d->var.type;
+
+        if (entry_d->var.global)
+        {
+            gst->insert(id.c_str(), *entry_d, yylineno, level);
+            global_te = gst->lookup(id.c_str());
+        }
+        else if (entry_d->var.local)
+        {
+            lst->insert(id.c_str(), *entry_d, yylineno, level);
+            local_te = lst->lookup(id.c_str());
+        }
+        else if (entry_d->var.stat)
+        {
+            sst->insert(id.c_str(), *entry_d, yylineno, level);
+            static_te = sst->lookup(id.c_str());
+        }
+    }
+
     cpu_registers ASTIDNode::to_code(section_enum section, CodeGenerator *cg)
     {
         check_error(id);
+        std::cout << "PRUEBA LOCA AQUI" << std::endl;
         cpu_registers r = cg->get_reg();
-
         entry_data entry_d;
         if (static_te != nullptr) entry_d = static_te->get_data();
         else if (local_te != nullptr) entry_d = local_te->get_data();
         else if (global_te != nullptr) global_te->get_data();
 
         int offset = entry_d.var.offset - entry_d.var.array_selection;
-        cg->write(section, "c%s%s#s", "movl", std::to_string(offset) + cg->translate_reg(EBP), cg->translate_reg(r), "Get value from \'" + id + "\' variable");
+        cg->write(section, "c%s%s#s", "movl", std::to_string(offset) + "(" + cg->translate_reg(EBP) + ")", cg->translate_reg(r), "Get value from \'" + id + "\' variable");
 
         return r;
     }

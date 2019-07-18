@@ -68,7 +68,7 @@ else_if_for_while             (\.){1}
 
 context_tag                   [ ]*
 /* Identificador */
-id                            {letter}({letter}|{digit})*
+id                            ({letter}({letter}|{digit})*)
 
 %%
   if (enter_special) {
@@ -373,8 +373,8 @@ id                            {letter}({letter}|{digit})*
 
   /* Identificador */
 {id}                          {
-                                std::string id = yytext;
-                                yylval = reinterpret_cast<void *>(new wic::ASTIDNode(id, wic::UNKNOWN));
+                                char* id = strdup(yytext);
+                                yylval = static_cast<void *>(id);
                                 return ID;
                               }
 

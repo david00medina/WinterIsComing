@@ -78,8 +78,12 @@ namespace wic {
 
     class ASTIDNode : public ASTSymbolTableNode
     {
+    private:
+        void register_id(void*, void*);
+
     public:
         ASTIDNode() = default;
+        ASTIDNode(void*, void*);
         ASTIDNode(std::string, data_type);
         ASTIDNode(std::string, data_type, TableEntry*, TableEntry*, TableEntry*);
         ~ASTIDNode() = default;

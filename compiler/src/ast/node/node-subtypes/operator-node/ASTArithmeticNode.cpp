@@ -81,30 +81,30 @@ namespace wic
         switch (node_t) {
             case SUM:
                 cg->write(section, "c%s%s#s", "addl", cg->translate_reg(r1), cg->translate_reg(r2),
-                                       cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " + " + cg->translate_reg(r2));
+                cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " + " + cg->translate_reg(r2));
                 cg->free_reg(r1);
                 return r2;
             case SUB:
                 cg->write(section, "c%s%s#s", "subl", cg->translate_reg(r1), cg->translate_reg(r2),
-                                       cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " - " + cg->translate_reg(r2));
+                cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " - " + cg->translate_reg(r2));
                 cg->free_reg(r1);
                 return r2;
             case PROD:
                 cg->write(section, "c%s%s#s", "imul", cg->translate_reg(r1), cg->translate_reg(r2),
-                                       cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " * " + cg->translate_reg(r2));
+                cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " * " + cg->translate_reg(r2));
                 cg->free_reg(r1);
                 return r2;
             case ASSIGN:
-            {
-                TableEntry* entry = reinterpret_cast<ASTIDNode *>(op1)->get_entry();
-                int offset = entry->get_data().var.offset;
-                std::string op = std::to_string(offset) + "(" + cg->translate_reg(EBX) + ")";
-                std::string id = entry->get_id();
-
-                cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), op, "Save variable \'" + id + "\'");
-                cg->free_reg(r1);
-                return r2;
-            }
+                {
+                    ASTIDNode* id = reinterpret_cast<ASTIDNode *>(op1);
+                    int offset = id->get_entry()->get_data().var.offset;
+                    std::string op = std::to_string(offset) + "(" + cg->translate_reg(EBX) + ")";
+                    std::string id_ = id->get_entry()->get_id();
+                    std::cout << "REGISTRO " << r1 << std::endl;
+                    cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), op, "Save variable \'" + id_ + "\'");
+                    cg->free_reg(r1);
+                    return r2;
+                }
             case POWER:
                 return NONE;
             default:
@@ -116,22 +116,22 @@ namespace wic
         switch (node_t) {
             case SUM:
                 cg->write(section, "c%s%s#s", "addss", cg->translate_reg(r1), cg->translate_reg(r2),
-                                       cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " + " + cg->translate_reg(r2));
+                cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " + " + cg->translate_reg(r2));
                 cg->free_reg(r1);
                 return r2;
             case SUB:
                 cg->write(section, "c%s%s#s", "subss", cg->translate_reg(r1), cg->translate_reg(r2),
-                                       cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " - " + cg->translate_reg(r2));
+                cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " - " + cg->translate_reg(r2));
                 cg->free_reg(r1);
                 return r2;
             case PROD:
                 cg->write(section, "c%s%s#s", "mulss", cg->translate_reg(r1), cg->translate_reg(r2),
-                                       cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " * " + cg->translate_reg(r2));
+                cg->translate_reg(r2) + " = " + cg->translate_reg(r1) + " * " + cg->translate_reg(r2));
                 cg->free_reg(r1);
                 return r2;
             case DIV:
                 cg->write(section, "c%s%s#s", "divss", cg->translate_reg(r2), cg->translate_reg(r1),
-                                       cg->translate_reg(r1) + " = " + cg->translate_reg(r1) + " / " + cg->translate_reg(r2));
+                cg->translate_reg(r1) + " = " + cg->translate_reg(r1) + " / " + cg->translate_reg(r2));
                 cg->free_reg(r2);
                 return r1;
             case POWER:
@@ -169,7 +169,6 @@ namespace wic
 
     cpu_registers ASTSumNode::to_code(section_enum section, CodeGenerator *cg)
     {
-        std::cout << "MIRA ESTO: " << op1->get_node_type() << ", " << op1->get_data_type() << std::endl;
         check_error("sum");
         return operate(section, cg);
     }
@@ -220,12 +219,13 @@ namespace wic
         return operate(section, cg);
     }
 
-    ASTAssignNode::ASTAssignNode(data_type data_t, wic::ASTNode *op1, wic::ASTNode *op2)
-            : ASTArithmeticNode("ASSIGN", wic::ASSIGN, data_t, op1, op2) {}
+    ASTAssignNode::ASTAssignNode(wic::ASTNode *op1, wic::ASTNode *op2)
+            : ASTArithmeticNode("ASSIGN", wic::ASSIGN, op1->get_data_type(), op1, op2) {}
 
     cpu_registers ASTAssignNode::to_code(section_enum section, CodeGenerator *cg)
     {
+        cpu_registers r = operate(section, cg);
         check_error("assign");
-        return operate(section, cg);
+        return r;
     }
 }

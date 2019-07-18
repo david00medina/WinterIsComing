@@ -22,7 +22,6 @@ namespace wic
         cpu_registers int_to_float(cpu_registers, section_enum, CodeGenerator*);
         cpu_registers float_to_int(cpu_registers, section_enum, CodeGenerator*);
         cpu_registers operand_type_conversion(cpu_registers, cpu_registers, section_enum, CodeGenerator*);
-        data_type get_node_data_type(ASTNode*);
 
         virtual cpu_registers instr_reg2(cpu_registers, cpu_registers, section_enum, CodeGenerator*) = 0;
         virtual cpu_registers instr_reg2_float(cpu_registers, cpu_registers, section_enum, CodeGenerator*) = 0;

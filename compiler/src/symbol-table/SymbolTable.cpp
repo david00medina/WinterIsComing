@@ -48,10 +48,10 @@ namespace wic
 
     bool SymbolTable::insert(const char* id, entry_data entry_d, unsigned int line, unsigned int scope)
     {
-        printf("\n-----------------linea-%d-----------valor-%d-------\n", line, entry_d);
         int i = hash(id);
 
         TableEntry* existing_entry = lookup(id);
+
 
         if (existing_entry != nullptr && existing_entry->scope == scope)
         {

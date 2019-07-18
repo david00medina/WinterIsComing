@@ -74,12 +74,16 @@ namespace wic
 
     ASTMainNode::ASTMainNode() : ASTStructuralNode("MAIN", MAIN, UNKNOWN)
     {
-        body = nullptr;
+        body_count = 1;
+        func_count = 0;
+        body = new wic::ASTBodyNode();
         fun_list = nullptr;
     }
 
     ASTMainNode::ASTMainNode(ASTBodyNode* n) : ASTStructuralNode("MAIN",  MAIN, UNKNOWN)
     {
+        body_count = 0;
+        func_count = 0;
         add_body(n);
         fun_list = nullptr;
     }
@@ -103,6 +107,13 @@ namespace wic
             curr = curr->next;
         }
         curr = node;
+
+        body_count++;
+    }
+
+    ASTBodyNode* ASTMainNode::get_body()
+    {
+        return body;
     }
 
     void ASTMainNode::add_function(wic::ASTFunctionNode *node)
@@ -119,6 +130,8 @@ namespace wic
             curr = reinterpret_cast<ASTFunctionNode *>(curr->next);
         }
         curr = node;
+
+        func_count++;
     }
 
     bool ASTMainNode::match_function(std::string id, function* call)
@@ -141,7 +154,6 @@ namespace wic
         cg->push_stack();
         body->set_main(this);
         ASTBodyNode* node = body;
-
         while (node != nullptr)
         {
             node->to_code(section, cg);

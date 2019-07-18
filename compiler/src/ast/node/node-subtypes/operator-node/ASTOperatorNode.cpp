@@ -34,6 +34,8 @@ namespace wic
 
     cpu_registers ASTOperatorNode::execute(wic::cpu_registers r1, wic::cpu_registers r2, section_enum section, wic::CodeGenerator *cg)
     {
+        data_t = INT;
+
         cpu_registers o1 = instr_reg2(r1, r2, section, cg);
         cpu_registers o2 = instr_reg3(r1, r2, section, cg);
 
@@ -43,6 +45,8 @@ namespace wic
 
     cpu_registers ASTOperatorNode::execute_float(wic::cpu_registers r1, wic::cpu_registers r2, section_enum section, wic::CodeGenerator *cg)
     {
+        data_t = REAL;
+
         cpu_registers o1 = instr_reg2_float(r1, r2, section, cg);
         cpu_registers o2 = instr_reg3_float(r1, r2, section, cg);
 
@@ -52,15 +56,16 @@ namespace wic
 
     void ASTOperatorNode::check_error(std::string op)
     {
-        data_type type1 = get_node_data_type(op1);
+        data_type type1 = op1->get_data_type();
 
         if (op2 == nullptr) return;
 
-        data_type type2 = get_node_data_type(op2);
+        data_type type2 = op2->get_data_type();
 
         switch (get_node_type())
         {
             case ASSIGN:
+                std::cout << "HOLA AQUI : " << op1->get_data_type() << op2->get_data_type() << std::endl;
                 if (op1->get_node_type() != ID) ErrorManager::send(WRONG_ASSIGN);
                 else if (type1 != type2) ErrorManager::send(INCOMPATIBLE_ASSIGN, reinterpret_cast<ASTIDNode *>(op1)->get_entry()->get_id());
                 break;
@@ -71,8 +76,6 @@ namespace wic
                 if (type1 != BOOL || type2 != BOOL) ErrorManager::send(WRONG_RELATIONAL_OPERANDS, op);
                 break;
             default:
-                std::cout << "HOLA: " << get_node_data_type(op1);
-                std::cout << "HOLA: " << op2->get_node_type();
 
                 if (type1 == UNKNOWN || type2 == UNKNOWN) ErrorManager::send(INCOMPATIBLE_OPERANDS, op);
                 break;
@@ -82,8 +85,8 @@ namespace wic
 
     void ASTOperatorNode::set_operator_type()
     {
-        data_type type1 = get_node_data_type(op1);
-        data_type type2 = get_node_data_type(op2);
+        data_type type1 = op1->get_data_type();
+        data_type type2 = op2->get_data_type();
         if (type1 == type2) data_t = type1;
         else
         {
@@ -112,10 +115,10 @@ namespace wic
 
     cpu_registers ASTOperatorNode::operand_type_conversion(cpu_registers r1, cpu_registers r2, section_enum section, CodeGenerator *cg)
     {
-        data_type type1 = get_node_data_type(op1);
+        data_type type1 = op1->get_data_type();
         data_type type2 = type1;
 
-        if (op2 != nullptr) type2 = get_node_data_type(op2);
+        if (op2 != nullptr) type2 = op2->get_data_type();
 
         if (type1 == type2)
         {
@@ -134,32 +137,19 @@ namespace wic
         }
     }
 
-    data_type ASTOperatorNode::get_node_data_type(ASTNode* op)
-    {
-        switch (op->get_node_type())
-        {
-            case ID:
-                return reinterpret_cast<ASTIDNode *>(op)->get_entry()->get_data().var.type;
-            case CALL:
-                return reinterpret_cast<ASTCallNode *>(op)->get_entry()->get_data().var.type;
-            case LEAF:
-                return reinterpret_cast<ASTLeafNode *>(op)->get_data_type();
-            default:
-                return UNKNOWN;
-        }
-    }
-
     cpu_registers ASTOperatorNode::operate(section_enum section, wic::CodeGenerator *cg)
     {
-        cpu_registers r1 = op1->to_code(section, cg);
+        cpu_registers r1;
+        if (node_t != ASSIGN) r1 = op1->to_code(section, cg);
+        else r1 = cg->get_reg();
 
         cpu_registers r2;
         if (op2 != nullptr) r2 = op2->to_code(section, cg);
         cpu_registers r = operand_type_conversion(r1, r2, section, cg);
 
-        data_type type1 = get_node_data_type(op1);
+        data_type type1 = op1->get_data_type();
         data_type type2;
-        if (op2 != nullptr) type2 = get_node_data_type(op2);
+        if (op2 != nullptr) type2 = op2->get_data_type();
 
         switch (r)
         {

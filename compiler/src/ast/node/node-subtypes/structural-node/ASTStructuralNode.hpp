@@ -44,6 +44,9 @@ namespace wic
         ASTBodyNode* body;
         ASTFunctionNode* fun_list;
 
+        unsigned int body_count;
+        unsigned int func_count;
+
         void check_error(std::string) {};
 
     public:
@@ -52,6 +55,7 @@ namespace wic
         ~ASTMainNode();
 
         void add_body(ASTBodyNode*);
+        ASTBodyNode* get_body();
         void add_function(ASTFunctionNode*);
         bool match_function(std::string, function*);
         cpu_registers to_code(section_enum, CodeGenerator*);
