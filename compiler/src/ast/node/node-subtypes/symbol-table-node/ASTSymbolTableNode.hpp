@@ -79,15 +79,19 @@ namespace wic {
     class ASTIDNode : public ASTSymbolTableNode
     {
     private:
+        bool is_initialization = false;
+
         void register_id(void*, void*);
+        cpu_registers get_var(section_enum, CodeGenerator*);
 
     public:
         ASTIDNode() = default;
         ASTIDNode(void*, void*);
-        ASTIDNode(std::string, data_type);
+        ASTIDNode(std::string);
         ASTIDNode(std::string, data_type, TableEntry*, TableEntry*, TableEntry*);
         ~ASTIDNode() = default;
 
+        void set_initialization(bool);
         cpu_registers to_code(section_enum, CodeGenerator*);
     };
 }

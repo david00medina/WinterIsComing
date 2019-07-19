@@ -18,14 +18,14 @@ namespace wic
         ASTIDNode *id = reinterpret_cast<ASTIDNode *>(op1);
 
         int offset = id->get_entry()->get_data().var.offset;
-        std::string op = std::to_string(offset) + "(" + cg->translate_reg(EBX) + ")";
+        std::string op = std::to_string(offset) + "(" + cg->translate_reg(EBP) + ")";
         std::string id_ = id->get_entry()->get_id();
 
         variable var_data = id->get_entry()->get_data().var;
 
         if (is_initialization)
         {
-            if (var_data.global) {
+            if (var_data.global || var_data.stat) {
                 cg->write(DATA, "c%s", ".globl", id_);
                 cg->write(DATA, "c", ".bss");
                 cg->write(DATA, "c%s", ".align", std::to_string(var_data.size));
@@ -35,16 +35,43 @@ namespace wic
 
                 if (var_data.array_length == 0) cg->write(DATA, "c%s", ".zero", std::to_string(var_data.size));
 
+                if (!is_float)
+                    cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), id_,
+                              "Save global/static variable \'" + id_ + "\'");
+                else
+                    cg->write(section, "c%s%s#s", "movss", cg->translate_reg(r1), id_,
+                              "Save global/static variable \'" + id_ + "\'");
+
+            } else if (var_data.local)
+            {
+                if (!is_float) cg->write(CODE, "c%s#s", "pushl", cg->translate_reg(r1), "Save local variable \'" + id_ + "\'");
+                else
+                {
+                    cpu_registers r = cg->get_reg();
+                    cg->write(CODE, "c%s%s#s", "movd", cg->translate_reg(r1), cg->translate_reg(r), "Move " +  cg->translate_reg(r1) + " to " + cg->translate_reg(r) + "register");
+                    cg->write(CODE, "c%s#s", "pushl", cg->translate_reg(r), "Save local variable \'" + id_  + "\'");
+                    cg->free_reg(r);
+                }
+            }
+        } else
+        {
+            if (var_data.local) {
+                if (!is_float)
+                    cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), op,
+                              "Save local variable \'" + id_ + "\'");
+                else
+                    cg->write(section, "c%s%s#s", "movss", cg->translate_reg(r1), op,
+                              "Save local variable \'" + id_ + "\'");
+
+            } else if (var_data.global || var_data.stat) {
+                if (!is_float)
+                    cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), id_,
+                              "Save global/static variable \'" + id_ + "\'");
+                else
+                    cg->write(section, "c%s%s#s", "movss", cg->translate_reg(r1), id_,
+                              "Save global/static variable \'" + id_ + "\'");
             }
         }
-
-        if (var_data.local)
-            if (data_t != REAL) cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), op, "Save local variable \'" + id_ + "\'");
-            else cg->write(section, "c%s%s#s", "movss", cg->translate_reg(r1), op, "Save local variable \'" + id_ + "\'");
-        else if (var_data.global || var_data.stat)
-            if (data_t != REAL) cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), id_, "Save global/static variable \'" + id_ + "\'");
-            else cg->write(section, "c%s%s#s", "movss", cg->translate_reg(r1), id_, "Save global/static variable \'" + id_ + "\'");
-
         cg->free_reg(r1);
         cg->free_reg(r2);
         return NONE;

@@ -228,8 +228,12 @@ namespace wic
         register_id(entry_data, id);
     }
 
-    ASTIDNode::ASTIDNode(std::string id, wic::data_type data_t) : ASTSymbolTableNode("ID", id, wic::ID, data_t)
+    ASTIDNode::ASTIDNode(std::string id)
     {
+        this->name = "ID";
+        this->id = id;
+        node_t = ID;
+
         local_te = lst->lookup(id.c_str());
         static_te = sst->lookup(id.c_str());
         global_te = gst->lookup(id.c_str());
@@ -245,8 +249,9 @@ namespace wic
                 static_te = nullptr;
             }
             else local_te = nullptr;
-
         }
+
+        data_t = get_entry()->get_data().var.type;
     }
 
     ASTIDNode::ASTIDNode(std::string id, wic::data_type data_t, wic::TableEntry *global_te, wic::TableEntry *static_te, wic::TableEntry *local_te)
@@ -254,7 +259,7 @@ namespace wic
 
     void ASTIDNode::register_id(void* elem1, void* elem2)
     {
-        entry_data* entry_d = reinterpret_cast<entry_data *>(elem1);
+        entry_data* entry_d = static_cast<entry_data *>(elem1);
         id = static_cast<char *>(elem2);
         data_t = entry_d->var.type;
 
@@ -275,18 +280,61 @@ namespace wic
         }
     }
 
+    cpu_registers ASTIDNode::get_var(section_enum section, CodeGenerator *cg)
+    {
+        cpu_registers r = cg->get_reg();
+
+        entry_data entry_d;
+        if (sst->lookup(id.c_str()) != nullptr) entry_d = static_te->get_data();
+        else if (lst->lookup(id.c_str()) != nullptr) entry_d = local_te->get_data();
+        else if (gst->lookup(id.c_str()) != nullptr) entry_d = global_te->get_data();
+
+        if (is_initialization)
+        {
+            if (entry_d.var.stat)
+            {
+                // TODO: Faltan static
+            } else if (entry_d.var.local)
+            {
+                cg->write(section, "c%c%s#s", "subl", "$4", cg->translate_reg(ESP), "Initialization of variable \'" + id + "\'");
+            } else if (entry_d.var.global)
+            {
+                cg->write(DATA, "c%s", ".globl", id);
+                cg->write(DATA, "c", ".bss");
+                cg->write(DATA, "c%s", ".align", std::to_string(entry_d.var.size));
+                cg->write(DATA, "c%s%c", ".type", id, "@object");
+                cg->write(DATA, "c%s%s", ".size", id, std::to_string(entry_d.var.size));
+                cg->write_label(DATA, id);
+                cg->write(DATA, "c%s", ".zero", std::to_string(entry_d.var.size));
+            }
+
+        } else {
+            if (entry_d.var.stat) {
+                std::cout << "STAT" << std::endl;
+                cg->write(section, "c%s%s#s", "movl", id, cg->translate_reg(r), "Load static variable \'" + id + "\'");
+            } else if (entry_d.var.local) {
+                std::cout << "LOCAL" << std::endl;
+                int offset = entry_d.var.offset - entry_d.var.array_selection;
+                cg->write(section, "c%s%s#s", "movl", std::to_string(offset) + "(" + cg->translate_reg(EBP) + ")",
+                          cg->translate_reg(r), "Load local variable \'" + id + "\'");
+            } else if (entry_d.var.global) {
+                std::cout << "GLOBAL" << std::endl;
+                cg->write(section, "c%s%s#s", "movl", id, cg->translate_reg(r), "Load global variable \'" + id + "\'");
+            }
+            return r;
+        }
+
+        return NONE;
+    }
+
+    void ASTIDNode::set_initialization(bool is_initialization)
+    {
+        this->is_initialization = is_initialization;
+    }
+
     cpu_registers ASTIDNode::to_code(section_enum section, CodeGenerator *cg)
     {
         check_error(id);
-        cpu_registers r = cg->get_reg();
-        entry_data entry_d;
-        if (static_te != nullptr) entry_d = static_te->get_data();
-        else if (local_te != nullptr) entry_d = local_te->get_data();
-        else if (global_te != nullptr) global_te->get_data();
-
-        int offset = entry_d.var.offset - entry_d.var.array_selection;
-        cg->write(section, "c%s%s#s", "movl", std::to_string(offset) + "(" + cg->translate_reg(EBP) + ")", cg->translate_reg(r), "Get value from \'" + id + "\' variable");
-
-        return r;
+        return get_var(section, cg);
     }
 }

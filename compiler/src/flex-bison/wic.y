@@ -173,6 +173,8 @@ data_type: INT_TYPE				  {
 
 instr: data_init ID                               {
 						    wic::ASTIDNode* id = new wic::ASTIDNode($1, $2);
+						    id->set_initialization(true);
+						    $$ = ast->tree_build(id);
 						  }
     | data_init ID ASSIGN expr                    {
     						    wic::ASTIDNode* id = new wic::ASTIDNode($1, $2);
@@ -186,7 +188,10 @@ instr: data_init ID                               {
     | if_instr { $$ = $1; }
     | for_instr
     | while_instr { $$ = $1; }
-    | expr { $$ = $1; }
+    | expr 				          {
+    						    wic::ASTNode* node = reinterpret_cast<wic::ASTNode *>($1);
+     						    $$ = ast->tree_build(node);
+     						  }
     | fun_init
     | fun_call
     | /* empty */
@@ -395,12 +400,13 @@ expr: ID ASSIGN expr
     | expr UNION term
     | expr DIFFERENCE term
     | expr INTERSECTION term
-    | term { $$ = ($1); }
+    | term { $$ = $1; }
     | data_vector
 
 term: ID
 				{
-				    	wic::ASTIDNode* id = reinterpret_cast<wic::ASTIDNode *>($1);
+					std::string name = static_cast<char *>($1);
+				    	wic::ASTIDNode* id = new wic::ASTIDNode(name);
 				    	std::cout << "Factor : ID (name=" << id->get_id() << ")" << std::endl;
 
 				    	if (!id->is_registered())

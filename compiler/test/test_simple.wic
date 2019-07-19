@@ -1,4 +1,10 @@
-global int a = 2 + 3
-global real b = 2. + 4.21
+..global int a = 2 + 3
+..global real b = 2. + 4.21
+..int c = 2 + 3
+..real b = 2. + 3.
+..b
+..a
+global real d
+bool e
 .. int b = 5 + 5
 .. a = a + b

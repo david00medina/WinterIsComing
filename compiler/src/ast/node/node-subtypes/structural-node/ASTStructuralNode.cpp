@@ -53,7 +53,9 @@ namespace wic
 
     cpu_registers ASTBodyNode::to_code(section_enum section, CodeGenerator *cg) {
         ASTNode* curr = instr;
-        level++;
+
+        cg->push_stack();
+
         while (curr != nullptr) {
             curr->to_code(section, cg);
             if (curr->get_node_type() == CALL) {
@@ -151,7 +153,7 @@ namespace wic
 
     cpu_registers ASTMainNode::to_code(section_enum section, CodeGenerator *cg) {
         cg->init();
-        cg->push_stack();
+
         body->set_main(this);
         ASTBodyNode* node = body;
         while (node != nullptr)
