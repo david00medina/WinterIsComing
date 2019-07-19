@@ -278,7 +278,6 @@ namespace wic
     cpu_registers ASTIDNode::to_code(section_enum section, CodeGenerator *cg)
     {
         check_error(id);
-        std::cout << "PRUEBA LOCA AQUI" << std::endl;
         cpu_registers r = cg->get_reg();
         entry_data entry_d;
         if (static_te != nullptr) entry_d = static_te->get_data();

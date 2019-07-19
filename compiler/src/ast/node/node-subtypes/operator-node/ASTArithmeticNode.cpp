@@ -7,6 +7,49 @@ namespace wic
     ASTArithmeticNode::ASTArithmeticNode(std::string name, wic::node_type node_t, wic::data_type data_t, wic::ASTNode *op1, wic::ASTNode *op2)
         : ASTOperatorNode(name, node_t, data_t, op1, op2) {}
 
+    void ASTArithmeticNode::set_initialization(bool is_initialization)
+    {
+        this->is_initialization = is_initialization;
+    }
+
+    cpu_registers ASTArithmeticNode::assign(bool is_float, cpu_registers r1, cpu_registers r2,
+                                               section_enum section, CodeGenerator *cg)
+    {
+        ASTIDNode *id = reinterpret_cast<ASTIDNode *>(op1);
+
+        int offset = id->get_entry()->get_data().var.offset;
+        std::string op = std::to_string(offset) + "(" + cg->translate_reg(EBX) + ")";
+        std::string id_ = id->get_entry()->get_id();
+
+        variable var_data = id->get_entry()->get_data().var;
+
+        if (is_initialization)
+        {
+            if (var_data.global) {
+                cg->write(DATA, "c%s", ".globl", id_);
+                cg->write(DATA, "c", ".bss");
+                cg->write(DATA, "c%s", ".align", std::to_string(var_data.size));
+                cg->write(DATA, "c%s%c", ".type", id_, "@object");
+                cg->write(DATA, "c%s%s", ".size", id_, std::to_string(var_data.size));
+                cg->write_label(DATA, id_);
+
+                if (var_data.array_length == 0) cg->write(DATA, "c%s", ".zero", std::to_string(var_data.size));
+
+            }
+        }
+
+        if (var_data.local)
+            if (data_t != REAL) cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), op, "Save local variable \'" + id_ + "\'");
+            else cg->write(section, "c%s%s#s", "movss", cg->translate_reg(r1), op, "Save local variable \'" + id_ + "\'");
+        else if (var_data.global || var_data.stat)
+            if (data_t != REAL) cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), id_, "Save global/static variable \'" + id_ + "\'");
+            else cg->write(section, "c%s%s#s", "movss", cg->translate_reg(r1), id_, "Save global/static variable \'" + id_ + "\'");
+
+        cg->free_reg(r1);
+        cg->free_reg(r2);
+        return NONE;
+    }
+
     cpu_registers ASTArithmeticNode::div_mod(cpu_registers r1, cpu_registers r2, div_selector selector, section_enum section, CodeGenerator *cg)
     {
         if (cg->is_used(EAX) && r1 != EAX && r2 != EAX) cg->write(section, "c%s#s", "pushl", cg->translate_reg(EAX), "Push used register to stack (" + cg->translate_reg(EAX) + ")");
@@ -95,16 +138,7 @@ namespace wic
                 cg->free_reg(r1);
                 return r2;
             case ASSIGN:
-                {
-                    ASTIDNode* id = reinterpret_cast<ASTIDNode *>(op1);
-                    int offset = id->get_entry()->get_data().var.offset;
-                    std::string op = std::to_string(offset) + "(" + cg->translate_reg(EBX) + ")";
-                    std::string id_ = id->get_entry()->get_id();
-                    std::cout << "REGISTRO " << r1 << std::endl;
-                    cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r1), op, "Save variable \'" + id_ + "\'");
-                    cg->free_reg(r1);
-                    return r2;
-                }
+                return assign(false, r1, r2, section, cg);
             case POWER:
                 return NONE;
             default:
@@ -134,6 +168,8 @@ namespace wic
                 cg->translate_reg(r1) + " = " + cg->translate_reg(r1) + " / " + cg->translate_reg(r2));
                 cg->free_reg(r2);
                 return r1;
+            case ASSIGN:
+                return assign(true, r1, r2, section, cg);
             case POWER:
                 return NONE;
             default:
@@ -221,6 +257,7 @@ namespace wic
 
     ASTAssignNode::ASTAssignNode(wic::ASTNode *op1, wic::ASTNode *op2)
             : ASTArithmeticNode("ASSIGN", wic::ASSIGN, op1->get_data_type(), op1, op2) {}
+
 
     cpu_registers ASTAssignNode::to_code(section_enum section, CodeGenerator *cg)
     {

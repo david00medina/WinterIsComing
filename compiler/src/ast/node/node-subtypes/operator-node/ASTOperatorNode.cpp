@@ -140,11 +140,14 @@ namespace wic
     cpu_registers ASTOperatorNode::operate(section_enum section, wic::CodeGenerator *cg)
     {
         cpu_registers r1;
+
         if (node_t != ASSIGN) r1 = op1->to_code(section, cg);
-        else r1 = cg->get_reg();
 
         cpu_registers r2;
         if (op2 != nullptr) r2 = op2->to_code(section, cg);
+
+        if (node_t == ASSIGN) r1 = r2;
+
         cpu_registers r = operand_type_conversion(r1, r2, section, cg);
 
         data_type type1 = op1->get_data_type();

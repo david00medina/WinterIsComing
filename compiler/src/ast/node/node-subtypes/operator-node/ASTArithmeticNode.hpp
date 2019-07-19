@@ -7,12 +7,16 @@ namespace wic
 {
     class ASTArithmeticNode : public ASTOperatorNode
     {
+    private:
+        bool is_initialization = false;
+
     protected:
         typedef enum {
             QUOTIENT,
             REMAINDER
         } div_selector;
 
+        virtual cpu_registers assign(bool, cpu_registers, cpu_registers, section_enum, CodeGenerator*);
         virtual cpu_registers div_mod(cpu_registers, cpu_registers, div_selector, section_enum, CodeGenerator*);
         virtual cpu_registers division(div_selector, section_enum, CodeGenerator*);
 
@@ -25,6 +29,8 @@ namespace wic
         ASTArithmeticNode() = default;
         ASTArithmeticNode(std::string, node_type, data_type, ASTNode*, ASTNode*);
         ~ASTArithmeticNode() = default;
+
+        virtual void set_initialization(bool);
     };
 
     class ASTSumNode : public ASTArithmeticNode

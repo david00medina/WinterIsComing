@@ -139,30 +139,35 @@ data_type: INT_TYPE				  {
 						    wic::entry_data* entry_d = new wic::entry_data();
 						    entry_d->var.type = wic::INT;
 						    entry_d->var.size = 4;
+						    entry_d->var.array_length = 0;
 						    $$ = entry_d;
 						  }
     | REAL_TYPE					  {
 						    wic::entry_data* entry_d = new wic::entry_data();
 						    entry_d->var.type = wic::REAL;
 						    entry_d->var.size = 4;
+						    entry_d->var.array_length = 0;
 						    $$ = entry_d;
 						  }
     | BOOL_TYPE 				  {
 						    wic::entry_data* entry_d = new wic::entry_data();
 						    entry_d->var.type = wic::BOOL;
 						    entry_d->var.size = 1;
+						    entry_d->var.array_length = 0;
 						    $$ = entry_d;
 						  }
     | CHAR_TYPE                                   {
     						    wic::entry_data* entry_d = new wic::entry_data();
     						    entry_d->var.type = wic::CHAR;
     						    entry_d->var.size = 1;
+						    entry_d->var.array_length = 0;
     						    $$ = entry_d;
     						  }
     | VOID					  {
     						    wic::entry_data* entry_d = new wic::entry_data();
 						    entry_d->var.type = wic::VOID;
 						    entry_d->var.size = 4;
+						    entry_d->var.array_length = 0;
 						    $$ = entry_d;
     						  }
 
@@ -173,6 +178,7 @@ instr: data_init ID                               {
     						    wic::ASTIDNode* id = new wic::ASTIDNode($1, $2);
     						    wic::ASTNode* expr = reinterpret_cast<wic::ASTNode *>($4);
     						    wic::ASTAssignNode* assign = new wic::ASTAssignNode(id, expr);
+    						    assign->set_initialization(true);
     						    $$ = ast->tree_build(assign);
     						  }
     | ID array_access                             { printf("Término (VectorVal)");}

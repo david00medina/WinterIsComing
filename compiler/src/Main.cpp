@@ -10,7 +10,6 @@
 #include "ast/node/node-subtypes/operator-node/ASTArithmeticNode.hpp"
 #include "ast/node/node-subtypes/structural-node/ASTStructuralNode.hpp"
 #include "ast/node/node-subtypes/symbol-table-node/ASTSymbolTableNode.hpp"
-#include "build/wic.tab.h"
 
 
 extern int yylex();
@@ -31,6 +30,7 @@ extern wic::CodeGenerator* cg;
 int main(int argc, char const **argv) {
     // Turn debug mode ON (yydebug = 1)
     yydebug = 1;
+    yylineno = 0;
 
     ast = new wic::AbstractSyntaxTree();
     gst = new wic::GSymbolTable();
@@ -102,8 +102,8 @@ int main(int argc, char const **argv) {
 
         cg.print("caballo loco %s loquisimo, %d, %c, %r, %b", 4, node1, node2, node3, node4, node5);
         cg.exit();
-        cg.end();*//*
-        wic::ASTMainNode* main = new wic::ASTMainNode();
+        cg.end();*/
+        /*wic::ASTMainNode* main = new wic::ASTMainNode();
         wic::ASTBodyNode* body = new wic::ASTBodyNode();
         wic::ASTBodyNode* func_body = new wic::ASTBodyNode();
         wic::data_value data_v;
@@ -145,7 +145,7 @@ int main(int argc, char const **argv) {
         lst->show("ohla");
         wic::TableEntry* entry = lst->lookup("hola");
         wic::ASTIDNode* id = new wic::ASTIDNode("hola", wic::INT, nullptr, nullptr, entry);
-        wic::ASTAssignNode* assign = new wic::ASTAssignNode(wic::INT, id, int_node);
+        wic::ASTAssignNode* assign = new wic::ASTAssignNode(id, int_node);
 
 //        body->add_instr(prod);
 //        main->add_instr(sum);
@@ -178,7 +178,7 @@ int main(int argc, char const **argv) {
 
         main->add_body(body);
         main->add_function(fun);
-//        main->to_code(wic::CODE, cg);
+        main->to_code(wic::CODE, cg);
 //        if_node->to_code(wic::CODE, cg);
 //        int_node->to_code(wic::CODE, cg);
 //        float_node->to_code(wic::CODE, cg);
@@ -199,8 +199,8 @@ int main(int argc, char const **argv) {
     if (cg == nullptr) cg = new wic::CodeGenerator();
 
     int result = yyparse();
-
-    //int result = 1;
+    ast->to_code(cg);
+//    int result = 1;
     //while(1) { /* TODO: Quitar este bucle cuando entreguemos el trabajo */
         /*int result = yyparse();
 
