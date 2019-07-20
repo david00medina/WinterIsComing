@@ -40,15 +40,15 @@ namespace wic {
 
         void set_path(const std::string);
 
-        void push_stack();
-        void pop_stack();
-        void push_scope();
-        void pop_scope();
-        void push_reg(cpu_registers, std::string);
-        void push_float_reg(cpu_registers, std::string);
-        void push_mem(int, std::string);
-        void pop_reg(cpu_registers, std::string);
-        void pop_float_reg(cpu_registers, std::string);
+        void push_stack(section_enum);
+        void pop_stack(section_enum);
+        void push_scope(section_enum);
+        void pop_scope(section_enum);
+        void push_reg(section_enum, cpu_registers, std::string);
+        void push_float_reg(section_enum, cpu_registers, std::string);
+        void push_mem(section_enum, int, std::string);
+        void pop_reg(section_enum, cpu_registers, std::string);
+        void pop_float_reg(section_enum, cpu_registers, std::string);
 
 
         void write(section_enum, const char*, ...);

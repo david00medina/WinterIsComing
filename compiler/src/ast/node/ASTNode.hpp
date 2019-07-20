@@ -64,8 +64,6 @@ namespace wic
         data_type get_data_type();
         void set_data_type(data_type);
 
-        ASTNode* find(unsigned int, node_type, ASTNode*);
-
         virtual void check_error(std::string);
         virtual cpu_registers to_code(section_enum, CodeGenerator*);
 

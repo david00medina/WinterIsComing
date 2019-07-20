@@ -61,7 +61,6 @@ namespace wic
     {
     protected:
         TableEntry* head[MAX_ENTRIES];
-        int addr;
 
         virtual int hash(const char*);
 

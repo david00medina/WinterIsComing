@@ -29,7 +29,7 @@ extern wic::CodeGenerator* cg;
 
 int main(int argc, char const **argv) {
     // Turn debug mode ON (yydebug = 1)
-    yydebug = 1;
+    yydebug = 0;
     yylineno = 0;
 
     ast = new wic::AbstractSyntaxTree();
@@ -199,6 +199,9 @@ int main(int argc, char const **argv) {
     if (cg == nullptr) cg = new wic::CodeGenerator();
 
     int result = yyparse();
+    ast->get_last_function()->print();
+    std::cout << ast->get_last_function()->get_num_params() << std::endl;
+
     ast->to_code(cg);
 //    int result = 1;
     //while(1) { /* TODO: Quitar este bucle cuando entreguemos el trabajo */

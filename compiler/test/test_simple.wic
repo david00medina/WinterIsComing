@@ -1,6 +1,6 @@
-..global int a = 2 + 3
+global int a = 2 + 3
 ..global real b = 2. + 4.21
-..int c = 2 + 3
+int c = a + 3
 ..real b = 2. + 3.
 ..b
 ..a

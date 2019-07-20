@@ -54,7 +54,7 @@ namespace wic
     cpu_registers ASTBodyNode::to_code(section_enum section, CodeGenerator *cg) {
         ASTNode* curr = instr;
 
-        cg->push_stack();
+        cg->push_stack(section);
 
         while (curr != nullptr) {
             curr->to_code(section, cg);
@@ -127,13 +127,41 @@ namespace wic
         }
 
         ASTFunctionNode* curr = fun_list;
-        while (curr != nullptr)
+        while (curr->next != nullptr)
         {
             curr = reinterpret_cast<ASTFunctionNode *>(curr->next);
         }
-        curr = node;
+        curr->next = reinterpret_cast<ASTNode *>(node);
 
         func_count++;
+    }
+
+    ASTFunctionNode * ASTMainNode::lookup_function(std::string id)
+    {
+        if (fun_list == nullptr) return nullptr;
+
+        ASTFunctionNode* curr = fun_list;
+        while (curr != nullptr)
+        {
+            if (strcmp(curr->get_id(), id.c_str()) == 0) return curr;
+            curr = reinterpret_cast<ASTFunctionNode *>(curr->next);
+        }
+
+        return nullptr;
+    }
+
+    ASTFunctionNode* ASTMainNode::get_last_function()
+    {
+        if (fun_list == nullptr) return nullptr;
+
+        ASTFunctionNode* curr = fun_list;
+
+        while (curr->next != nullptr)
+        {
+            curr = reinterpret_cast<ASTFunctionNode *>(curr->next);
+        }
+
+        return curr;
     }
 
     bool ASTMainNode::match_function(std::string id, function* call)
@@ -192,7 +220,7 @@ namespace wic
         delete args;
     }
 
-    void ASTArgumentNode::add_argument(wic::ASTNode *arg)
+    void ASTArgumentNode::add_argument(ASTNode *arg)
     {
         add_node(args, arg);
         num_args++;
@@ -214,7 +242,7 @@ namespace wic
 
                     if (!entry_d.var.global || !entry_d.var.stat)
                     {
-                        cg->push_mem(entry_d.var.offset,
+                        cg->push_mem(section, entry_d.var.offset,
                                 "Loading variable \'" + id + "\' as function arguments (" + cg->get_mem_var(offset) + ")");
                     } else
                     {
@@ -234,8 +262,8 @@ namespace wic
                 }
                 break;
             default:
-                if (node->get_data_type() != REAL) cg->push_reg(r, "Loading values as function argument (" + cg->translate_reg(r) + ")");
-                else cg->push_float_reg(r, "Loading function argument (" + cg->translate_reg(r) + ")");
+                if (node->get_data_type() != REAL) cg->push_reg(section, r, "Loading values as function argument (" + cg->translate_reg(r) + ")");
+                else cg->push_float_reg(section, r, "Loading function argument (" + cg->translate_reg(r) + ")");
                 break;
         }
 
@@ -259,114 +287,29 @@ namespace wic
         }
     }
 
-    ASTParamNode::ASTParamNode() : ASTStructuralNode("PARAM", PARAM, UNKNOWN)
+    ASTReturnNode::ASTReturnNode(data_type data_t) : ASTStructuralNode("RETURN", RET, data_t) {}
+
+    ASTReturnNode::ASTReturnNode(ASTNode* ret, data_type data_t) : ASTStructuralNode("RETURN", RET, data_t)
     {
-        num_params = 0;
-        param_mem = 2 * 4; // Make room for the return address and previous EBP
+        // TODO: Devolver error si data_t != ret->get_data_type()
+        this->ret = ret;
     }
 
-    ASTParamNode::ASTParamNode(ASTIDNode* param) : ASTStructuralNode("PARAM", PARAM, UNKNOWN)
-    {
-        num_params = 1;
-        param_mem = 2 * 4; // Make room for the return address and previous EBP
-        add_params(param);
-    }
-
-    ASTParamNode::~ASTParamNode()
-    {
-        delete params;
-    }
-
-    unsigned int ASTParamNode::get_num_params()
-    {
-        return num_params;
-    }
-
-    ASTIDNode* ASTParamNode::get_params()
-    {
-        return params;
-    }
-
-    void ASTParamNode::add_params(wic::ASTIDNode *param)
-    {
-        if (params == nullptr)
-        {
-            params = param;
-            return;
-        }
-
-        ASTIDNode* curr = params;
-        while (curr != nullptr)
-        {
-            curr = reinterpret_cast<ASTIDNode *>(curr->next);
-        }
-        curr = param;
-
-        num_params++;
-    }
-
-    ASTIDNode* ASTParamNode::lookup(std::string id)
-    {
-        ASTIDNode* curr = params;
-
-        while (curr->next != nullptr)
-        {
-            std::string node_id = curr->get_id();
-            if (node_id.compare(id) == 0) return curr;
-            curr = reinterpret_cast<ASTIDNode *>(curr->next);
-        }
-
-        return nullptr;
-    }
-
-    cpu_registers ASTParamNode::to_code(section_enum section, CodeGenerator *cg)
-    {
-        ASTIDNode* curr = params;
-        int count = num_params;
-
-        while (curr->next != nullptr)
-        {
-            entry_data entry_d;
-            entry_d.var.global = false;
-            entry_d.var.stat = false;
-            entry_d.var.local = true;
-            entry_d.var.type = curr->get_data_type();
-
-            switch (get_data_type())
-            {
-                case BOOL:
-                case ARRAY_BOOL:
-                case CHAR:
-                case STRING:
-                    entry_d.var.size = 1;
-                    break;
-                default:
-                    entry_d.var.size = 4;
-                    break;
-            }
-
-            entry_d.var.array_selection = 0;
-            entry_d.var.offset = (4 * count) + (entry_d.var.array_length / 4) + param_mem;
-
-            lst->insert(curr->get_id(), entry_d, yylineno, level+1);
-
-            curr = reinterpret_cast<ASTIDNode *>(curr->next);
-
-            count--;
-        }
-    }
-
-    ASTReturnNode::ASTReturnNode() : ASTStructuralNode("RETURN", RET, UNKNOWN) {}
-
-    ASTReturnNode::ASTReturnNode(ASTNode* ret) : ASTStructuralNode("RETURN", RET, ret->get_data_type())
+    void ASTReturnNode::set_return(wic::ASTNode *ret)
     {
         this->ret = ret;
     }
 
     cpu_registers ASTReturnNode::to_code(section_enum section, CodeGenerator *cg)
     {
-        cpu_registers r = ret->to_code(section, cg);
-        cg->free_reg(EAX);
-        cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r), cg->translate_reg(EAX), "Return value saved in " + cg->translate_reg(EAX) + " register");
+        if (ret != nullptr) {
+            cpu_registers r = ret->to_code(section, cg);
+
+            cg->free_reg(EAX);
+            cg->write(section, "c%s%s#s", "movl", cg->translate_reg(r), cg->translate_reg(EAX),
+                      "Return value saved in " + cg->translate_reg(EAX) + " register");
+        }
+
+        cg->write(section, "c#c", "ret", "Return from function");
     }
 }

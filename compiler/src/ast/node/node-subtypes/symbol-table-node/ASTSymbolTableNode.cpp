@@ -9,6 +9,7 @@ extern wic::LSymbolTable* lst;
 
 extern int yylineno;
 extern int level;
+extern int call_level;
 
 namespace wic
 {
@@ -96,40 +97,26 @@ namespace wic
         std::cout << "(" << name << ", " << id << ", " << type_data_str[data_t] << ")";
     }
 
-    ASTFunctionNode::ASTFunctionNode(std::string id, wic::data_type data_t, wic::ASTParamNode *param, wic::ASTBodyNode *body, wic::ASTReturnNode* ret)
-        : ASTSymbolTableNode("FUNCTION", id, FUNCTION, data_t)
+    ASTFunctionNode::ASTFunctionNode(std::string id, entry_data entry_d)
+        : ASTSymbolTableNode("FUNCTION", id, FUNCTION, entry_d.fun.return_type)
+    {
+        params = nullptr;
+        body = new ASTBodyNode();
+        ret = new ASTReturnNode(data_t);
+
+        if (gst->lookup(get_id()) == nullptr) gst->insert(get_id(), entry_d, yylineno, 0);
+        global_te = gst->lookup(get_id());
+    }
+
+    ASTFunctionNode::ASTFunctionNode(std::string id, entry_data entry_d, ASTParamNode *param, ASTBodyNode *body, ASTReturnNode* ret)
+        : ASTSymbolTableNode("FUNCTION", id, FUNCTION, entry_d.fun.return_type)
     {
         this->params = param;
         this->body = body;
         this->ret = ret;
 
-        entry_data entry_d;
-        fun_info = new function;
-        fun_info->params_no = params->get_num_params();
-        fun_info->return_type = data_t;
-
-
-        ASTIDNode* curr = params->get_params();
-
-        param_list* curr_params = nullptr;
-
-        while (curr != nullptr)
-        {
-            if (curr_params == nullptr) curr_params = &fun_info->params;
-
-            curr_params->id = (char*)curr->get_id();
-            curr_params->type = curr->get_data_type();
-
-            curr = reinterpret_cast<ASTIDNode *>(curr->next);
-
-            param_list* new_param = new param_list;
-            curr_params->next = new_param;
-        }
-
-        entry_d.fun = *fun_info;
-
-        gst->insert(id.c_str(), entry_d, yylineno, level);
-        global_te = gst->lookup(id.c_str());
+        if (gst->lookup(get_id()) == nullptr) gst->insert(id.c_str(), entry_d, yylineno, 0);
+        global_te = gst->lookup(get_id());
     }
 
     ASTFunctionNode::~ASTFunctionNode()
@@ -138,16 +125,76 @@ namespace wic
         delete body;
     }
 
-    ASTNode* ASTFunctionNode::get_body()
+    unsigned int ASTFunctionNode::get_num_params()
+    {
+        return global_te->get_data().fun.params_no;
+    }
+
+    ASTParamNode* ASTFunctionNode::get_params()
+    {
+        return params;
+    }
+
+    void ASTFunctionNode::add_param(ASTParamNode* node)
+    {
+        if (params == nullptr) params = node;
+        else
+        {
+            ASTParamNode* curr = params;
+            while (curr->next != nullptr)
+            {
+                curr = reinterpret_cast<ASTParamNode *>(curr->next);
+            }
+            curr->next = node;
+        }
+
+        entry_data entry_d = global_te->get_data();
+        entry_d.fun.params_no = ++num_params;
+        int param_mem = 2 * 4 + entry_d.fun.params_no * 4;
+
+        if (entry_d.fun.params_no == 1)
+        {
+            entry_d.fun.params.id = (char *) node->get_id();
+            entry_d.fun.params.type = node->get_data_type();
+            entry_d.fun.params.offset = param_mem;
+        }
+        else
+        {
+            param_list* param = &(entry_d.fun.params);
+
+            while (param->next != nullptr) param = param->next;
+            param->next = new param_list;
+            param->next->id = (char *) node->get_id();
+            param->next->type = node->get_data_type();
+            param->next->offset = param_mem;
+        }
+
+        gst->modify(get_id(), entry_d, yylineno, 0);
+        global_te = gst->lookup(get_id());
+    }
+
+    ASTBodyNode* ASTFunctionNode::get_body()
     {
         return body;
     }
 
+    ASTReturnNode* ASTFunctionNode::get_return()
+    {
+        return ret;
+    }
+
+    void ASTFunctionNode::set_return(ASTNode* node)
+    {
+        ret->set_return(node);
+    }
+
     bool ASTFunctionNode::match(std::string id, wic::function* call)
     {
-        if (id.compare(id) != 0 || fun_info->params_no != call->params_no || fun_info->return_type != call->return_type) return false;
+        if (id.compare(id) != 0 || global_te->get_data().fun.params_no != call->params_no
+            || global_te->get_data().fun.return_type != call->return_type) return false;
 
-        param_list* curr = &(fun_info->params);
+        function func_info = global_te->get_data().fun;
+        param_list* curr = &(func_info.params);
         param_list* curr_call = &(call->params);
 
         while (curr != nullptr && curr_call != nullptr)
@@ -167,10 +214,24 @@ namespace wic
         cg->write(FUNCTION_CODE, "c%s%c", ".type", "_" + id, "@function");
         cg->write_label(FUNCTION_CODE, id);
 
-        params->to_code(FUNCTION_CODE, cg);
+        if (params != nullptr) params->to_code(FUNCTION_CODE, cg);
         body->to_code(FUNCTION_CODE, cg);
 
         return ret->to_code(FUNCTION_CODE, cg);
+    }
+
+    void ASTFunctionNode::print()
+    {
+        function func = global_te->get_data().fun;
+
+        param_list* curr = &(func.params);
+
+        while (curr != nullptr)
+        {
+            std::cout << "(id=" << curr->id << ", data_type=" << curr->type
+                << ", offset=" << curr->offset << ")" << std::endl;
+            curr = curr->next;
+        }
     }
 
     ASTCallNode::ASTCallNode(std::string id, wic::data_type data_t, wic::ASTArgumentNode *arg)
@@ -337,4 +398,13 @@ namespace wic
         check_error(id);
         return get_var(section, cg);
     }
+
+    ASTParamNode::ASTParamNode(std::string id, entry_data entry_d) : ASTSymbolTableNode("PARAM", id, PARAM, entry_d.var.type) {}
+
+    ASTParamNode::~ASTParamNode()
+    {
+        delete params;
+    }
+
+    cpu_registers ASTParamNode::to_code(section_enum section, CodeGenerator *cg) {}
 }

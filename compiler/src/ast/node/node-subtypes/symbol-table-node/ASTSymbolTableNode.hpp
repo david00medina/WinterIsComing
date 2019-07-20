@@ -46,17 +46,26 @@ namespace wic {
         ASTParamNode* params;
         ASTBodyNode* body;
         ASTReturnNode* ret;
-        function* fun_info;
+
+        int num_params = 0;
 
     public:
         ASTFunctionNode() = default;
-        ASTFunctionNode(std::string, data_type, ASTParamNode*, ASTBodyNode*, ASTReturnNode*);
+        ASTFunctionNode(std::string, entry_data, ASTParamNode*, ASTBodyNode*, ASTReturnNode*);
+        ASTFunctionNode(std::string, entry_data);
         ~ASTFunctionNode();
 
-        ASTNode* get_body();
+        unsigned int get_num_params();
+        ASTParamNode* get_params();
+        void add_param(ASTParamNode*);
+        ASTBodyNode* get_body();
+        ASTReturnNode* get_return();
+        void set_return(ASTNode*);
         bool match(std::string, function*);
 
         cpu_registers to_code(section_enum, CodeGenerator*);
+
+        void print();
     };
 
     class ASTCallNode : public ASTSymbolTableNode
@@ -92,6 +101,19 @@ namespace wic {
         ~ASTIDNode() = default;
 
         void set_initialization(bool);
+        cpu_registers to_code(section_enum, CodeGenerator*);
+    };
+
+    class ASTParamNode : public ASTSymbolTableNode {
+    private:
+        ASTIDNode* params;
+
+        void check_error(std::string) {};
+
+    public:
+        ASTParamNode(std::string, entry_data);
+        ~ASTParamNode();
+
         cpu_registers to_code(section_enum, CodeGenerator*);
     };
 }

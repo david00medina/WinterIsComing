@@ -21,6 +21,7 @@
     #include "../ast/node/node-subtypes/operator-node/ASTOperatorNode.hpp"
 
     int level = 0;
+    int call_level = 0;
     int enter_special = 1;
 
     /* Declaraciones de funciones */

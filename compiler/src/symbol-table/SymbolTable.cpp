@@ -26,7 +26,6 @@ namespace wic
     SymbolTable::SymbolTable()
     {
         for (int i = 0; i < MAX_ENTRIES; ++i) head[i] = nullptr;
-        addr = 0;
     }
 
     SymbolTable::~SymbolTable()
@@ -57,10 +56,6 @@ namespace wic
         {
             ErrorManager::send(REDECLARATION_VAR, id);
         }
-
-        addr -= entry_d.var.size;
-        entry_d.var.offset = addr;
-
         TableEntry* tEntry = new TableEntry(id, entry_d, line, scope);
 
         if (head[i] == nullptr) head[i] = tEntry;
@@ -90,13 +85,11 @@ namespace wic
             if (strcmp(curr->id, id) == 0 && prev == nullptr)
             {
                 head[i] = next;
-                addr += curr->entry_d.var.size;
                 delete curr;
                 return true;
             } else if (strcmp(curr->id, id) == 0)
             {
                 prev->next = next;
-                addr += curr->entry_d.var.size;
                 delete curr;
                 return true;
             }

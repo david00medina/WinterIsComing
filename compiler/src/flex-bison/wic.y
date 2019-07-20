@@ -96,15 +96,10 @@
 
 /* Definición de gramáticas */
 
-main: input {
-		wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($1);
-	    }
+main: input
 
 input: instr END_OF_INSTR input
-    | { $$ = new wic::ASTBodyNode();} OPEN_CONTEXT_TAG instr {
-
-							     }
-	  CLOSE_CONTEXT_TAG {} input
+    | OPEN_CONTEXT_TAG instr CLOSE_CONTEXT_TAG input
     | /* empty */
 
 data_init: GLOBAL data_type			  {
@@ -197,19 +192,34 @@ instr: data_init ID                               {
     | /* empty */
 
 params: params ELEM_SEPARATOR data_type ID
+						  {
+						    wic::entry_data entry_d = *(static_cast<wic::entry_data *>($3));
+						    std::string id = static_cast<char *>($4);
+
+						    wic::ASTParamNode* param = new wic::ASTParamNode(id, entry_d);
+						    ast->get_last_function()->add_param(param);
+						  }
     | data_type ID
+    						  {
+                                                    wic::entry_data entry_d = *(static_cast<wic::entry_data *>($1));
+						    std::string id = static_cast<char *>($2);
+
+                                                    wic::ASTParamNode* param = new wic::ASTParamNode(id, entry_d);
+						    ast->get_last_function()->add_param(param);
+    						  }
 
 args: args ELEM_SEPARATOR expr
     | expr
 
-fun_init: FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE HEADER_END END_OF_INSTR
-      OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
-     {
-        // TODO: Pendiente
-        // wic::ASTLeafNode* node = reinterpret_cast<wic::ASTIDNode *>($3);
-        // printf("Función (nombre=%s)\n", node->get_id());
-     }
-    | FUN data_type ID PARETHESES_OPEN params PARETHESES_CLOSE END_OF_INSTR
+fun_init: FUN data_type ID 			  {
+                                                    wic::entry_data* entry_d = static_cast<wic::entry_data *>($2);
+                                                    std::string name = static_cast<const char *>($3);
+                                                    ast->function_build(name, *entry_d);
+					          }
+      PARETHESES_OPEN params PARETHESES_CLOSE fun_init_tail
+
+fun_init_tail: HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
+   | END_OF_INSTR
 
 fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR
 

@@ -72,73 +72,73 @@ namespace wic
         fout.open(path + ".s", std::ios::in | std::ios::out | std::ios::trunc);
     }
 
-    void CodeGenerator::push_stack(){
-        write(CODE, "c%s#c", "pushl", reg[EBP], "Save previous scope");
-        write(CODE, "c%s%s#c", "movl", reg[ESP], reg[EBP], "Set new scope");
+    void CodeGenerator::push_stack(section_enum section){
+        write(section, "c%s#c", "pushl", reg[EBP], "Save previous scope");
+        write(section, "c%s%s#c", "movl", reg[ESP], reg[EBP], "Set new scope");
     }
 
-    void CodeGenerator::pop_stack()
+    void CodeGenerator::pop_stack(section_enum section)
     {
-        write(CODE, "c%s#c", "popl", reg[EBP], "Save previous scope");
-        write(CODE, "c%s%s#c", "movl", reg[EBP], reg[ESP], "Set new scope");
+        write(section, "c%s#c", "popl", reg[EBP], "Save previous scope");
+        write(section, "c%s%s#c", "movl", reg[EBP], reg[ESP], "Set new scope");
     }
 
-    void CodeGenerator::push_scope()
+    void CodeGenerator::push_scope(section_enum section)
     {
         for (int i = 0; i < TOTAL_REG; i++)
         {
-            push_reg(static_cast<cpu_registers>(EAX+i), "Push scope (" + reg[EAX+i] + ")");
-            push_float_reg(static_cast<cpu_registers>(XMM0+i), "Push scope (" + reg[XMM0+i] + ")");
+            push_reg(section, static_cast<cpu_registers>(EAX+i), "Push scope (" + reg[EAX+i] + ")");
+            push_float_reg(section, static_cast<cpu_registers>(XMM0+i), "Push scope (" + reg[XMM0+i] + ")");
 
             free_reg(static_cast<cpu_registers>(EAX+i));
             free_reg(static_cast<cpu_registers>(XMM0+i));
         }
     }
 
-    void CodeGenerator::pop_scope()
+    void CodeGenerator::pop_scope(section_enum section)
     {
         for (int i = 0; i < TOTAL_REG; i++)
         {
-            pop_reg(static_cast<cpu_registers>(EAX+i), "Pop scope (" + reg[EAX+i] + ")");
-            pop_float_reg(static_cast<cpu_registers>(XMM0+i), "Pop scope (" + reg[XMM0+i] + ")");
+            pop_reg(section, static_cast<cpu_registers>(EAX+i), "Pop scope (" + reg[EAX+i] + ")");
+            pop_float_reg(section, static_cast<cpu_registers>(XMM0+i), "Pop scope (" + reg[XMM0+i] + ")");
 
             lock_reg(static_cast<cpu_registers>(EAX+i));
             lock_reg(static_cast<cpu_registers>(XMM0+i));
         }
     }
 
-    void CodeGenerator::push_reg(cpu_registers r, std::string msg)
+    void CodeGenerator::push_reg(section_enum section, cpu_registers r, std::string msg)
     {
-        write(CODE, "c%s#s", "pushl", reg[r], msg);
+        write(section, "c%s#s", "pushl", reg[r], msg);
         free_reg(r);
     }
 
-    void CodeGenerator::pop_reg(cpu_registers r, std::string msg)
+    void CodeGenerator::pop_reg(section_enum section, cpu_registers r, std::string msg)
     {
-        write(CODE, "c%s#s", "popl", reg[r], msg);
+        write(section, "c%s#s", "popl", reg[r], msg);
         lock_reg(r);
 
     }
 
-    void CodeGenerator::push_float_reg(cpu_registers r, std::string msg)
+    void CodeGenerator::push_float_reg(section_enum section, cpu_registers r, std::string msg)
     {
         cpu_registers r2 = get_reg();
-        write(CODE, "c%s%s#s", "movd", reg[r], reg[r2], "Save float value temporarily in a general register (" + reg[r2] + ")");
+        write(section, "c%s%s#s", "movd", reg[r], reg[r2], "Save float value temporarily in a general register (" + reg[r2] + ")");
         free_reg(r);
-        write(CODE, "c%s#s", "pushl", reg[r2], msg);
+        write(section, "c%s#s", "pushl", reg[r2], msg);
         free_reg(r2);
     }
 
-    void CodeGenerator::pop_float_reg(cpu_registers r, std::string msg)
+    void CodeGenerator::pop_float_reg(section_enum section, cpu_registers r, std::string msg)
     {
-        write(CODE, "c%s%s%s", "movss", reg[ESP], reg[r], msg);
-        write(CODE, "c%c%s#c", "add", "$4", reg[ESP], "Restore stack pointer");
+        write(section, "c%s%s%s", "movss", reg[ESP], reg[r], msg);
+        write(section, "c%c%s#c", "add", "$4", reg[ESP], "Restore stack pointer");
         lock_reg(r);
     }
 
-    void CodeGenerator::push_mem(int offset, std::string msg)
+    void CodeGenerator::push_mem(section_enum section, int offset, std::string msg)
     {
-        write(CODE, "c%s#s", "pushl", get_mem_var(offset), msg);
+        write(section, "c%s#s", "pushl", get_mem_var(offset), msg);
     }
 
     void CodeGenerator::write_to_file(std::fstream &f, va_list argv, const char *fmt)

@@ -28,22 +28,6 @@ namespace wic {
         curr->next = node;
     }
 
-    ASTNode * ASTNode::find(unsigned int count, wic::node_type node_t, ASTNode* head)
-    {
-        ASTNode* curr = head;
-        for (int i = 0; i < count; ++i)
-        {
-            if(curr->next != nullptr) curr = curr->next;
-        }
-
-        while (curr->next != nullptr && curr->node_t != node_t)
-        {
-            curr = curr->next;
-        }
-
-        return curr;
-    }
-
     node_type ASTNode::get_node_type() {
         return node_t;
     }

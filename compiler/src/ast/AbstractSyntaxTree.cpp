@@ -37,6 +37,22 @@ namespace wic
         return root;
     }
 
+    void AbstractSyntaxTree::function_build(std::string id, entry_data entry_d)
+    {
+        ASTFunctionNode* func = new ASTFunctionNode(id, entry_d);
+        root->add_function(func);
+    }
+
+    ASTFunctionNode * AbstractSyntaxTree::lookup_function(std::string id)
+    {
+        return root->lookup_function(id);
+    }
+
+    ASTFunctionNode* AbstractSyntaxTree::get_last_function()
+    {
+        return root->get_last_function();
+    }
+
     void AbstractSyntaxTree::print()
     {
         std::queue<ASTNode *> nodes;

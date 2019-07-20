@@ -30,6 +30,7 @@ namespace wic
     typedef struct param_list {
         char* id;
         data_type type;
+        int offset;
         struct param_list *next;
     } param_list;
 
