@@ -167,7 +167,6 @@ namespace wic
     bool ASTMainNode::match_function(std::string id, function* call)
     {
         if(gst->lookup(id.c_str()) == nullptr) return false;
-
         ASTFunctionNode* curr = fun_list;
 
         while (curr != nullptr)
@@ -201,90 +200,6 @@ namespace wic
         cg->end();
 
         return NONE;
-    }
-
-    ASTArgumentNode::ASTArgumentNode() : ASTStructuralNode("ARGUMENT", ARG, UNKNOWN)
-    {
-        num_args = 0;
-    }
-
-    ASTArgumentNode::ASTArgumentNode(wic::ASTNode *arg) : ASTStructuralNode("ARGUMENT", ARG, UNKNOWN)
-    {
-        num_args = 0;
-        memory += 4;
-        add_argument(arg);
-    }
-
-    ASTArgumentNode::~ASTArgumentNode()
-    {
-        delete args;
-    }
-
-    void ASTArgumentNode::add_argument(ASTNode *arg)
-    {
-        add_node(args, arg);
-        num_args++;
-        memory += 4;
-    }
-
-    void ASTArgumentNode::load_args(wic::ASTNode *node, section_enum section, wic::CodeGenerator *cg)
-    {
-        cpu_registers r = node->to_code(section, cg);
-
-        switch (node->get_node_type())
-        {
-            case ID:
-                {
-                    ASTIDNode* id_node = reinterpret_cast<ASTIDNode *>(node);
-                    entry_data entry_d = id_node->get_entry()->get_data();
-                    int offset = id_node->get_entry()->get_data().var.offset;
-                    std::string id = id_node->get_id();
-
-                    if (!entry_d.var.global || !entry_d.var.stat)
-                    {
-                        cg->push_mem(section, entry_d.var.offset,
-                                "Loading variable \'" + id + "\' as function arguments (" + cg->get_mem_var(offset) + ")");
-                    } else
-                    {
-                        if (id_node->get_data_type() != REAL)
-                        {
-                            cg->write(section, "c%s%s#s", "movl", "." + id, cg->get_mem_var(offset),
-                                 "Loading variable \'" + id + "\' at "
-                                 + cg->get_mem_var(offset) + " as function arguments");
-                        }
-                        else
-                        {
-                            cg->write(section, "c%s%s#s", "movs", "." + id, cg->get_mem_var(offset),
-                                                   "Loading variable \'" + id + "\' at "
-                                                   + cg->get_mem_var(offset) + " as function arguments");
-                        }
-                    }
-                }
-                break;
-            default:
-                if (node->get_data_type() != REAL) cg->push_reg(section, r, "Loading values as function argument (" + cg->translate_reg(r) + ")");
-                else cg->push_float_reg(section, r, "Loading function argument (" + cg->translate_reg(r) + ")");
-                break;
-        }
-
-        cg->free_reg(r);
-    }
-
-    int ASTArgumentNode::get_num_args()
-    {
-        return num_args;
-    }
-
-    cpu_registers ASTArgumentNode::to_code(section_enum section, wic::CodeGenerator *cg)
-    {
-        ASTNode* curr = args;
-        curr = curr->next;
-
-        while (curr != nullptr)
-        {
-            load_args(curr, section, cg);
-            curr = curr->next;
-        }
     }
 
     ASTReturnNode::ASTReturnNode(data_type data_t) : ASTStructuralNode("RETURN", RET, data_t) {}

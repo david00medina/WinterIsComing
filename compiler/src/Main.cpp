@@ -199,10 +199,8 @@ int main(int argc, char const **argv) {
     if (cg == nullptr) cg = new wic::CodeGenerator();
 
     int result = yyparse();
-    ast->get_last_function()->print();
-    std::cout << ast->get_last_function()->get_num_params() << std::endl;
-
     ast->to_code(cg);
+    std::cout << "HOLA" << std::endl;
 //    int result = 1;
     //while(1) { /* TODO: Quitar este bucle cuando entreguemos el trabajo */
         /*int result = yyparse();

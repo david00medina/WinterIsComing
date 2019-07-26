@@ -26,7 +26,6 @@ namespace wic
         std::string name;
         node_type node_t;
         data_type data_t;
-        ASTNode* next;
 
         void add_node(ASTNode*&, ASTNode*);
 
@@ -54,6 +53,8 @@ namespace wic
                 };
 
     public:
+        ASTNode* next;
+
         ASTNode();
         ASTNode(std::string, node_type, data_type);
         virtual ~ASTNode();

@@ -77,25 +77,6 @@ namespace wic
         void set_return(ASTNode*);
         cpu_registers to_code(section_enum, CodeGenerator*);
     };
-
-    class ASTArgumentNode : public ASTStructuralNode {
-    private:
-        ASTNode* args;
-        unsigned int num_args;
-        int memory;
-
-        void check_error(std::string) {};
-        void load_args(ASTNode*, section_enum, CodeGenerator*);
-
-    public:
-        ASTArgumentNode();
-        ASTArgumentNode(ASTNode*);
-        ~ASTArgumentNode();
-
-        void add_argument(ASTNode*);
-        int get_num_args();
-        cpu_registers to_code(section_enum, CodeGenerator*);
-    };
 }
 
 #endif

@@ -73,16 +73,21 @@ namespace wic {
     private:
         ASTArgumentNode* args;
         entry_data entry_d;
+        unsigned int num_args;
+
+        void initialize();
 
     public:
         ASTCallNode() = default;
-        ASTCallNode(std::string, data_type, ASTArgumentNode *);
+        ASTCallNode(std::string, ASTArgumentNode*);
         ~ASTCallNode();
 
-        ASTNode* get_args();
+        void add_arg(ASTArgumentNode*);
+        ASTArgumentNode* get_args();
         entry_data get_entry_data();
 
         cpu_registers to_code(section_enum, CodeGenerator*);
+        void print();
     };
 
     class ASTIDNode : public ASTSymbolTableNode
@@ -114,6 +119,22 @@ namespace wic {
         ASTParamNode(std::string, entry_data);
         ~ASTParamNode();
 
+        cpu_registers to_code(section_enum, CodeGenerator*);
+    };
+
+    class ASTArgumentNode : public ASTSymbolTableNode {
+    private:
+        ASTNode* arg;
+        int offset;
+
+        void check_error(std::string) {};
+        void load_args(ASTNode*, section_enum, CodeGenerator*);
+
+    public:
+        ASTArgumentNode(ASTNode*);
+        ~ASTArgumentNode() = default;
+
+        void set_offset(int);
         cpu_registers to_code(section_enum, CodeGenerator*);
     };
 }

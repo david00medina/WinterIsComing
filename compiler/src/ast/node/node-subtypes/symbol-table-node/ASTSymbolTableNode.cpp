@@ -190,9 +190,9 @@ namespace wic
 
     bool ASTFunctionNode::match(std::string id, wic::function* call)
     {
-        if (id.compare(id) != 0 || global_te->get_data().fun.params_no != call->params_no
+        std::cout << "HOLA " << call->params_no << std::endl;
+        if (this->id.compare(id) != 0 || global_te->get_data().fun.params_no != call->params_no
             || global_te->get_data().fun.return_type != call->return_type) return false;
-
         function func_info = global_te->get_data().fun;
         param_list* curr = &(func_info.params);
         param_list* curr_call = &(call->params);
@@ -234,11 +234,14 @@ namespace wic
         }
     }
 
-    ASTCallNode::ASTCallNode(std::string id, wic::data_type data_t, wic::ASTArgumentNode *arg)
-        : ASTSymbolTableNode("CALL", id, CALL, data_t)
+    ASTCallNode::ASTCallNode(std::string id, ASTArgumentNode* args)
+        : ASTSymbolTableNode("CALL", id, CALL, gst->lookup(id.c_str())->get_data().fun.return_type)
     {
-        if (arg->get_node_type() == ARG) this->args = arg;
-        global_te = gst->lookup(id.c_str());
+        this->global_te = gst->lookup(id.c_str());
+        std::cout << "CALL : " << global_te << std::endl;
+        this->args = args;
+        num_args = 0;
+        initialize();
     }
 
     ASTCallNode::~ASTCallNode()
@@ -246,7 +249,72 @@ namespace wic
         delete args;
     }
 
-    ASTNode* ASTCallNode::get_args()
+    void ASTCallNode::initialize()
+    {
+        function fun = global_te->get_data().fun;
+        num_args = fun.params_no;
+
+        param_list* curr_param = &(fun.params);
+        ASTArgumentNode* curr = args;
+        int input_size = 0;
+        while (curr != nullptr) {
+            input_size++;
+            curr = reinterpret_cast<ASTArgumentNode *>(curr->next);
+        }
+
+        if (input_size != num_args) {
+            std::cout << "[+] ERROR : El número de argumentos no coincide con el número de parámetros" << std::endl;
+            return;
+        }
+
+        curr = args;
+
+        for (int i = num_args; i > 0; --i) {
+            int count = i;
+
+            while (count <= 0) {
+                curr_param = curr_param->next;
+                count--;
+            }
+
+            std::string in_id = curr_param->id;
+            curr->set_id(&in_id);
+            curr->set_offset(curr_param->offset);
+            curr->data_t = curr_param->type;
+
+            curr = reinterpret_cast<ASTArgumentNode *>(curr->next);
+        }
+    }
+
+    void ASTCallNode::add_arg(wic::ASTArgumentNode *arg)
+    {
+        function fun = global_te->get_data().fun;
+        param_list* curr_param = &(fun.params);
+
+        while (curr_param != nullptr)
+        {
+            if (strcmp(curr_param->id, arg->get_id()) == 0)
+            {
+                arg->set_offset(curr_param->offset);
+                std::string s = curr_param->id;
+                arg->set_id(&s);
+                break;
+            }
+            curr_param = curr_param->next;
+        }
+
+        if (num_args == 0) args = arg;
+        else
+        {
+            ASTArgumentNode *head = args;
+            arg->next = reinterpret_cast<ASTNode *>(head);
+            args = arg;
+        }
+
+        num_args++;
+    }
+
+    ASTArgumentNode* ASTCallNode::get_args()
     {
         return args;
     }
@@ -259,27 +327,30 @@ namespace wic
     cpu_registers ASTCallNode::to_code(section_enum section, CodeGenerator *cg)
     {
         check_error(id);
-        entry_d.fun.params_no = args->get_num_args();
-        entry_d.fun.return_type = data_t;
 
         ASTArgumentNode* curr = args;
-        param_list* curr_param = new param_list;
 
         while (curr != nullptr)
         {
-            curr_param->type = curr->get_data_type();
-            curr_param->next = new param_list;
-            curr_param = curr_param->next;
+            curr->to_code(section, cg);
             curr = reinterpret_cast<ASTArgumentNode *>(curr->next);
         }
 
-        if (args != nullptr) args->to_code(section, cg);
         cg->write(section, "c%s#s", "call", "_" + id, "Call the function \'" + id + "\'");
 
         // TODO: Si el registro EAX no está libre pasar el contenido a otro registro diferente.
         if (cg->is_used(EAX)) cg->lock_reg(EAX);
 
         return EAX;
+    }
+
+    void ASTCallNode::print()
+    {
+        ASTArgumentNode* curr = args;
+        while (curr != nullptr) {
+            std::cout << curr->get_id() << " " << std::endl;
+            curr = reinterpret_cast<ASTArgumentNode *>(curr->next);
+        }
     }
 
     ASTIDNode::ASTIDNode(void *entry_data, void *id)
@@ -407,4 +478,62 @@ namespace wic
     }
 
     cpu_registers ASTParamNode::to_code(section_enum section, CodeGenerator *cg) {}
+
+    ASTArgumentNode::ASTArgumentNode(ASTNode* node) : ASTSymbolTableNode("ARGUMENT", "", ARG, UNKNOWN)
+    {
+        arg = node;
+    }
+
+    void ASTArgumentNode::load_args(wic::ASTNode *node, section_enum section, wic::CodeGenerator *cg)
+    {
+        cpu_registers r = node->to_code(section, cg);
+
+        switch (node->get_node_type())
+        {
+            case ID:
+            {
+                ASTIDNode* id_node = reinterpret_cast<ASTIDNode *>(node);
+                entry_data entry_d = id_node->get_entry()->get_data();
+                int offset = id_node->get_entry()->get_data().var.offset;
+                std::string id = id_node->get_id();
+
+                if (!entry_d.var.global || !entry_d.var.stat)
+                {
+                    cg->push_mem(section, entry_d.var.offset,
+                                 "Loading variable \'" + id + "\' as function arguments (" + cg->get_mem_var(offset) + ")");
+                } else
+                {
+                    if (id_node->get_data_type() != REAL)
+                    {
+                        cg->write(section, "c%s%s#s", "movl", "." + id, cg->get_mem_var(offset),
+                                  "Loading variable \'" + id + "\' at "
+                                  + cg->get_mem_var(offset) + " as function arguments");
+                    }
+                    else
+                    {
+                        cg->write(section, "c%s%s#s", "movs", "." + id, cg->get_mem_var(offset),
+                                  "Loading variable \'" + id + "\' at "
+                                  + cg->get_mem_var(offset) + " as function arguments");
+                    }
+                }
+            }
+                break;
+            default:
+                if (node->get_data_type() != REAL) cg->push_reg(section, r, "Loading values as function argument (" + cg->translate_reg(r) + ")");
+                else cg->push_float_reg(section, r, "Loading function argument (" + cg->translate_reg(r) + ")");
+                break;
+        }
+
+        cg->free_reg(r);
+    }
+
+    void ASTArgumentNode::set_offset(int offset)
+    {
+        this->offset = offset;
+    }
+
+    cpu_registers ASTArgumentNode::to_code(section_enum section, wic::CodeGenerator *cg)
+    {
+        load_args(arg, section, cg);
+    }
 }

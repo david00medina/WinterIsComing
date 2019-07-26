@@ -1,3 +1,5 @@
 .. Declaracion de funciones de diferentes tipos de retorno
 fun int hello(int a, real b, bool c)
 
+hello(2,3.0, true)
+

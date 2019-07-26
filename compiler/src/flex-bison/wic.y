@@ -208,8 +208,18 @@ params: params ELEM_SEPARATOR data_type ID
 						    ast->get_last_function()->add_param(param);
     						  }
 
-args: args ELEM_SEPARATOR expr
-    | expr
+args: args ELEM_SEPARATOR expr			  {
+						    wic::ASTArgumentNode* args = reinterpret_cast<wic::ASTArgumentNode *>($1);
+						    wic::ASTNode* node = reinterpret_cast<wic::ASTNode *>($3);
+						    wic::ASTArgumentNode* arg = new wic::ASTArgumentNode(node);
+						    arg->next = reinterpret_cast<wic::ASTNode *>(args);
+						    $$ = arg;
+						  }
+    | expr					  {
+    						    wic::ASTNode* node = reinterpret_cast<wic::ASTNode *>($1);
+    						    wic::ASTArgumentNode* arg = new wic::ASTArgumentNode(node);
+    						    $$ = arg;
+    						  }
 
 fun_init: FUN data_type ID 			  {
                                                     wic::entry_data* entry_d = static_cast<wic::entry_data *>($2);
@@ -221,7 +231,12 @@ fun_init: FUN data_type ID 			  {
 fun_init_tail: HEADER_END END_OF_INSTR OPEN_CONTEXT_TAG input CLOSE_CONTEXT_TAG
    | END_OF_INSTR
 
-fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR
+fun_call: ID PARETHESES_OPEN args PARETHESES_CLOSE END_OF_INSTR {
+								  wic::ASTArgumentNode* args = reinterpret_cast<wic::ASTArgumentNode *>($3);
+								  std::string id = static_cast<char *>($1);
+								  wic::ASTCallNode* call = new wic::ASTCallNode(id, args);
+								  $$ = ast->tree_build(call);
+							        }
 
 while_instr: expr /*{ wic::ASTRelationalNode* expr = reinterpret_cast<wic::ASTRelationalNode* >($1); }*/ FOR_WHILE_CLAUSE HEADER_END END_OF_INSTR
       OPEN_CONTEXT_TAG input /*{ wic::ASTBodyNode* input = reinterpret_cast<wic::ASTBodyNode* >($7); }*/ CLOSE_CONTEXT_TAG
